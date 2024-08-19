@@ -14,4 +14,12 @@ export function authorize() {
     return invoke()<null>("authorize")
 }
 
+export function exit() {
+    return invoke()<null>("exit")
+}
+
+export function mainWindowFocus() {
+    return invoke()<null>("main_window_focus")
+}
+
 

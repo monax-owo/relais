@@ -6,5 +6,5 @@ yarn.lock
 **/.github
 **/node_modules
 **/.svelte-kit
-src/@types/generated
+**/generated
 target

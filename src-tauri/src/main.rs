@@ -6,7 +6,7 @@ use reqwest::Client;
 use std::{error::Error, os::raw::c_void};
 use tauri::{
   generate_context, generate_handler, App, Builder, CustomMenuItem, Manager, PhysicalPosition,
-  PhysicalSize, Runtime, SystemTray, SystemTrayEvent, SystemTrayMenu, Window, WindowEvent,
+  PhysicalSize, SystemTray, SystemTrayEvent, SystemTrayMenu, Window, WindowEvent,
 };
 use twitch::authorize;
 
@@ -30,8 +30,8 @@ pub struct Store {
 async fn main() {
   #[cfg(debug_assertions)]
   tauri_specta::ts::export(
-    specta::collect_types![authorize],
-    "../src/@types/generated/specta/bindings.d.ts",
+    specta::collect_types![authorize, exit, main_window_focus],
+    "../src/lib/generated/specta/bindings.ts",
   )
   .expect("failed to generate types");
 
@@ -114,7 +114,7 @@ async fn main() {
       _ => (),
     })
     .manage(state)
-    .invoke_handler(generate_handler![exit, main_window_focus])
+    .invoke_handler(generate_handler![authorize, exit, main_window_focus])
     .run(generate_context!())
     .expect("error while running tauri application");
 }
