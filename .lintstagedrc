@@ -1,0 +1,7 @@
+{
+  "*.{[tj]sx?,svelte,[s|post]?css,md,json}": [
+    "prettier --write --plugin-search-dir=. -c",
+    "prettier --check --plugin-search-dir=. -c"
+  ],
+  "*.{[tj]sx?,svelte}": "eslint"
+}

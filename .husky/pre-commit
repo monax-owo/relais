@@ -1,0 +1,18 @@
+staged=$(git diff --cached --name-only --diff-filter=ACMR)
+prettier=$(sed 's| |\\ |g' <<<"$staged")
+rs=$(grep '\.rs$' <<<"$staged" || echo "")
+
+echo "husky started"
+echo "staged - " $staged
+echo "prettier - " $prettier
+echo "rs - " $rs
+
+if [ -n "$rs" ]; then
+  echo ".rs files found"
+  cargo clippy --fix --allow-dirty --allow-staged --manifest-path ./src-tauri/Cargo.toml || exit
+else
+  echo ".rs files not found"
+fi
+
+pnpm prettier $prettier --write -u
+pnpm lint-staged

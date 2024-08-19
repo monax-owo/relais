@@ -1,0 +1,22 @@
+@use "_variable" as *;
+@use "_function" as *;
+@use "_mixin" as *;
+@use "_theme" as *;
+
+.shadow-1 {
+  @include shadow-1(var(--blur));
+}
+
+button:not(.btn) {
+  all: unset;
+  display: inline-block;
+  appearance: none;
+  cursor: pointer;
+  outline: none;
+  border: none;
+  padding: 0;
+  width: auto;
+  color: inherit;
+  font: inherit;
+  line-height: normal;
+}
