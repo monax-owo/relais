@@ -122,14 +122,11 @@
     },
     "windows": [
       {
-        "decorations": false,
-        "fullscreen": false,
         "label": "main",
+        "title": "relais",
+        "width": 400,
+        "height": 260,
         "resizable": false,
-        "skipTaskbar": true,
-        "title": "comment viewer",
-        "titleBarStyle": "Overlay",
-        "transparent": true,
         "url": ""
       }
     ]

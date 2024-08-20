@@ -10,10 +10,6 @@ declare global {
 // Function avoids 'window not defined' in SSR
 const invoke = () => window.__TAURI_INVOKE__;
 
-export function authorize() {
-    return invoke()<string>("authorize")
-}
-
 export function exit() {
     return invoke()<null>("exit")
 }

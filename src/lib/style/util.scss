@@ -20,3 +20,14 @@ button:not(.btn) {
   font: inherit;
   line-height: normal;
 }
+
+input:not(.input) {
+  border: 1px solid var(--b-bg);
+  border-radius: var(--b-radius);
+  background-color: var(--bg);
+  padding: 0 0.4rem;
+  color: inherit;
+  &:focus-visible {
+    outline: 1px solid var(--text);
+  }
+}

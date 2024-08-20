@@ -17,7 +17,6 @@
   // Supports weights 300-700
   import "@fontsource-variable/fira-code";
   //
-  import { appWindow } from "@tauri-apps/api/window";
   import { register, unregisterAll } from "@tauri-apps/api/globalShortcut";
   import { mainWindowFocus } from "$lib/util/wrap";
   //
@@ -32,7 +31,6 @@
 </script>
 
 <svelte:window on:contextmenu|preventDefault={() => console.log("contextmenu")} />
-<svelte:body on:click={async () => await appWindow.hide()} />
 
 <div id="app">
   <slot></slot>
@@ -44,12 +42,17 @@
     font-size: 20px;
   }
   :global(body) {
-    background: #{Alpha(var(--bg), var(--bg-alpha))};
+    background-color: var(--bg);
     overflow: hidden;
     scroll-behavior: smooth;
     scrollbar-gutter: auto;
     scrollbar-width: thin;
+    color: var(--text);
     user-select: none;
+  }
+  :global(::selection) {
+    background-color: var(--highlight-bg);
+    color: var(--bg);
   }
   :global(kbd, code) {
     font-family: "Fira Code Variable", monospace;
