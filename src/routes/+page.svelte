@@ -8,9 +8,9 @@
   import Widget from "$lib/util/drag/Widget.svelte";
   import { authorize } from "$lib/generated/specta/bindings";
   // let stroke: number = 2;
-
+  let token: string;
   const handleAuth = async () => {
-    await authorize();
+    token = await authorize();
   };
 </script>
 
@@ -18,6 +18,7 @@
 <Template>
   <Widget>
     <button type="button" on:click={handleAuth}>button</button>
+    <span>token:{token}</span>
   </Widget>
   {#if dev}
     <div class="widget">

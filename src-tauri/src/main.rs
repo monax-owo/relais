@@ -3,11 +3,12 @@
 
 // use serde::{Deserialize, Serialize};
 use reqwest::Client;
-use std::{error::Error, os::raw::c_void};
+use std::{error::Error, os::raw::c_void, sync::Arc};
 use tauri::{
   generate_context, generate_handler, App, Builder, CustomMenuItem, Manager, PhysicalPosition,
   PhysicalSize, SystemTray, SystemTrayEvent, SystemTrayMenu, Window, WindowEvent,
 };
+use tokio::sync::Mutex;
 use twitch::authorize;
 
 mod command;
@@ -24,6 +25,7 @@ use windows::Win32::{
 
 pub struct Store {
   client: Client,
+  twitch_token: Arc<Mutex<String>>,
 }
 
 #[tokio::main]
@@ -38,6 +40,7 @@ async fn main() {
   let builder = Builder::default();
   let state = Store {
     client: Client::new(),
+    twitch_token: Arc::new(Mutex::new(String::default())),
   };
 
   builder

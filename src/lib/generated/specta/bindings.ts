@@ -11,7 +11,7 @@ declare global {
 const invoke = () => window.__TAURI_INVOKE__;
 
 export function authorize() {
-    return invoke()<null>("authorize")
+    return invoke()<string>("authorize")
 }
 
 export function exit() {
