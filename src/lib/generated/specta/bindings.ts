@@ -18,4 +18,8 @@ export function mainWindowFocus() {
     return invoke()<null>("main_window_focus")
 }
 
+export function openUrl(label: string, url: string) {
+    return invoke()<string>("open_url", { label,url })
+}
+
 
