@@ -1,5 +1,5 @@
-use serde::{Deserialize, Serialize};
-use specta::Type;
+// use serde::{Deserialize, Serialize};
+// use specta::Type;
 use tauri::{AppHandle, Window, WindowBuilder};
 use url::Url;
 

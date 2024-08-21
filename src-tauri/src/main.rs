@@ -2,7 +2,6 @@
 #![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
 
 // use serde::{Deserialize, Serialize};
-use std::{error::Error, os::raw::c_void};
 use tauri::{
   generate_context, generate_handler, App, Builder, CustomMenuItem, Manager, SystemTray,
   SystemTrayEvent, SystemTrayMenu, WindowEvent,
@@ -12,11 +11,14 @@ mod command;
 
 use command::*;
 
-#[cfg(target_os = "windows")]
-use windows::Win32::{
-  Foundation::{BOOL, HWND},
-  Graphics::Dwm::{DwmSetWindowAttribute, DWMWA_TRANSITIONS_FORCEDISABLED},
-};
+// #[cfg(target_os = "windows")]
+// use {
+//   std::os::raw::c_void,
+//   windows::Win32::{
+//     Foundation::{BOOL, HWND},
+//     Graphics::Dwm::{DwmSetWindowAttribute, DWMWA_TRANSITIONS_FORCEDISABLED},
+//   },
+// };
 
 #[tokio::main]
 async fn main() {
@@ -79,6 +81,7 @@ async fn main() {
       WindowEvent::Destroyed => println!("destroy!"),
       WindowEvent::CloseRequested { api, .. } => match e.window().label() {
         "main" => api.prevent_close(),
+        "test" => todo!(),
         _ => (),
       },
       _ => (),
