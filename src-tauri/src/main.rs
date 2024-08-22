@@ -57,8 +57,8 @@ async fn main() {
   tauri_specta::ts::export(
     specta::collect_types![
       exit,
-      main_window_focus,
-      main_window_hide,
+      window_focus,
+      window_hide,
       open_window,
       close_window,
       get_windows
@@ -96,7 +96,7 @@ async fn main() {
 
       #[cfg(not(debug_assertions))]
       {
-        window_focus(&main_window)?;
+        _window_focus(&main_window)?;
       }
 
       let tray_menu = SystemTrayMenu::new()
@@ -111,7 +111,7 @@ async fn main() {
             // window_focus(&main_window).expect("failed to focusing main window")
           }
           SystemTrayEvent::MenuItemClick { id, .. } => match id.as_str() {
-            "show" => window_focus(&main_window).expect("failed to focusing main window"),
+            "show" => _window_focus(&main_window).expect("failed to focusing main window"),
             "quit" => exit_0(&handle).expect("Failed to remove tasktray icon"),
             _ => (),
           },
@@ -132,8 +132,8 @@ async fn main() {
     .manage(state)
     .invoke_handler(generate_handler![
       exit,
-      main_window_focus,
-      main_window_hide,
+      window_focus,
+      window_hide,
       open_window,
       close_window,
       get_windows

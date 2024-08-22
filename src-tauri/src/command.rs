@@ -19,7 +19,7 @@ pub fn exit(app: AppHandle, _window: Window) -> Result<(), String> {
 //
 
 //
-pub fn window_focus(window: &Window) -> anyhow::Result<()> {
+pub fn _window_focus(window: &Window) -> anyhow::Result<()> {
   window.show()?;
   window.set_focus()?;
   // window.set_always_on_top(true)?;
@@ -28,14 +28,14 @@ pub fn window_focus(window: &Window) -> anyhow::Result<()> {
 
 #[tauri::command]
 #[specta::specta]
-pub fn main_window_focus(_app: AppHandle, window: Window) -> Result<(), String> {
-  window_focus(&window).map_err(|e| e.to_string())?;
+pub fn window_focus(_app: AppHandle, window: Window) -> Result<(), String> {
+  _window_focus(&window).map_err(|e| e.to_string())?;
   Ok(())
 }
 //
 
 //
-pub fn window_hide(window: &Window) -> anyhow::Result<()> {
+pub fn _window_hide(window: &Window) -> anyhow::Result<()> {
   window.hide()?;
   // window.set_always_on_top(false)?;
   Ok(())
@@ -43,8 +43,8 @@ pub fn window_hide(window: &Window) -> anyhow::Result<()> {
 
 #[tauri::command]
 #[specta::specta]
-pub fn main_window_hide(_app: AppHandle, window: Window) -> Result<(), String> {
-  window_hide(&window).map_err(|e| e.to_string())?;
+pub fn window_hide(_app: AppHandle, window: Window) -> Result<(), String> {
+  _window_hide(&window).map_err(|e| e.to_string())?;
   Ok(())
 }
 //

@@ -14,12 +14,12 @@ export function exit() {
     return invoke()<null>("exit")
 }
 
-export function mainWindowFocus() {
-    return invoke()<null>("main_window_focus")
+export function windowFocus() {
+    return invoke()<null>("window_focus")
 }
 
-export function mainWindowHide() {
-    return invoke()<null>("main_window_hide")
+export function windowHide() {
+    return invoke()<null>("window_hide")
 }
 
 export function openWindow(label: string, url: string) {
