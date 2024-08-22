@@ -22,8 +22,8 @@ export function windowHide() {
     return invoke()<null>("window_hide")
 }
 
-export function openWindow(label: string, url: string) {
-    return invoke()<null>("open_window", { label,url })
+export function openWindow(label: string, url: string, title: string | null) {
+    return invoke()<null>("open_window", { label,url,title })
 }
 
 export function closeWindow(label: string) {

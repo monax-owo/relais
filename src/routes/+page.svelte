@@ -8,7 +8,7 @@
   let url: string;
   let windows: WindowData[] = [];
   const handleOpen = async () => {
-    await openWindow("aaaaaaaaaaaaaaaaa", url);
+    await openWindow("aaaaaaaaaaaaaaaaa", url, null);
     windows = await getWindows();
   };
 </script>
