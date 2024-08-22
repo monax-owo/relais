@@ -58,6 +58,7 @@ async fn main() {
     specta::collect_types![
       exit,
       main_window_focus,
+      main_window_hide,
       open_window,
       close_window,
       get_windows
@@ -132,6 +133,7 @@ async fn main() {
     .invoke_handler(generate_handler![
       exit,
       main_window_focus,
+      main_window_hide,
       open_window,
       close_window,
       get_windows

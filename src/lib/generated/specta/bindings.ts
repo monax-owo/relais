@@ -18,6 +18,10 @@ export function mainWindowFocus() {
     return invoke()<null>("main_window_focus")
 }
 
+export function mainWindowHide() {
+    return invoke()<null>("main_window_hide")
+}
+
 export function openWindow(label: string, url: string) {
     return invoke()<null>("open_window", { label,url })
 }
