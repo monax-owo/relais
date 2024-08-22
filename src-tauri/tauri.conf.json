@@ -93,7 +93,7 @@
         "icons/icon.icns",
         "icons/icon.ico"
       ],
-      "identifier": "io.github.monax-owo.comment_viewer",
+      "identifier": "io.github.monax-owo.relais",
       "longDescription": "",
       "macOS": {
         "entitlements": null,
