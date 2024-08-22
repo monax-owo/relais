@@ -4,6 +4,9 @@ use tauri::{AppHandle, Manager, State, Window, WindowBuilder, WindowEvent};
 
 use crate::{AppState, WindowData};
 
+#[specta::specta]
+pub fn export_types(_a: WindowData) {}
+
 //
 pub fn exit_0(handle: &AppHandle) -> anyhow::Result<()> {
   handle.tray_handle().destroy()?;
@@ -103,7 +106,7 @@ fn _close_window(app: AppHandle, label: String) -> Result<(), ()> {
   window.close().map_err(|_| ())?;
   let state = app.state::<AppState>();
   state.remove_window(&label).map_err(|_| ())?;
-  // emit
+
   Ok(())
 }
 
@@ -116,17 +119,18 @@ pub fn close_window(
   label: String,
 ) -> Result<(), ()> {
   _close_window(app, label.to_string()).map_err(|_| ())?;
+
   Ok(())
 }
 //
 
-//
-#[tauri::command]
-#[specta::specta]
-pub fn get_windows(
-  _app: AppHandle,
-  _window: Window,
-  state: State<'_, AppState>,
-) -> Vec<WindowData> {
-  state.windows.lock().unwrap().to_vec()
-}
+// //
+// #[tauri::command]
+// #[specta::specta]
+// pub fn get_windows(
+//   _app: AppHandle,
+//   _window: Window,
+//   state: State<'_, AppState>,
+// ) -> Vec<WindowData> {
+//   state.windows.lock().unwrap().to_vec()
+// }

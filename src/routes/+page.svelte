@@ -1,26 +1,35 @@
 <script lang="ts">
-  import { enhance } from "$app/forms";
-  import { getWindows, openWindow, type WindowData } from "$lib/generated/specta/bindings";
+  import { openWindow, type WindowData } from "$lib/generated/specta/bindings";
   // import type { PageData } from './$types';
   // export let data: PageData;
   import { Template } from "$lib/imports";
+  import { listen } from "@tauri-apps/api/event";
   // let stroke: number = 2;
   let url: string;
   let windows: WindowData[] = [];
   // todo label
   const handleOpen = async () => {
-    await openWindow(
-      new URL(url.startsWith("http") ? "" : "https://" + url).hostname.replaceAll(".", "_"),
-      url,
-      null
-    );
-    windows = await getWindows();
+    let label = "";
+    try {
+      let link = new URL((url.startsWith("http") ? "" : "https://") + url);
+      console.log(link);
+      label = (link.hostname + link.pathname).replaceAll(/[./]/g, "_");
+    } catch (e) {
+      console.error(e);
+    }
+    console.log(label);
+    await openWindow(label, url, null);
   };
+  onMount(async () => {
+    listen("update_windows", (e) => {
+      windows = e.payload as WindowData[];
+    });
+  });
 </script>
 
 <!--  -->
 <Template>
-  <form class="container" on:submit={handleOpen} use:enhance={() => {}}>
+  <form class="container" on:submit={handleOpen}>
     <input type="text" bind:value={url} />
     <button type="submit">OPEN</button>
   </form>

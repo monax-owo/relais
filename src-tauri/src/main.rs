@@ -6,7 +6,7 @@ use std::sync::Mutex;
 use serde::{Deserialize, Serialize};
 use specta::Type;
 use tauri::{
-  generate_context, generate_handler, App, Builder, CustomMenuItem, Manager, SystemTray,
+  generate_context, generate_handler, App, AppHandle, Builder, CustomMenuItem, Manager, SystemTray,
   SystemTrayEvent, SystemTrayMenu, WindowEvent,
 };
 
@@ -42,12 +42,19 @@ impl AppState {
     dbg!(&lock);
     Ok(())
   }
+
   // labelに一致する値がなかったらErrにする
   pub fn remove_window(&self, label: &str) -> anyhow::Result<()> {
     let mut lock = self.windows.lock().unwrap();
     lock.retain(|v| v.label.as_str() != label);
     dbg!(&lock);
     Ok(())
+  }
+
+  pub fn sync_windows(&self, handle: AppHandle) {
+    handle
+      .emit_all::<Vec<WindowData>>("update_windows", self.windows.lock().unwrap().to_vec())
+      .unwrap();
   }
 }
 
@@ -56,12 +63,12 @@ async fn main() {
   #[cfg(debug_assertions)]
   tauri_specta::ts::export(
     specta::collect_types![
+      export_types,
       exit,
       window_focus,
       window_hide,
       open_window,
       close_window,
-      get_windows
     ],
     "../src/lib/generated/specta/bindings.ts",
   )
@@ -136,7 +143,6 @@ async fn main() {
       window_hide,
       open_window,
       close_window,
-      get_windows
     ])
     .run(generate_context!())
     .expect("error while running tauri application");

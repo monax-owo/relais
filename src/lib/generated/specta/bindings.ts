@@ -10,6 +10,10 @@ declare global {
 // Function avoids 'window not defined' in SSR
 const invoke = () => window.__TAURI_INVOKE__;
 
+export function exportTypes(a: WindowData) {
+    return invoke()<null>("export_types", { a })
+}
+
 export function exit() {
     return invoke()<null>("exit")
 }
@@ -28,10 +32,6 @@ export function openWindow(label: string, url: string, title: string | null) {
 
 export function closeWindow(label: string) {
     return invoke()<null>("close_window", { label })
-}
-
-export function getWindows() {
-    return invoke()<WindowData[]>("get_windows")
 }
 
 export type WindowData = { title: string; label: string; zoom: number }
