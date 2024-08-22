@@ -1,11 +1,10 @@
 // use serde::{Deserialize, Serialize};
 // use specta::Type;
 use tauri::{AppHandle, Manager, State, Window, WindowBuilder};
-use url::Url;
 
 use crate::{AppState, WindowData};
 
-// 
+//
 pub fn exit_0(handle: &AppHandle) -> anyhow::Result<()> {
   handle.tray_handle().destroy()?;
   handle.exit(0);
@@ -17,9 +16,9 @@ pub fn exit_0(handle: &AppHandle) -> anyhow::Result<()> {
 pub fn exit(app: AppHandle, _window: Window) -> Result<(), String> {
   exit_0(&app).map_err(|e| e.to_string())
 }
-// 
+//
 
-// 
+//
 pub fn window_focus(window: &Window) -> anyhow::Result<()> {
   window.show()?;
   window.set_focus()?;
@@ -33,9 +32,9 @@ pub fn main_window_focus(_app: AppHandle, window: Window) -> Result<(), String> 
   window_focus(&window).map_err(|e| e.to_string())?;
   Ok(())
 }
-// 
+//
 
-// 
+//
 pub fn window_hide(window: &Window) -> anyhow::Result<()> {
   window.hide()?;
   // window.set_always_on_top(false)?;
@@ -48,9 +47,9 @@ pub fn main_window_hide(_app: AppHandle, window: Window) -> Result<(), String> {
   window_hide(&window).map_err(|e| e.to_string())?;
   Ok(())
 }
-// 
+//
 
-// 
+//
 #[tauri::command]
 #[specta::specta]
 pub async fn open_window(
@@ -92,7 +91,7 @@ pub async fn open_window(
 pub fn close_window(
   app: AppHandle,
   _window: Window,
-  state: &mut State<'_, AppState>,
+  state: State<'_, AppState>,
   label: &str,
 ) -> Result<(), ()> {
   // close window
@@ -111,7 +110,7 @@ pub fn close_window(
 pub fn get_windows(
   _app: AppHandle,
   _window: Window,
-  state: &mut State<'_, AppState>,
+  state: State<'_, AppState>,
 ) -> Vec<WindowData> {
   state.windows.lock().unwrap().to_vec()
 }

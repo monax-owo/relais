@@ -1,6 +1,6 @@
 <script lang="ts">
   import { enhance } from "$app/forms";
-  import { openWindow, type WindowData } from "$lib/generated/specta/bindings";
+  import { getWindows, openWindow, type WindowData } from "$lib/generated/specta/bindings";
   // import type { PageData } from './$types';
   // export let data: PageData;
   import { Template } from "$lib/imports";
@@ -8,7 +8,8 @@
   let url: string;
   let windows: WindowData[] = [];
   const handleOpen = async () => {
-    windows = await openWindow("aaaaaaaaaaaaaaaaa", url);
+    await openWindow("aaaaaaaaaaaaaaaaa", url);
+    windows = await getWindows();
   };
 </script>
 

@@ -22,4 +22,12 @@ export function openWindow(label: string, url: string) {
     return invoke()<null>("open_window", { label,url })
 }
 
+export function closeWindow(label: string) {
+    return invoke()<null>("close_window", { label })
+}
 
+export function getWindows() {
+    return invoke()<WindowData[]>("get_windows")
+}
+
+export type WindowData = { title: string; label: string; zoom: number }

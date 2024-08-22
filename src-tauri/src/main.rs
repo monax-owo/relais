@@ -55,13 +55,19 @@ impl AppState {
 async fn main() {
   #[cfg(debug_assertions)]
   tauri_specta::ts::export(
-    specta::collect_types![exit, main_window_focus, open_window],
+    specta::collect_types![
+      exit,
+      main_window_focus,
+      open_window,
+      close_window,
+      get_windows
+    ],
     "../src/lib/generated/specta/bindings.ts",
   )
   .expect("failed to generate types");
 
   let builder = Builder::default();
-  let mut state = AppState {
+  let state = AppState {
     windows: Mutex::new(vec![]),
   };
   builder
@@ -123,7 +129,13 @@ async fn main() {
       _ => (),
     })
     .manage(state)
-    .invoke_handler(generate_handler![exit, main_window_focus, open_window])
+    .invoke_handler(generate_handler![
+      exit,
+      main_window_focus,
+      open_window,
+      close_window,
+      get_windows
+    ])
     .run(generate_context!())
     .expect("error while running tauri application");
 }
