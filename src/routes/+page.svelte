@@ -1,21 +1,34 @@
 <script lang="ts">
-  import { openUrl } from "$lib/generated/specta/bindings";
+  import { enhance } from "$app/forms";
+  import { openWindow, type WindowData } from "$lib/generated/specta/bindings";
   // import type { PageData } from './$types';
   // export let data: PageData;
   import { Template } from "$lib/imports";
   // let stroke: number = 2;
-  let value: string;
+  let url: string;
+  let windows: WindowData[] = [];
   const handleOpen = async () => {
-    await openUrl("aaaaaaaaaaaaaaaaa", value);
+    windows = await openWindow("aaaaaaaaaaaaaaaaa", url);
   };
 </script>
 
 <!--  -->
 <Template>
-  <div class="container">
-    <input type="text" bind:value />
-    <button type="button" on:click={handleOpen}>OPEN</button>
-  </div>
+  <form class="container" on:submit={handleOpen} use:enhance={() => {}}>
+    <input type="text" bind:value={url} />
+    <button type="submit">OPEN</button>
+  </form>
+  <ul>
+    {#each windows as window}
+      <li>
+        <div>
+          <span>{window.label}</span>
+          <span>{window.title}</span>
+          <span>{window.zoom}</span>
+        </div>
+      </li>
+    {/each}
+  </ul>
 </Template>
 
 <style lang="scss">

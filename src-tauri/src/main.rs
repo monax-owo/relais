@@ -1,7 +1,10 @@
 // Prevents additional console window on Windows in release, DO NOT REMOVE!!
 #![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
 
-// use serde::{Deserialize, Serialize};
+use std::sync::Mutex;
+
+use serde::{Deserialize, Serialize};
+use specta::Type;
 use tauri::{
   generate_context, generate_handler, App, Builder, CustomMenuItem, Manager, SystemTray,
   SystemTrayEvent, SystemTrayMenu, WindowEvent,
@@ -20,17 +23,47 @@ use command::*;
 //   },
 // };
 
+#[derive(Debug, Deserialize, Serialize, Type)]
+pub struct AppState {
+  windows: Mutex<Vec<WindowData>>,
+}
+
+#[derive(Debug, Clone, Deserialize, Serialize, Type)]
+pub struct WindowData {
+  title: String,
+  label: String,
+  zoom: f64,
+}
+
+impl AppState {
+  pub fn add_window(&self, window: WindowData) -> anyhow::Result<()> {
+    let mut lock = self.windows.lock().unwrap();
+    lock.push(window);
+    dbg!(&lock);
+    Ok(())
+  }
+  // labelに一致する値がなかったらErrにする
+  pub fn remove_window(&self, label: &str) -> anyhow::Result<()> {
+    let mut lock = self.windows.lock().unwrap();
+    lock.retain(|v| v.label.as_str() != label);
+    dbg!(&lock);
+    Ok(())
+  }
+}
+
 #[tokio::main]
 async fn main() {
   #[cfg(debug_assertions)]
   tauri_specta::ts::export(
-    specta::collect_types![exit, main_window_focus, open_url],
+    specta::collect_types![exit, main_window_focus, open_window],
     "../src/lib/generated/specta/bindings.ts",
   )
   .expect("failed to generate types");
 
   let builder = Builder::default();
-
+  let mut state = AppState {
+    windows: Mutex::new(vec![]),
+  };
   builder
     .setup(move |app: &mut App| {
       let handle = app.handle();
@@ -54,7 +87,10 @@ async fn main() {
         // }
       }
 
-      window_focus(&main_window)?;
+      #[cfg(not(debug_assertions))]
+      {
+        window_focus(&main_window)?;
+      }
 
       let tray_menu = SystemTrayMenu::new()
         .add_item(CustomMenuItem::new("show", "Show window"))
@@ -86,7 +122,8 @@ async fn main() {
       },
       _ => (),
     })
-    .invoke_handler(generate_handler![exit, main_window_focus, open_url])
+    .manage(state)
+    .invoke_handler(generate_handler![exit, main_window_focus, open_window])
     .run(generate_context!())
     .expect("error while running tauri application");
 }
