@@ -7,8 +7,13 @@
   // let stroke: number = 2;
   let url: string;
   let windows: WindowData[] = [];
+  // todo label
   const handleOpen = async () => {
-    await openWindow("aaaaaaaaaaaaaaaaa", url, null);
+    await openWindow(
+      new URL(url.startsWith("http") ? "" : "https://" + url).hostname.replaceAll(".", "_"),
+      url,
+      null
+    );
     windows = await getWindows();
   };
 </script>

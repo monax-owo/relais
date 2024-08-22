@@ -60,7 +60,6 @@ pub async fn open_window(
   url: String,
   title: Option<String>,
 ) -> Result<(), ()> {
-  // もうちょっといい書き方あるだろ
   let url = if url.starts_with("http") {
     url
   } else {
@@ -85,8 +84,11 @@ pub async fn open_window(
   state.add_window(window_data).map_err(|_| ())?;
 
   // if window closing, when remove if from window list
-  window.on_window_event(move |e| if let WindowEvent::CloseRequested { .. } = *e {
-    _close_window(app.clone(), label.clone()).unwrap();
+  window.on_window_event(move |e| {
+    if let WindowEvent::CloseRequested { .. } = *e {
+      // TODO: クローンしない方法を調べる？
+      _close_window(app.clone(), label.clone()).unwrap();
+    }
   });
 
   Ok(())
@@ -101,6 +103,7 @@ fn _close_window(app: AppHandle, label: String) -> Result<(), ()> {
   window.close().map_err(|_| ())?;
   let state = app.state::<AppState>();
   state.remove_window(&label).map_err(|_| ())?;
+  // emit
   Ok(())
 }
 
