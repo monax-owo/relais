@@ -107,10 +107,9 @@ pub async fn open_window(
   state.add_window(window_data).map_err(|_| ())?;
   state.sync_windows(&app);
 
-  {
-    let pos = ctrl_window.outer_position().unwrap();
-    window.set_position(ctrl_pos(pos.x, pos.y)).unwrap();
-  }
+  window
+    .set_position(ctrl_pos(ctrl_window.outer_position().unwrap()))
+    .unwrap();
 
   {
     let arc = Arc::new((window, ctrl_window));
@@ -130,9 +129,16 @@ pub async fn open_window(
     ctrl_window.on_window_event({
       let arc = arc.clone();
       move |e| match *e {
-        WindowEvent::Focused(state) if state => arc.0.show().unwrap(),
+        WindowEvent::Focused(state) if state => {
+          arc.0.unminimize().unwrap();
+          arc
+            .0
+            .set_position(ctrl_pos(arc.0.outer_position().unwrap()))
+            .unwrap();
+          arc.0.show().unwrap();
+        }
         WindowEvent::Moved(pos) => {
-          arc.0.set_position(ctrl_pos(pos.x, pos.y)).unwrap();
+          arc.0.set_position(ctrl_pos(pos)).unwrap();
         }
         _ => (),
       }
@@ -172,7 +178,7 @@ pub fn close_window(
 
 //
 // PhysicalPositionを渡せるようにしたほうがRustらしいと思う
-fn ctrl_pos(x: i32, y: i32) -> PhysicalPosition<i32> {
+fn ctrl_pos(pos: PhysicalPosition<i32>) -> PhysicalPosition<i32> {
   const OFFSET: (i32, i32) = (100, 100);
-  PhysicalPosition::new(x + OFFSET.0, y + OFFSET.1)
+  PhysicalPosition::new(pos.x + OFFSET.0, pos.y + OFFSET.1)
 }
