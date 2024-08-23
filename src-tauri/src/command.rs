@@ -1,6 +1,11 @@
+use std::sync::Arc;
+
 // use serde::{Deserialize, Serialize};
 // use specta::Type;
-use tauri::{AppHandle, Manager, State, Window, WindowBuilder, WindowEvent};
+use tauri::{
+  AppHandle, Manager, PhysicalPosition, State, Window, WindowBuilder, WindowEvent, WindowUrl,
+};
+use uuid::Uuid;
 
 use crate::{AppState, WindowData};
 
@@ -59,9 +64,9 @@ pub async fn open_window(
   app: AppHandle,
   _window: Window,
   state: State<'_, AppState>,
-  label: String,
   url: String,
   title: Option<String>,
+  label: Option<String>,
 ) -> Result<(), ()> {
   let url = if url.starts_with("http") {
     url
@@ -73,26 +78,66 @@ pub async fn open_window(
 
   // create window
   let title = title.unwrap_or_default();
-  let window = WindowBuilder::new(&app, &label, tauri::WindowUrl::External(parse_url))
-    .transparent(true)
+  let label = label.unwrap_or(Uuid::new_v4().to_string());
+  let window = WindowBuilder::new(&app, &label, WindowUrl::External(parse_url))
+    .decorations(false)
     .title(&title)
+    .transparent(true)
     .build()
     .unwrap();
+
+  let ctrl_window = WindowBuilder::new(
+    &app,
+    "ctrl_".to_string() + &label,
+    WindowUrl::App("/ctrl".into()),
+  )
+  // .resizable(false)
+  .skip_taskbar(true)
+  .title("")
+  .transparent(true)
+  .build()
+  .unwrap();
 
   let window_data = WindowData {
     title,
     label: label.clone(),
     zoom: 1.0,
   };
-  state.add_window(window_data).map_err(|_| ())?;
 
-  // if window closing, when remove if from window list
-  window.on_window_event(move |e| {
-    if let WindowEvent::CloseRequested { .. } = *e {
-      // TODO: クローンしない方法を調べる？
-      _close_window(app.clone(), label.clone()).unwrap();
-    }
-  });
+  state.add_window(window_data).map_err(|_| ())?;
+  state.sync_windows(&app);
+
+  {
+    let pos = ctrl_window.outer_position().unwrap();
+    window.set_position(ctrl_pos(pos.x, pos.y)).unwrap();
+  }
+
+  {
+    let arc = Arc::new((window, ctrl_window));
+    let (ref window, ref ctrl_window) = *Arc::clone(&arc);
+    // if window closing, when remove if from window list
+    window.on_window_event({
+      let arc = arc.clone();
+      move |e| match *e {
+        WindowEvent::CloseRequested { .. } => {
+          _close_window(app.clone(), label.clone()).unwrap();
+        }
+        WindowEvent::Focused(state) if state => arc.1.show().unwrap(),
+        _ => (),
+      }
+    });
+
+    ctrl_window.on_window_event({
+      let arc = arc.clone();
+      move |e| match *e {
+        WindowEvent::Focused(state) if state => arc.0.show().unwrap(),
+        WindowEvent::Moved(pos) => {
+          arc.0.set_position(ctrl_pos(pos.x, pos.y)).unwrap();
+        }
+        _ => (),
+      }
+    });
+  }
 
   Ok(())
 }
@@ -106,6 +151,7 @@ fn _close_window(app: AppHandle, label: String) -> Result<(), ()> {
   window.close().map_err(|_| ())?;
   let state = app.state::<AppState>();
   state.remove_window(&label).map_err(|_| ())?;
+  state.sync_windows(&app);
 
   Ok(())
 }
@@ -124,13 +170,9 @@ pub fn close_window(
 }
 //
 
-// //
-// #[tauri::command]
-// #[specta::specta]
-// pub fn get_windows(
-//   _app: AppHandle,
-//   _window: Window,
-//   state: State<'_, AppState>,
-// ) -> Vec<WindowData> {
-//   state.windows.lock().unwrap().to_vec()
-// }
+//
+// PhysicalPositionを渡せるようにしたほうがRustらしいと思う
+fn ctrl_pos(x: i32, y: i32) -> PhysicalPosition<i32> {
+  const OFFSET: (i32, i32) = (100, 100);
+  PhysicalPosition::new(x + OFFSET.0, y + OFFSET.1)
+}

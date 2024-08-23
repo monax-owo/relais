@@ -51,7 +51,7 @@ impl AppState {
     Ok(())
   }
 
-  pub fn sync_windows(&self, handle: AppHandle) {
+  pub fn sync_windows(&self, handle: &AppHandle) {
     handle
       .emit_all::<Vec<WindowData>>("update_windows", self.windows.lock().unwrap().to_vec())
       .unwrap();

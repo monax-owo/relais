@@ -7,18 +7,17 @@
   // let stroke: number = 2;
   let url: string;
   let windows: WindowData[] = [];
+  let valid = true;
   // todo label
   const handleOpen = async () => {
-    let label = "";
     try {
-      let link = new URL((url.startsWith("http") ? "" : "https://") + url);
-      console.log(link);
-      label = (link.hostname + link.pathname).replaceAll(/[./]/g, "_");
+      new URL((url.startsWith("http") ? "" : "https://") + url);
+      valid = true;
     } catch (e) {
+      valid = false;
       console.error(e);
     }
-    console.log(label);
-    await openWindow(label, url, null);
+    await openWindow(url, null, null);
   };
   onMount(async () => {
     listen("update_windows", (e) => {
@@ -30,6 +29,7 @@
 <!--  -->
 <Template>
   <form class="container" on:submit={handleOpen}>
+    <span>{valid}</span>
     <input type="text" bind:value={url} />
     <button type="submit">OPEN</button>
   </form>
@@ -37,7 +37,7 @@
     {#each windows as window}
       <li>
         <div>
-          <span>{window.label}</span>
+          <!-- <span>{window.label}</span> -->
           <span>{window.title}</span>
           <span>{window.zoom}</span>
         </div>
