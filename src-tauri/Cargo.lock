@@ -84,6 +84,7 @@ dependencies = [
  "tauri-specta",
  "tokio",
  "url",
+ "uuid",
  "windows 0.39.0",
 ]
 
