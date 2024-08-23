@@ -77,6 +77,7 @@ pub async fn open_window(
   dbg!(&parse_url);
 
   // create window
+  // TODO: ウィンドウの位置を決める、innersizeだとずれてしまうのでoutersizeを指定する方法を探す
   let title = title.unwrap_or_default();
   let label = label.unwrap_or(Uuid::new_v4().to_string());
   let window = WindowBuilder::new(&app, &label, WindowUrl::External(parse_url))
@@ -133,7 +134,7 @@ pub async fn open_window(
           arc.0.unminimize().unwrap();
           arc
             .0
-            .set_position(ctrl_pos(arc.0.outer_position().unwrap()))
+            .set_position(ctrl_pos(arc.1.outer_position().unwrap()))
             .unwrap();
           arc.0.show().unwrap();
         }
@@ -179,6 +180,6 @@ pub fn close_window(
 //
 // PhysicalPositionを渡せるようにしたほうがRustらしいと思う
 fn ctrl_pos(pos: PhysicalPosition<i32>) -> PhysicalPosition<i32> {
-  const OFFSET: (i32, i32) = (100, 100);
+  const OFFSET: (i32, i32) = (0, 80);
   PhysicalPosition::new(pos.x + OFFSET.0, pos.y + OFFSET.1)
 }
