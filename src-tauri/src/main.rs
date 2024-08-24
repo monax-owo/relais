@@ -1,7 +1,7 @@
 // Prevents additional console window on Windows in release, DO NOT REMOVE!!
 #![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
 
-use std::sync::Mutex;
+use std::sync::{atomic::AtomicBool, Mutex};
 
 use serde::{Deserialize, Serialize};
 use specta::Type;
@@ -26,6 +26,7 @@ use command::*;
 #[derive(Debug, Deserialize, Serialize, Type)]
 pub struct AppState {
   windows: Mutex<Vec<WindowData>>,
+  overlay: AtomicBool,
 }
 
 #[derive(Debug, Clone, Deserialize, Serialize, Type)]
@@ -77,6 +78,7 @@ async fn main() {
   let builder = Builder::default();
   let state = AppState {
     windows: Mutex::new(vec![]),
+    overlay: true.into(),
   };
   builder
     .setup(move |app: &mut App| {

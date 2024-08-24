@@ -140,7 +140,7 @@ pub async fn open_window(
     let arc = Arc::new((window, ctrl_window));
     let (ref window, ref ctrl_window) = *Arc::clone(&arc);
 
-    // ctrlで動かそうとするとwindowを1度フォーカスしてからctrlをフォーカスしている
+    // AppStateのoverlayが無効のときのみctrlを表示+有効のときはwindowを半透明にする
     // if window closing, when remove if from window list
     window.on_window_event({
       let arc = arc.clone();
