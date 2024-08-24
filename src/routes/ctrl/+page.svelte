@@ -1,11 +1,25 @@
 <script lang="ts">
+  import { appWindow } from "@tauri-apps/api/window";
+
   //
+  const em = async (event: string) => {
+    await appWindow.emit("ctrl", event);
+  };
+  const handleMini = async () => {
+    await em("mini");
+  };
+  const handleMaxi = async () => {
+    await em("maxi");
+  };
+  const handleClose = async () => {
+    await em("close");
+  };
 </script>
 
 <div class="header" data-tauri-drag-region>
-  <button type="button">_</button>
-  <button type="button">O</button>
-  <button type="button">X</button>
+  <button type="button" on:pointerdown={handleMini}>_</button>
+  <button type="button" on:pointerdown={handleMaxi}>O</button>
+  <button type="button" on:pointerdown={handleClose}>X</button>
   <button type="button" data-tauri-drag-region>@</button>
 </div>
 

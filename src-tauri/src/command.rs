@@ -202,6 +202,24 @@ pub async fn open_window(
       }
     });
 
+    ctrl_window.listen("ctrl", {
+      let arc = arc.clone();
+      // TODO: "\"maxi\"" 文字列がエスケープされるからmatchできない
+      move |e| {
+        if let Some(v) = e.payload() {
+          println!("{}", &v);
+          match v {
+            "mini" => arc.0.minimize().unwrap(),
+            "maxi" => {
+              dbg!(&v);
+            }
+            "close" => {}
+            _ => (),
+          }
+        }
+      }
+    });
+
     (|| -> anyhow::Result<()> {
       let diff_x = ctrl_window.outer_size()?.width - ctrl_window.inner_size()?.width;
       let diff_y = ctrl_window.outer_size()?.height - ctrl_window.inner_size()?.height;
