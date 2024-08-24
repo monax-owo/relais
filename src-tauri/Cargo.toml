@@ -22,7 +22,10 @@ reqwest = "0.11.18"
 serde = { version = "1.0", features = ["derive"] }
 serde_json = "1.0"
 specta = "1.0.5"
-tauri = { version = "1.7.0", features = [ "window-show", "window-hide", "window-start-dragging",
+tauri = { version = "1.7.0", features = [
+  "window-show",
+  "window-hide",
+  "window-start-dragging",
   "global-shortcut-all",
   "shell-open",
   "app-show",
@@ -34,9 +37,10 @@ tokio = { version = "1.39.2", features = ["full"] }
 url = "2.5.2"
 uuid = "1.10.0"
 windows = { version = "0.39.0", features = [
-  "Win32_Foundation",
+  "Win32_UI_WindowsAndMessaging",
   "Win32_Graphics",
   "Win32_Graphics_Dwm",
+  "Win32_Foundation",
 ] }
 
 [features]

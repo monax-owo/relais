@@ -59,7 +59,7 @@ pub fn window_hide(_app: AppHandle, window: Window) -> Result<(), String> {
 //
 
 //
-const CTRL_WINDOW_SIZE: (u32, u32) = (40, 100);
+const CTRL_WINDOW_SIZE: (u32, u32) = (40, 160);
 //
 #[tauri::command]
 #[specta::specta]
@@ -89,7 +89,7 @@ pub async fn open_window(
     .title(&title)
     .transparent(true)
     .build()
-    .unwrap();
+    .map_err(|_| ())?;
 
   let ctrl_window = WindowBuilder::new(
     &app,
@@ -99,12 +99,27 @@ pub async fn open_window(
   .decorations(false)
   .maximizable(false)
   .minimizable(false)
-  // .resizable(false)
-  // .skip_taskbar(true)
+  .resizable(false)
+  .skip_taskbar(true)
   .title("ctrl")
   .transparent(true)
   .build()
-  .unwrap();
+  .map_err(|_| ())?;
+
+  // windows crate 0.39.0
+  // set child window
+  #[cfg(target_os = "windows")]
+  {
+    use windows::Win32::UI::WindowsAndMessaging::SetParent;
+
+    let handle_window = window.hwnd().map_err(|_| ())?;
+    let handle_ctrl_window = window.hwnd().map_err(|_| ())?;
+
+    unsafe {
+      println!("unsafe");
+      let _handle = SetParent(handle_ctrl_window, handle_window);
+    }
+  }
 
   let window_data = WindowData {
     title,
@@ -116,12 +131,15 @@ pub async fn open_window(
   state.sync_windows(&app);
 
   window
-    .set_position(ctrl_pos(ctrl_window.outer_position().unwrap()))
-    .unwrap();
+    .set_position(ctrl_pos(ctrl_window.outer_position().map_err(|_| ())?))
+    .map_err(|_| ())?;
+
+  ctrl_window.hide().map_err(|_| ())?;
 
   {
     let arc = Arc::new((window, ctrl_window));
     let (ref window, ref ctrl_window) = *Arc::clone(&arc);
+
     // if window closing, when remove if from window list
     window.on_window_event({
       let arc = arc.clone();
@@ -129,13 +147,21 @@ pub async fn open_window(
         WindowEvent::CloseRequested { .. } => {
           _close_window(app.clone(), label.clone()).unwrap();
         }
-        WindowEvent::Focused(state) if state => {
-          if arc.1.is_minimized().unwrap() {
-            arc.1.unminimize().unwrap();
-          };
-          if arc.1.is_visible().unwrap() {
-            arc.1.set_focus().unwrap();
+        WindowEvent::Focused(state) => {
+          if state {
+            if !arc.1.is_visible().unwrap() {
+              arc.1.show().unwrap();
+              dbg!("here");
+            };
+
+            println!("window focus");
           }
+        }
+        WindowEvent::Resized(_) => {
+          arc
+            .0
+            .set_position(ctrl_pos(arc.1.outer_position().unwrap()))
+            .unwrap();
         }
         _ => (),
       }
@@ -144,13 +170,25 @@ pub async fn open_window(
     ctrl_window.on_window_event({
       let arc = arc.clone();
       move |e| match *e {
-        WindowEvent::Focused(state) if state => {
-          arc.0.unminimize().unwrap();
-          arc
-            .0
-            .set_position(ctrl_pos(arc.1.outer_position().unwrap()))
-            .unwrap();
-          arc.0.show().unwrap();
+        WindowEvent::Focused(state) => {
+          if state {
+            if arc.0.is_minimized().unwrap() {
+              arc.0.unminimize().unwrap();
+              dbg!("here");
+            }
+            arc
+              .0
+              .set_position(ctrl_pos(arc.1.outer_position().unwrap()))
+              .unwrap();
+            if !arc.0.is_visible().unwrap() {
+              arc.0.show().unwrap();
+              dbg!("here");
+            }
+            println!("ctrl focus");
+          } else if !arc.0.is_focused().unwrap() {
+            arc.1.hide().unwrap();
+            dbg!("here");
+          }
         }
         WindowEvent::Moved(pos) => {
           arc.0.set_position(ctrl_pos(pos)).unwrap();
@@ -168,7 +206,7 @@ pub async fn open_window(
       ))?;
       Ok(())
     })()
-    .unwrap();
+    .map_err(|_| ())?;
   }
 
   Ok(())
