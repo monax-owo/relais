@@ -24,6 +24,10 @@
       windows = e.payload as WindowData[];
     });
   });
+  ifThen(windows.length == 0, () => {
+    url = "x.com";
+    handleOpen();
+  });
 </script>
 
 <!--  -->
@@ -53,9 +57,18 @@
     flex-flow: row nowrap;
     align-content: center;
     justify-content: center;
+    gap: 0.2rem;
     height: 1.6rem;
     & input {
+      margin: 0 0.2rem;
       width: 12rem;
     }
+  }
+  button {
+    margin: 0 0.2rem;
+    border: 1px solid var(--b-bg);
+    border-radius: var(--b-radius);
+    padding: 0 0.4rem;
+    font-size: 0.8rem;
   }
 </style>

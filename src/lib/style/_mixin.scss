@@ -15,6 +15,17 @@ $breakpoints: (
   }
 }
 
+$orientation: (
+  portrait: "portrait",
+  landscape: "landscape",
+);
+
+@mixin orientation($arg) {
+  @media (orientation: #{map-get($orientation,$arg)}) {
+    @content;
+  }
+}
+
 @mixin shadow-1($blur) {
   box-shadow: 0 0 $blur 0px var(--s-bg);
 }

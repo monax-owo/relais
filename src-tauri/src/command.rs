@@ -3,7 +3,8 @@ use std::sync::Arc;
 // use serde::{Deserialize, Serialize};
 // use specta::Type;
 use tauri::{
-  AppHandle, Manager, PhysicalPosition, State, Window, WindowBuilder, WindowEvent, WindowUrl,
+  AppHandle, Manager, PhysicalPosition, PhysicalSize, State, Window, WindowBuilder, WindowEvent,
+  WindowUrl,
 };
 use uuid::Uuid;
 
@@ -58,6 +59,8 @@ pub fn window_hide(_app: AppHandle, window: Window) -> Result<(), String> {
 //
 
 //
+const CTRL_WINDOW_SIZE: (u32, u32) = (40, 100);
+//
 #[tauri::command]
 #[specta::specta]
 pub async fn open_window(
@@ -78,6 +81,7 @@ pub async fn open_window(
 
   // create window
   // TODO: ウィンドウの位置を決める、innersizeだとずれてしまうのでoutersizeを指定する方法を探す
+  // BuilderではなくWindowに対してset_sizeすれば良さそう？
   let title = title.unwrap_or_default();
   let label = label.unwrap_or(Uuid::new_v4().to_string());
   let window = WindowBuilder::new(&app, &label, WindowUrl::External(parse_url))
@@ -92,9 +96,12 @@ pub async fn open_window(
     "ctrl_".to_string() + &label,
     WindowUrl::App("/ctrl".into()),
   )
+  .decorations(false)
+  .maximizable(false)
+  .minimizable(false)
   // .resizable(false)
-  .skip_taskbar(true)
-  .title("")
+  // .skip_taskbar(true)
+  .title("ctrl")
   .transparent(true)
   .build()
   .unwrap();
@@ -122,7 +129,14 @@ pub async fn open_window(
         WindowEvent::CloseRequested { .. } => {
           _close_window(app.clone(), label.clone()).unwrap();
         }
-        WindowEvent::Focused(state) if state => arc.1.show().unwrap(),
+        WindowEvent::Focused(state) if state => {
+          if arc.1.is_minimized().unwrap() {
+            arc.1.unminimize().unwrap();
+          };
+          if arc.1.is_visible().unwrap() {
+            arc.1.set_focus().unwrap();
+          }
+        }
         _ => (),
       }
     });
@@ -144,6 +158,17 @@ pub async fn open_window(
         _ => (),
       }
     });
+
+    (|| -> anyhow::Result<()> {
+      let diff_x = ctrl_window.outer_size()?.width - ctrl_window.inner_size()?.width;
+      let diff_y = ctrl_window.outer_size()?.height - ctrl_window.inner_size()?.height;
+      ctrl_window.set_size(PhysicalSize::new(
+        diff_x + CTRL_WINDOW_SIZE.0,
+        diff_y + CTRL_WINDOW_SIZE.1,
+      ))?;
+      Ok(())
+    })()
+    .unwrap();
   }
 
   Ok(())
@@ -180,6 +205,6 @@ pub fn close_window(
 //
 // PhysicalPositionを渡せるようにしたほうがRustらしいと思う
 fn ctrl_pos(pos: PhysicalPosition<i32>) -> PhysicalPosition<i32> {
-  const OFFSET: (i32, i32) = (0, 80);
+  const OFFSET: (i32, i32) = (40, 0);
   PhysicalPosition::new(pos.x + OFFSET.0, pos.y + OFFSET.1)
 }
