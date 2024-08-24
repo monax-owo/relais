@@ -140,6 +140,7 @@ pub async fn open_window(
     let arc = Arc::new((window, ctrl_window));
     let (ref window, ref ctrl_window) = *Arc::clone(&arc);
 
+    // ctrlで動かそうとするとwindowを1度フォーカスしてからctrlをフォーカスしている
     // if window closing, when remove if from window list
     window.on_window_event({
       let arc = arc.clone();
@@ -153,14 +154,17 @@ pub async fn open_window(
               arc.1.show().unwrap();
               dbg!("here");
             };
-
+            arc
+              .0
+              .set_position(ctrl_pos(arc.1.outer_position().unwrap()))
+              .unwrap();
             println!("window focus");
           }
         }
         WindowEvent::Resized(_) => {
           arc
-            .0
-            .set_position(ctrl_pos(arc.1.outer_position().unwrap()))
+            .1
+            .set_position(window_pos(arc.0.outer_position().unwrap()))
             .unwrap();
         }
         _ => (),
@@ -187,7 +191,9 @@ pub async fn open_window(
             println!("ctrl focus");
           } else if !arc.0.is_focused().unwrap() {
             arc.1.hide().unwrap();
+            // ここが何故か実行される
             dbg!("here");
+            println!("here");
           }
         }
         WindowEvent::Moved(pos) => {
@@ -241,8 +247,13 @@ pub fn close_window(
 //
 
 //
-// PhysicalPositionを渡せるようにしたほうがRustらしいと思う
 fn ctrl_pos(pos: PhysicalPosition<i32>) -> PhysicalPosition<i32> {
   const OFFSET: (i32, i32) = (40, 0);
   PhysicalPosition::new(pos.x + OFFSET.0, pos.y + OFFSET.1)
+}
+
+//
+fn window_pos(pos: PhysicalPosition<i32>) -> PhysicalPosition<i32> {
+  const OFFSET: (i32, i32) = (40, 0);
+  PhysicalPosition::new(pos.x - OFFSET.0, pos.y - OFFSET.1)
 }

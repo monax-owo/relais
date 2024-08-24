@@ -25,7 +25,7 @@
     });
   });
   ifThen(windows.length == 0, () => {
-    url = "x.com";
+    url = "google.com";
     handleOpen();
   });
 </script>
