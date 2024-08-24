@@ -11,8 +11,10 @@ use tauri::{
 };
 
 mod command;
+mod window;
 
 use command::*;
+use window::*;
 
 // #[cfg(target_os = "windows")]
 // use {
