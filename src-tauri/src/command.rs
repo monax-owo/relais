@@ -189,9 +189,8 @@ pub async fn open_window(
               dbg!("here");
             }
             println!("ctrl focus");
-          } else if !arc.0.is_focused().unwrap() {
+          } else if !arc.0.is_focused().unwrap() && !arc.1.is_focused().unwrap() {
             arc.1.hide().unwrap();
-            // ここが何故か実行される
             dbg!("here");
             println!("here");
           }
