@@ -1,5 +1,6 @@
 use std::sync::Arc;
 
+use anyhow::bail;
 // use serde::{Deserialize, Serialize};
 // use specta::Type;
 use tauri::{
@@ -89,6 +90,7 @@ pub async fn open_window(
   let window_data = WindowData {
     title,
     label: label.clone(),
+    transparent: false,
     zoom: 1.0,
   };
 
@@ -112,7 +114,7 @@ pub async fn open_window(
       let arc = arc.clone();
       let app = app.clone();
       move |e| match *e {
-        WindowEvent::CloseRequested { .. } => close(&app, &arc),
+        WindowEvent::CloseRequested { .. } => close(&app, &arc).unwrap(),
         WindowEvent::Focused(state) => {
           if state {
             arc.1.show().unwrap();
@@ -172,8 +174,9 @@ pub async fn open_window(
           println!("{}", &payload);
           match payload {
             "mini" => arc.0.minimize().unwrap(),
-            "close" => close(&app, &arc),
-            "transparent" => {}
+            "close" => close(&app, &arc).unwrap(),
+            // "transparent" => toggle_transparent(&app, &arc).unwrap(),
+            "transparent" => arc.1.emit_all("transparent", true).unwrap(),
             _ => println!("did not match"),
           }
         }
@@ -195,14 +198,28 @@ pub async fn open_window(
   Ok(())
 }
 
-fn close(app: &AppHandle, arc: &Arc<(Window, Window)>) {
+fn close(app: &AppHandle, arc: &Arc<(Window, Window)>) -> anyhow::Result<()> {
   let state = app.state::<AppState>();
   let labels = [arc.0.label(), arc.1.label()];
-  arc.1.close().unwrap();
-  arc.0.close().unwrap();
-  state.remove_window(labels[0]).map_err(|_| ()).unwrap();
-  state.remove_window(labels[1]).map_err(|_| ()).unwrap();
+  arc.1.close()?;
+  arc.0.close()?;
+  state.remove_window(labels[0])?;
+  state.remove_window(labels[1])?;
   state.sync_windows(app);
+  Ok(())
+}
+
+fn toggle_transparent(app: &AppHandle, arc: &Arc<(Window, Window)>) -> anyhow::Result<()> {
+  let state = app.state::<AppState>();
+  let Some(property) = state.get_property(arc.0.label()) else {
+    bail!("window data is not found");
+  };
+
+  // TODO
+  // もし半透明モードなら反転
+  
+  // unsafe {}
+  Ok(())
 }
 //
 

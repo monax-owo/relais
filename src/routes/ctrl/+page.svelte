@@ -1,25 +1,46 @@
 <script lang="ts">
   import { appWindow } from "@tauri-apps/api/window";
 
+  import IconMinus from "@tabler/icons-svelte/IconMinus.svelte";
+  import IconX from "@tabler/icons-svelte/IconX.svelte";
+  import IconArrowsMove from "@tabler/icons-svelte/IconArrowsMove.svelte";
+  import IconLockOpen from "@tabler/icons-svelte/IconLockOpen.svelte";
+  import IconLock from "@tabler/icons-svelte/IconLock.svelte";
+  const stroke = 2;
+
+  let transparent = false;
+
   const em = async (event: unknown) => {
     await appWindow.emit("ctrl", event);
   };
   const handleMini = async () => {
     await em("mini");
   };
-  const handleMaxi = async () => {
-    await em("maxi");
-  };
   const handleClose = async () => {
     await em("close");
   };
+  const handleTransparent = async () => {
+    await em("transparent");
+  };
+  onMount(() => {
+    appWindow.listen<boolean>("transparent", (e) => {
+      transparent = e.payload;
+    });
+  });
 </script>
 
+<!-- TODO: lock/unlock animation -->
 <div class="header" data-tauri-drag-region>
-  <button type="button" on:pointerdown={handleMini}>_</button>
-  <button type="button" on:pointerdown={handleMaxi}>O</button>
-  <button type="button" on:pointerdown={handleClose}>X</button>
-  <button type="button" data-tauri-drag-region>@</button>
+  <button type="button" on:pointerdown={handleMini}><IconMinus {stroke}></IconMinus></button>
+  <button type="button" on:pointerdown={handleClose}><IconX {stroke}></IconX></button>
+  <button type="button" on:pointerdown={handleTransparent}
+    >{#if transparent}
+      <IconLockOpen {stroke} />
+    {:else}
+      <IconLock {stroke} />
+    {/if}</button>
+  <button type="button" data-tauri-drag-region
+    ><IconArrowsMove {stroke} data-tauri-drag-region /></button>
 </div>
 
 <style lang="scss">
@@ -28,7 +49,7 @@
     display: flex;
     flex-wrap: wrap;
     align-content: center;
-    justify-content: center;
+    justify-content: space-evenly;
     gap: 0.4rem;
     background-color: var(--bg);
     width: 100%;
@@ -45,6 +66,10 @@
       height: 1.2rem;
       font-size: 0.8rem;
       text-align: center;
+      &[data-tauri-drag-region] {
+        cursor: move;
+        pointer-events: fill;
+      }
     }
   }
 </style>

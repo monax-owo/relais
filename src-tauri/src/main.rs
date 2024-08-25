@@ -35,6 +35,7 @@ pub struct AppState {
 pub struct WindowData {
   title: String,
   label: String,
+  transparent: bool,
   zoom: f64,
 }
 
@@ -58,6 +59,11 @@ impl AppState {
     handle
       .emit_all::<Vec<WindowData>>("update_windows", self.windows.lock().unwrap().to_vec())
       .unwrap();
+  }
+
+  pub fn get_property(&self, label: &str) -> Option<WindowData> {
+    let lock = self.windows.lock().unwrap();
+    lock.iter().find(|v| v.label.as_str() == label).cloned()
   }
 }
 

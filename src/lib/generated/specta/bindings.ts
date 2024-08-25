@@ -34,4 +34,4 @@ export function closeWindow(label: string) {
     return invoke()<null>("close_window", { label })
 }
 
-export type WindowData = { title: string; label: string; zoom: number }
+export type WindowData = { title: string; label: string; transparent: boolean; zoom: number }
