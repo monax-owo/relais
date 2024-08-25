@@ -1,12 +1,6 @@
 <script lang="ts">
   import { appWindow } from "@tauri-apps/api/window";
 
-  //
-  enum test {
-    a,
-    b,
-  }
-
   const em = async (event: unknown) => {
     await appWindow.emit("ctrl", event);
   };
@@ -14,7 +8,7 @@
     await em("mini");
   };
   const handleMaxi = async () => {
-    await em(test.b);
+    await em("maxi");
   };
   const handleClose = async () => {
     await em("close");

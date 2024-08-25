@@ -44,7 +44,6 @@ pub async fn open_window(
     format!("https://{}", url)
   };
   let parse_url = url::Url::parse(&url).map_err(|_| ())?;
-  dbg!(&parse_url);
 
   // create window
   let title = title.unwrap_or_default();
@@ -110,10 +109,9 @@ pub async fn open_window(
     // if window closing, when remove if from window list
     window.on_window_event({
       let arc = arc.clone();
+      let app = app.clone();
       move |e| match *e {
-        WindowEvent::CloseRequested { .. } => {
-          _close_window(app.clone(), label.clone()).unwrap();
-        }
+        WindowEvent::CloseRequested { .. } => close(&app, &arc),
         WindowEvent::Focused(state) => {
           if state {
             arc.1.show().unwrap();
@@ -144,7 +142,6 @@ pub async fn open_window(
           if state {
             if arc.0.is_minimized().unwrap() {
               arc.0.unminimize().unwrap();
-              dbg!("here");
             }
             arc
               .0
@@ -152,12 +149,9 @@ pub async fn open_window(
               .unwrap();
             if !arc.0.is_visible().unwrap() {
               arc.0.show().unwrap();
-              dbg!("here");
             }
           } else if !arc.0.is_focused().unwrap() && !arc.1.is_focused().unwrap() {
             arc.1.hide().unwrap();
-            dbg!("here");
-            println!("here");
           }
         }
         WindowEvent::Moved(pos) => {
@@ -169,17 +163,17 @@ pub async fn open_window(
 
     ctrl_window.listen("ctrl", {
       let arc = arc.clone();
+      let app = app.clone();
       // TODO: "\"maxi\"" 文字列がエスケープされるからmatchできない
       move |e| {
         if let Some(v) = e.payload() {
-          println!("{}", &v);
-          match v {
+          let payload = serde_json::from_str(v).unwrap();
+          println!("{}", &payload);
+          match payload {
             "mini" => arc.0.minimize().unwrap(),
-            "maxi" => {
-              dbg!(&v);
-            }
-            "close" => {}
-            _ => (),
+            "close" => close(&app, &arc),
+            "transparent" => {}
+            _ => println!("did not match"),
           }
         }
       }
@@ -198,6 +192,16 @@ pub async fn open_window(
   }
 
   Ok(())
+}
+
+fn close(app: &AppHandle, arc: &Arc<(Window, Window)>) {
+  let state = app.state::<AppState>();
+  let labels = [arc.0.label(), arc.1.label()];
+  arc.1.close().unwrap();
+  arc.0.close().unwrap();
+  state.remove_window(labels[0]).map_err(|_| ()).unwrap();
+  state.remove_window(labels[1]).map_err(|_| ()).unwrap();
+  state.sync_windows(app);
 }
 //
 
