@@ -2,14 +2,19 @@
   import { appWindow } from "@tauri-apps/api/window";
 
   //
-  const em = async (event: string) => {
+  enum test {
+    a,
+    b,
+  }
+
+  const em = async (event: unknown) => {
     await appWindow.emit("ctrl", event);
   };
   const handleMini = async () => {
     await em("mini");
   };
   const handleMaxi = async () => {
-    await em("maxi");
+    await em(test.b);
   };
   const handleClose = async () => {
     await em("close");

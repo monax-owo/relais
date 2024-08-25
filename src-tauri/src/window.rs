@@ -47,8 +47,6 @@ pub async fn open_window(
   dbg!(&parse_url);
 
   // create window
-  // TODO: ウィンドウの位置を決める、innersizeだとずれてしまうのでoutersizeを指定する方法を探す
-  // BuilderではなくWindowに対してset_sizeすれば良さそう？
   let title = title.unwrap_or_default();
   let label = label.unwrap_or(Uuid::new_v4().to_string());
   let window = WindowBuilder::new(&app, &label, WindowUrl::External(parse_url))
@@ -107,6 +105,7 @@ pub async fn open_window(
     let arc = Arc::new((window, ctrl_window));
     let (ref window, ref ctrl_window) = *Arc::clone(&arc);
 
+    // TODO: zoom
     // AppStateのoverlayが無効のときのみctrlを表示+有効のときはwindowを半透明にする
     // if window closing, when remove if from window list
     window.on_window_event({
@@ -117,15 +116,15 @@ pub async fn open_window(
         }
         WindowEvent::Focused(state) => {
           if state {
-            if !arc.1.is_visible().unwrap() {
-              arc.1.show().unwrap();
-              dbg!("here");
-            };
+            arc.1.show().unwrap();
+
             arc
               .0
               .set_position(ctrl_pos(arc.1.outer_position().unwrap()))
               .unwrap();
             println!("window focus");
+          } else if !arc.1.is_focused().unwrap() {
+            arc.1.hide().unwrap();
           }
         }
         WindowEvent::Resized(_) => {
@@ -155,7 +154,6 @@ pub async fn open_window(
               arc.0.show().unwrap();
               dbg!("here");
             }
-            println!("ctrl focus");
           } else if !arc.0.is_focused().unwrap() && !arc.1.is_focused().unwrap() {
             arc.1.hide().unwrap();
             dbg!("here");
