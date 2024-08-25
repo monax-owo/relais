@@ -50,6 +50,7 @@ pub async fn open_window(
   let label = label.unwrap_or(Uuid::new_v4().to_string());
   let window = WindowBuilder::new(&app, &label, WindowUrl::External(parse_url))
     .decorations(false)
+    .min_inner_size(500.0, 500.0)
     .title(&title)
     .transparent(true)
     .build()
@@ -72,18 +73,18 @@ pub async fn open_window(
 
   // windows crate 0.39.0
   // set child window
-  #[cfg(target_os = "windows")]
-  {
-    use windows::Win32::UI::WindowsAndMessaging::SetParent;
+  // #[cfg(target_os = "windows")]
+  // {
+  //   use windows::Win32::UI::WindowsAndMessaging::SetParent;
 
-    let handle_window = window.hwnd().map_err(|_| ())?;
-    let handle_ctrl_window = window.hwnd().map_err(|_| ())?;
+  //   let handle_window = window.hwnd().map_err(|_| ())?;
+  //   let handle_ctrl_window = window.hwnd().map_err(|_| ())?;
 
-    unsafe {
-      println!("unsafe");
-      let _handle = SetParent(handle_ctrl_window, handle_window);
-    }
-  }
+  //   unsafe {
+  //     println!("unsafe");
+  //     let _handle = SetParent(handle_ctrl_window, handle_window);
+  //   }
+  // }
 
   let window_data = WindowData {
     title,
@@ -154,6 +155,7 @@ pub async fn open_window(
             arc.1.hide().unwrap();
           }
         }
+        // arc.0.start_dragging()
         WindowEvent::Moved(pos) => {
           arc.0.set_position(ctrl_pos(pos)).unwrap();
         }
@@ -164,7 +166,6 @@ pub async fn open_window(
     ctrl_window.listen("ctrl", {
       let arc = arc.clone();
       let app = app.clone();
-      // TODO: "\"maxi\"" 文字列がエスケープされるからmatchできない
       move |e| {
         if let Some(v) = e.payload() {
           let payload = serde_json::from_str(v).unwrap();
