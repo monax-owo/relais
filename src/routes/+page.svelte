@@ -24,9 +24,11 @@
       windows = e.payload as WindowData[];
     });
   });
-  ifThen(windows.length <= 0, () => {
-    url = "google.com";
-    handleOpen();
+  ifDev(() => {
+    ifThen(windows.length <= 0, () => {
+      url = "google.com";
+      handleOpen();
+    });
   });
 </script>
 

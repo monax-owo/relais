@@ -132,7 +132,6 @@ pub async fn open_window(
               .0
               .set_position(ctrl_pos(arc.1.outer_position().unwrap()))
               .unwrap();
-            println!("window focus");
           } else if !arc.1.is_focused().unwrap() {
             arc.1.hide().unwrap();
           }
@@ -186,7 +185,10 @@ pub async fn open_window(
             // "transparent" => toggle_transparent(&app).unwrap(),
             "transparent" => arc
               .1
-              .emit_all("transparent", toggle_transparent(&app, &arc, 128).unwrap())
+              .emit_all(
+                "transparent",
+                toggle_transparent(&app, &arc.0, &arc.1, 128).unwrap(),
+              )
               .unwrap(),
             _ => println!("did not match: {}", payload),
           }
@@ -206,6 +208,8 @@ pub async fn open_window(
     .map_err(|_| ())?;
   }
 
+  app.get_window("main").unwrap().hide().unwrap();
+
   Ok(())
 }
 
@@ -222,11 +226,12 @@ fn close(app: &AppHandle, arc: &Arc<(Window, Window)>) -> anyhow::Result<()> {
 
 fn toggle_transparent(
   app: &AppHandle,
-  arc: &Arc<(Window, Window)>,
+  window: &Window,
+  ctrl_window: &Window,
   alpha: u8,
 ) -> anyhow::Result<bool> {
   let state = app.state::<AppState>();
-  let window_hwnd = arc.0.hwnd()?;
+  let window_hwnd = window.hwnd()?;
   let condition = state.overlay.load(Ordering::Acquire);
   // TODO
   // もし半透明モードなら反転
@@ -242,7 +247,8 @@ fn toggle_transparent(
   } else {
     // 半透明
     let res = unsafe { SetLayeredWindowAttributes(window_hwnd, 0, alpha, LWA_ALPHA) };
-    dbg!(res);
+
+    ctrl_window.hide()?;
 
     state.overlay.store(true, Ordering::Release);
   };
