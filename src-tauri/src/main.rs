@@ -130,7 +130,7 @@ async fn main() {
             // window_focus(&main_window).expect("failed to focusing main window")
           }
           SystemTrayEvent::MenuItemClick { id, .. } => match id.as_str() {
-            MENU_SHOW => main_window.clone().show().unwrap(),
+            MENU_SHOW => _window_focus(&main_window).unwrap(),
             MENU_TOGGLE => (),
             MENU_QUIT => exit_0(&handle).expect("Failed to remove tasktray icon"),
             _ => (),
