@@ -6,6 +6,8 @@
   import IconArrowsMove from "@tabler/icons-svelte/IconArrowsMove.svelte";
   import IconLockOpen from "@tabler/icons-svelte/IconLockOpen.svelte";
   import IconLock from "@tabler/icons-svelte/IconLock.svelte";
+  import { getTransparent } from "$lib/generated/specta/bindings";
+
   const stroke = 2;
 
   let transparent = false;
@@ -21,16 +23,12 @@
   };
   const handleTransparent = async () => {
     await em("transparent");
+    transparent = await getTransparent();
   };
-  onMount(() => {
-    appWindow.listen<boolean>("transparent", (e) => {
-      transparent = e.payload;
-    });
-  });
 </script>
 
 <!-- TODO: lock/unlock animation -->
-<div class="header" data-tauri-drag-region>
+<div class="header">
   <button type="button" on:pointerdown={handleMini}><IconMinus {stroke}></IconMinus></button>
   <button type="button" on:pointerdown={handleClose}><IconX {stroke}></IconX></button>
   <button type="button" on:pointerdown={handleTransparent}

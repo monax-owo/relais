@@ -34,4 +34,8 @@ export function closeWindow(label: string) {
     return invoke()<null>("close_window", { label })
 }
 
+export function getTransparent() {
+    return invoke()<boolean>("get_transparent")
+}
+
 export type WindowData = { title: string; label: string; transparent: boolean; zoom: number }

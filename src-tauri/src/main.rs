@@ -25,6 +25,7 @@ use window::*;
 //   },
 // };
 
+// TODO: アプリ全体かウィンドウごとに半透明にするか
 #[derive(Debug, Deserialize, Serialize, Type)]
 pub struct AppState {
   windows: Mutex<Vec<WindowData>>,
@@ -61,7 +62,7 @@ impl AppState {
       .unwrap();
   }
 
-  pub fn get_property(&self, label: &str) -> Option<WindowData> {
+  pub fn get_window_data(&self, label: &str) -> Option<WindowData> {
     let lock = self.windows.lock().unwrap();
     lock.iter().find(|v| v.label.as_str() == label).cloned()
   }
@@ -78,6 +79,7 @@ async fn main() {
       window_hide,
       open_window,
       close_window,
+      get_transparent
     ],
     "../src/lib/generated/specta/bindings.ts",
   )
@@ -153,6 +155,7 @@ async fn main() {
       window_hide,
       open_window,
       close_window,
+      get_transparent
     ])
     .run(generate_context!())
     .expect("error while running tauri application");

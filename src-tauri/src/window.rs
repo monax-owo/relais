@@ -28,6 +28,7 @@ pub fn window_hide(_app: AppHandle, window: Window) -> Result<(), String> {
 
 //
 const CTRL_WINDOW_SIZE: (u32, u32) = (40, 160);
+const LABEL_PREFIX: &str = "ctrl_";
 //
 #[tauri::command]
 #[specta::specta]
@@ -176,7 +177,10 @@ pub async fn open_window(
             "mini" => arc.0.minimize().unwrap(),
             "close" => close(&app, &arc).unwrap(),
             // "transparent" => toggle_transparent(&app, &arc).unwrap(),
-            "transparent" => arc.1.emit_all("transparent", true).unwrap(),
+            "transparent" => arc
+              .1
+              .emit_all("transparent", toggle_transparent(&app, &arc).unwrap())
+              .unwrap(),
             _ => println!("did not match"),
           }
         }
@@ -209,17 +213,38 @@ fn close(app: &AppHandle, arc: &Arc<(Window, Window)>) -> anyhow::Result<()> {
   Ok(())
 }
 
-fn toggle_transparent(app: &AppHandle, arc: &Arc<(Window, Window)>) -> anyhow::Result<()> {
+fn toggle_transparent(app: &AppHandle, arc: &Arc<(Window, Window)>) -> anyhow::Result<bool> {
   let state = app.state::<AppState>();
-  let Some(property) = state.get_property(arc.0.label()) else {
+  let Some(property) = state.get_window_data(arc.0.label()) else {
     bail!("window data is not found");
   };
 
   // TODO
   // もし半透明モードなら反転
-  
+  let res = if property.transparent {
+    // state.
+    false
+  } else {
+    true
+  };
   // unsafe {}
-  Ok(())
+  Ok(res)
+}
+//
+
+//
+#[tauri::command]
+#[specta::specta]
+pub fn get_transparent(
+  _app: AppHandle,
+  window: Window,
+  state: State<'_, AppState>,
+) -> Result<bool, &str> {
+  let Some(data) = state.get_window_data(window.label().strip_prefix(LABEL_PREFIX).unwrap()) else {
+    return Err("window data is not found");
+  };
+  dbg!(&data);
+  Ok(data.transparent)
 }
 //
 
