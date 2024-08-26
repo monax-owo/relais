@@ -1,6 +1,7 @@
 use std::sync::{atomic::Ordering, Arc};
 
 use anyhow::bail;
+use serde_json::Value;
 // use serde::{Deserialize, Serialize};
 // use specta::Type;
 use tauri::{
@@ -30,7 +31,7 @@ pub fn window_hide(_app: AppHandle, window: Window) -> Result<(), String> {
 //
 
 //
-const CTRL_WINDOW_SIZE: (u32, u32) = (40, 160);
+const CTRL_WINDOW_SIZE: (u32, u32) = (40, 260);
 const LABEL_PREFIX: &str = "ctrl_";
 //
 
@@ -56,7 +57,10 @@ pub async fn open_window(
   let label = label.unwrap_or(Uuid::new_v4().to_string());
   let window = WindowBuilder::new(&app, &label, WindowUrl::External(parse_url))
     .decorations(false)
+    .initialization_script(include_str!("./init.js"))
+    .maximizable(false)
     .min_inner_size(500.0, 500.0)
+    .minimizable(true)
     .title(&title)
     .transparent(true)
     .build()
@@ -148,9 +152,11 @@ pub async fn open_window(
 
     ctrl_window.on_window_event({
       let arc = arc.clone();
+      let app = app.clone();
       move |e| match *e {
         WindowEvent::Focused(state) => {
-          if state {
+          if state && !app.state::<AppState>().overlay.load(Ordering::Acquire) {
+            dbg!("a");
             if arc.0.is_minimized().unwrap() {
               arc.0.unminimize().unwrap();
             }
@@ -158,9 +164,9 @@ pub async fn open_window(
               .0
               .set_position(ctrl_pos(arc.1.outer_position().unwrap()))
               .unwrap();
-            if !arc.0.is_visible().unwrap() {
-              arc.0.show().unwrap();
-            }
+            // if !arc.0.is_visible().unwrap() {
+            //   arc.0.show().unwrap();
+            // }
           } else if !arc.0.is_focused().unwrap() && !arc.1.is_focused().unwrap() {
             arc.1.hide().unwrap();
           }
@@ -178,19 +184,28 @@ pub async fn open_window(
       let app = app.clone();
       move |e| {
         if let Some(v) = e.payload() {
-          let payload = serde_json::from_str(v).unwrap();
+          let payload = serde_json::from_str::<Value>(v).unwrap();
           match payload {
-            "mini" => arc.0.minimize().unwrap(),
-            "close" => close(&app, &arc).unwrap(),
-            // "transparent" => toggle_transparent(&app).unwrap(),
-            "transparent" => arc
-              .1
-              .emit_all(
-                "transparent",
-                toggle_transparent(&app, &arc.0, &arc.1, 128).unwrap(),
-              )
-              .unwrap(),
-            _ => println!("did not match: {}", payload),
+            Value::Null => todo!(),
+            Value::Bool(_) => todo!(),
+            Value::Number(_) => todo!(),
+            Value::String(v) => match v.as_str() {
+              "mini" => arc.0.minimize().unwrap(),
+              "close" => close(&app, &arc).unwrap(),
+              // "transparent" => toggle_transparent(&app).unwrap(),
+              "transparent" => arc
+                .1
+                .emit_all(
+                  "transparent",
+                  toggle_transparent(&app, &arc.0, &arc.1, 128).unwrap(),
+                )
+                .unwrap(),
+              "zoomout" => (),
+              "zoomin" => (),
+              _ => println!("did not match: {}", v),
+            },
+            Value::Array(_) => todo!(),
+            Value::Object(_) => todo!(),
           }
         }
       }
@@ -224,7 +239,7 @@ fn close(app: &AppHandle, arc: &Arc<(Window, Window)>) -> anyhow::Result<()> {
   Ok(())
 }
 
-fn toggle_transparent(
+pub fn toggle_transparent(
   app: &AppHandle,
   window: &Window,
   ctrl_window: &Window,
@@ -246,9 +261,10 @@ fn toggle_transparent(
     state.overlay.store(false, Ordering::Release);
   } else {
     // 半透明
-    let res = unsafe { SetLayeredWindowAttributes(window_hwnd, 0, alpha, LWA_ALPHA) };
+    let _res = unsafe { SetLayeredWindowAttributes(window_hwnd, 0, alpha, LWA_ALPHA) };
 
-    ctrl_window.hide()?;
+    ctrl_window.hide().unwrap();
+    dbg!("hide");
 
     state.overlay.store(true, Ordering::Release);
   };

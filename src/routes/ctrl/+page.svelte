@@ -3,6 +3,10 @@
 
   import IconMinus from "@tabler/icons-svelte/IconMinus.svelte";
   import IconX from "@tabler/icons-svelte/IconX.svelte";
+
+  import IconZoomIn from "@tabler/icons-svelte/IconZoomIn.svelte";
+  import IconZoomOut from "@tabler/icons-svelte/IconZoomOut.svelte";
+
   import IconArrowsMove from "@tabler/icons-svelte/IconArrowsMove.svelte";
   // import IconLockOpen from "@tabler/icons-svelte/IconLockOpen.svelte";
   import IconLock from "@tabler/icons-svelte/IconLock.svelte";
@@ -17,11 +21,18 @@
   const em = async (event: unknown) => {
     await appWindow.emit("ctrl", event);
   };
+
   const handleMini = async () => {
     await em("mini");
   };
   const handleClose = async () => {
     await em("close");
+  };
+  const handleZoomIn = async () => {
+    await em("zoomin");
+  };
+  const handleZoomOut = async () => {
+    await em("zoomout");
   };
   const handleTransparent = async () => {
     await em("transparent");
@@ -30,18 +41,24 @@
 </script>
 
 <!-- TODO: lock/unlock animation -->
+<!-- <button type="button" on:pointerdown={}></button> -->
 <div class="header">
   <button type="button" on:pointerdown={handleMini}><IconMinus {stroke}></IconMinus></button>
   <button type="button" on:pointerdown={handleClose}><IconX {stroke}></IconX></button>
-  <button type="button" on:pointerdown={handleTransparent}
-    >{#if transparent}
+  <button type="button" on:pointerdown={handleTransparent}>
+    {#if transparent}
       <IconLockOpen2 {stroke} />
       <!-- <IconLockOpen {stroke} /> -->
     {:else}
       <IconLock {stroke} />
-    {/if}</button>
-  <button type="button" data-tauri-drag-region
-    ><IconArrowsMove {stroke} data-tauri-drag-region /></button>
+    {/if}
+  </button>
+  <button type="button" on:pointerdown={handleZoomIn}><IconZoomIn {stroke} /></button>
+  <button type="button" on:pointerdown={handleZoomOut}><IconZoomOut {stroke} /></button>
+
+  <button type="button" data-tauri-drag-region>
+    <IconArrowsMove {stroke} data-tauri-drag-region />
+  </button>
 </div>
 
 <style lang="scss">

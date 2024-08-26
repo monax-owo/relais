@@ -127,9 +127,7 @@ async fn main() {
         .with_menu(tray_menu)
         .with_tooltip("Relais")
         .on_event(move |e| match &e {
-          SystemTrayEvent::LeftClick { .. } => {
-            // window_focus(&main_window).expect("failed to focusing main window")
-          }
+          SystemTrayEvent::LeftClick { .. } => _window_focus(&main_window).unwrap(),
           SystemTrayEvent::MenuItemClick { id, .. } => match id.as_str() {
             MENU_SHOW => _window_focus(&main_window).unwrap(),
             MENU_TOGGLE => (),

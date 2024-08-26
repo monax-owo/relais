@@ -25,7 +25,7 @@
     });
   });
   ifDev(() => {
-    ifThen(windows.length <= 0, () => {
+    ifThen(windows.length < 1, () => {
       url = "google.com";
       handleOpen();
     });

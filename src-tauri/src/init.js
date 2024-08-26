@@ -1,0 +1,2 @@
+// TODO: initialization_script
+(() => {})();
