@@ -4,8 +4,10 @@
   import IconMinus from "@tabler/icons-svelte/IconMinus.svelte";
   import IconX from "@tabler/icons-svelte/IconX.svelte";
   import IconArrowsMove from "@tabler/icons-svelte/IconArrowsMove.svelte";
-  import IconLockOpen from "@tabler/icons-svelte/IconLockOpen.svelte";
+  // import IconLockOpen from "@tabler/icons-svelte/IconLockOpen.svelte";
   import IconLock from "@tabler/icons-svelte/IconLock.svelte";
+  import IconLockOpen2 from "@tabler/icons-svelte/IconLockOpen2.svelte";
+
   import { getTransparent } from "$lib/generated/specta/bindings";
 
   const stroke = 2;
@@ -33,7 +35,8 @@
   <button type="button" on:pointerdown={handleClose}><IconX {stroke}></IconX></button>
   <button type="button" on:pointerdown={handleTransparent}
     >{#if transparent}
-      <IconLockOpen {stroke} />
+      <IconLockOpen2 {stroke} />
+      <!-- <IconLockOpen {stroke} /> -->
     {:else}
       <IconLock {stroke} />
     {/if}</button>

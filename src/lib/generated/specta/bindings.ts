@@ -38,4 +38,4 @@ export function getTransparent() {
     return invoke()<boolean>("get_transparent")
 }
 
-export type WindowData = { title: string; label: string; transparent: boolean; zoom: number }
+export type WindowData = { title: string; label: string; zoom: number }

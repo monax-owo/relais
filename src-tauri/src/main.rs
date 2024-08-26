@@ -29,14 +29,13 @@ use window::*;
 #[derive(Debug, Deserialize, Serialize, Type)]
 pub struct AppState {
   windows: Mutex<Vec<WindowData>>,
-  overlay: AtomicBool,
+  pub overlay: AtomicBool,
 }
 
 #[derive(Debug, Clone, Deserialize, Serialize, Type)]
 pub struct WindowData {
   title: String,
   label: String,
-  transparent: bool,
   zoom: f64,
 }
 
@@ -88,7 +87,7 @@ async fn main() {
   let builder = Builder::default();
   let state = AppState {
     windows: Mutex::new(vec![]),
-    overlay: true.into(),
+    overlay: AtomicBool::new(false),
   };
   builder
     .setup(move |app: &mut App| {

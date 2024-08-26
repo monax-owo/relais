@@ -1,6 +1,5 @@
-use std::sync::Arc;
+use std::sync::{atomic::Ordering, Arc};
 
-use anyhow::bail;
 // use serde::{Deserialize, Serialize};
 // use specta::Type;
 use tauri::{
@@ -30,6 +29,7 @@ pub fn window_hide(_app: AppHandle, window: Window) -> Result<(), String> {
 const CTRL_WINDOW_SIZE: (u32, u32) = (40, 160);
 const LABEL_PREFIX: &str = "ctrl_";
 //
+
 #[tauri::command]
 #[specta::specta]
 pub async fn open_window(
@@ -60,7 +60,7 @@ pub async fn open_window(
 
   let ctrl_window = WindowBuilder::new(
     &app,
-    "ctrl_".to_string() + &label,
+    LABEL_PREFIX.to_string() + &label,
     WindowUrl::App("/ctrl".into()),
   )
   .decorations(false)
@@ -91,7 +91,6 @@ pub async fn open_window(
   let window_data = WindowData {
     title,
     label: label.clone(),
-    transparent: false,
     zoom: 1.0,
   };
 
@@ -172,16 +171,15 @@ pub async fn open_window(
       move |e| {
         if let Some(v) = e.payload() {
           let payload = serde_json::from_str(v).unwrap();
-          println!("{}", &payload);
           match payload {
             "mini" => arc.0.minimize().unwrap(),
             "close" => close(&app, &arc).unwrap(),
-            // "transparent" => toggle_transparent(&app, &arc).unwrap(),
+            // "transparent" => toggle_transparent(&app).unwrap(),
             "transparent" => arc
               .1
-              .emit_all("transparent", toggle_transparent(&app, &arc).unwrap())
+              .emit_all("transparent", toggle_transparent(&app).unwrap())
               .unwrap(),
-            _ => println!("did not match"),
+            _ => println!("did not match: {}", payload),
           }
         }
       }
@@ -213,18 +211,16 @@ fn close(app: &AppHandle, arc: &Arc<(Window, Window)>) -> anyhow::Result<()> {
   Ok(())
 }
 
-fn toggle_transparent(app: &AppHandle, arc: &Arc<(Window, Window)>) -> anyhow::Result<bool> {
+fn toggle_transparent(app: &AppHandle) -> anyhow::Result<bool> {
   let state = app.state::<AppState>();
-  let Some(property) = state.get_window_data(arc.0.label()) else {
-    bail!("window data is not found");
-  };
 
   // TODO
   // もし半透明モードなら反転
-  let res = if property.transparent {
-    // state.
+  let res = if state.overlay.load(Ordering::Acquire) {
+    state.overlay.store(false, Ordering::Release);
     false
   } else {
+    state.overlay.store(true, Ordering::Release);
     true
   };
   // unsafe {}
@@ -235,16 +231,8 @@ fn toggle_transparent(app: &AppHandle, arc: &Arc<(Window, Window)>) -> anyhow::R
 //
 #[tauri::command]
 #[specta::specta]
-pub fn get_transparent(
-  _app: AppHandle,
-  window: Window,
-  state: State<'_, AppState>,
-) -> Result<bool, &str> {
-  let Some(data) = state.get_window_data(window.label().strip_prefix(LABEL_PREFIX).unwrap()) else {
-    return Err("window data is not found");
-  };
-  dbg!(&data);
-  Ok(data.transparent)
+pub fn get_transparent(state: State<'_, AppState>) -> Result<bool, &str> {
+  Ok(state.overlay.load(Ordering::Acquire))
 }
 //
 
