@@ -1,7 +1,7 @@
 // Prevents additional console window on Windows in release, DO NOT REMOVE!!
 #![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
 
-use std::sync::{atomic::AtomicBool, Mutex};
+use std::sync::{atomic::AtomicBool, Arc, Mutex};
 
 use serde::{Deserialize, Serialize};
 use specta::Type;
@@ -92,34 +92,35 @@ async fn main() {
   builder
     .setup(move |app: &mut App| {
       let handle = app.handle();
-      let main_window = app.get_window("main").expect("Failed to get main window");
-
-      #[cfg(debug_assertions)]
-      {
-        // main_window.open_devtools();
-
-        // if cfg!(target_os = "windows") {
-        //   if let Ok(hwnd) = main_window.hwnd() {
-        //     unsafe {
-        //       let _ = DwmSetWindowAttribute::<HWND>(
-        //         hwnd,
-        //         DWMWA_TRANSITIONS_FORCEDISABLED,
-        //         &mut BOOL::from(true) as *mut _ as *mut c_void,
-        //         std::mem::size_of::<BOOL>() as u32,
-        //       );
-        //     }
-        //   }
-        // }
-      }
-
+      let main_window = Arc::new(app.get_window("main").expect("Failed to get main window"));
+      //
       #[cfg(not(debug_assertions))]
       {
         _window_focus(&main_window)?;
       }
+      //
+
+      //
+      main_window.on_window_event({
+        let main_window = Arc::clone(&main_window);
+        move |e| {
+          if let WindowEvent::CloseRequested { api, .. } = e {
+            api.prevent_close();
+            main_window.hide().unwrap();
+          }
+        }
+      });
+      //
+
+      //
+      const MENU_SHOW: &str = "show";
+      const MENU_TOGGLE: &str = "toggle";
+      const MENU_QUIT: &str = "quit";
 
       let tray_menu = SystemTrayMenu::new()
-        .add_item(CustomMenuItem::new("show", "Show window"))
-        .add_item(CustomMenuItem::new("quit", "Quit"));
+        .add_item(CustomMenuItem::new(MENU_SHOW, "Show"))
+        .add_item(CustomMenuItem::new(MENU_TOGGLE, "Toggle Overlay"))
+        .add_item(CustomMenuItem::new(MENU_QUIT, "Quit"));
 
       let _tray_handle = SystemTray::new()
         .with_menu(tray_menu)
@@ -129,22 +130,21 @@ async fn main() {
             // window_focus(&main_window).expect("failed to focusing main window")
           }
           SystemTrayEvent::MenuItemClick { id, .. } => match id.as_str() {
-            "show" => _window_focus(&main_window).expect("failed to focusing main window"),
-            "quit" => exit_0(&handle).expect("Failed to remove tasktray icon"),
+            MENU_SHOW => main_window.clone().show().unwrap(),
+            MENU_TOGGLE => (),
+            MENU_QUIT => exit_0(&handle).expect("Failed to remove tasktray icon"),
             _ => (),
           },
           _ => (),
         })
         .build(app)?;
+      //
+
       Ok(())
     })
     .on_window_event(move |e| match e.event() {
       WindowEvent::Destroyed => println!("destroy!"),
-      WindowEvent::CloseRequested { api, .. } => match e.window().label() {
-        "main" => api.prevent_close(),
-        "test" => todo!(),
-        _ => (),
-      },
+      WindowEvent::ThemeChanged(theme) => println!("theme = {:?}", theme),
       _ => (),
     })
     .manage(state)
