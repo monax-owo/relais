@@ -1,5 +1,6 @@
 use std::sync::{atomic::Ordering, Arc};
 
+use anyhow::bail;
 // use serde::{Deserialize, Serialize};
 // use specta::Type;
 use tauri::{
@@ -7,6 +8,9 @@ use tauri::{
   WindowUrl,
 };
 use uuid::Uuid;
+use windows::Win32::UI::WindowsAndMessaging::{
+  SetLayeredWindowAttributes, SetWindowLongPtrW, GWL_EXSTYLE, LWA_ALPHA, WS_EX_LAYERED,
+};
 
 use crate::{AppState, WindowData};
 
@@ -106,6 +110,11 @@ pub async fn open_window(
   {
     let arc = Arc::new((window, ctrl_window));
     let (ref window, ref ctrl_window) = *Arc::clone(&arc);
+    let window_hwnd = arc.0.hwnd().map_err(|_| ())?;
+
+    unsafe {
+      SetWindowLongPtrW(window_hwnd, GWL_EXSTYLE, WS_EX_LAYERED.0 as isize);
+    }
 
     // TODO: zoom
     // AppStateのoverlayが無効のときのみctrlを表示+有効のときはwindowを半透明にする
@@ -177,7 +186,7 @@ pub async fn open_window(
             // "transparent" => toggle_transparent(&app).unwrap(),
             "transparent" => arc
               .1
-              .emit_all("transparent", toggle_transparent(&app).unwrap())
+              .emit_all("transparent", toggle_transparent(&app, &arc, 128).unwrap())
               .unwrap(),
             _ => println!("did not match: {}", payload),
           }
@@ -211,20 +220,34 @@ fn close(app: &AppHandle, arc: &Arc<(Window, Window)>) -> anyhow::Result<()> {
   Ok(())
 }
 
-fn toggle_transparent(app: &AppHandle) -> anyhow::Result<bool> {
+fn toggle_transparent(
+  app: &AppHandle,
+  arc: &Arc<(Window, Window)>,
+  alpha: u8,
+) -> anyhow::Result<bool> {
   let state = app.state::<AppState>();
-
+  let window_hwnd = arc.0.hwnd()?;
+  let condition = state.overlay.load(Ordering::Acquire);
   // TODO
   // もし半透明モードなら反転
-  let res = if state.overlay.load(Ordering::Acquire) {
+  if condition {
+    // 不透明
+    let res = unsafe { SetLayeredWindowAttributes(window_hwnd, 0, 255, LWA_ALPHA) };
+    let res_as_bool = res.as_bool();
+    if !res_as_bool {
+      bail!("failed to set window style");
+    }
+
     state.overlay.store(false, Ordering::Release);
-    false
   } else {
+    // 半透明
+    let res = unsafe { SetLayeredWindowAttributes(window_hwnd, 0, alpha, LWA_ALPHA) };
+    dbg!(res);
+
     state.overlay.store(true, Ordering::Release);
-    true
   };
   // unsafe {}
-  Ok(res)
+  Ok(!condition)
 }
 //
 
