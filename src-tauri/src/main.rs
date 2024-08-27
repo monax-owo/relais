@@ -1,7 +1,10 @@
 // Prevents additional console window on Windows in release, DO NOT REMOVE!!
 #![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
 
-use std::sync::{atomic::AtomicBool, Arc, Mutex};
+use std::sync::{
+  atomic::{AtomicBool, Ordering},
+  Arc, Mutex,
+};
 
 use serde::{Deserialize, Serialize};
 use specta::Type;
@@ -42,6 +45,7 @@ pub struct AppState {
 pub struct WindowData {
   title: String,
   label: String,
+  pin: Arc<AtomicBool>,
   zoom: Arc<Mutex<f64>>,
 }
 
@@ -49,6 +53,7 @@ pub struct WindowData {
 pub struct SerializeWindowData {
   title: String,
   label: String,
+  pin: bool,
   zoom: f64,
 }
 
@@ -87,6 +92,7 @@ impl From<WindowData> for SerializeWindowData {
     Self {
       title: v.title,
       label: v.label,
+      pin: v.pin.clone().load(Ordering::Acquire),
       zoom: *v.zoom.lock().unwrap(),
     }
   }
@@ -103,7 +109,8 @@ async fn main() {
       window_hide,
       open_window,
       close_window,
-      get_transparent
+      get_transparent,
+      toggle_pin
     ],
     "../src/lib/generated/specta/bindings.ts",
   )
@@ -178,7 +185,8 @@ async fn main() {
       window_hide,
       open_window,
       close_window,
-      get_transparent
+      get_transparent,
+      toggle_pin
     ])
     .run(generate_context!())
     .expect("error while running tauri application");

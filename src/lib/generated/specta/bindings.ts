@@ -38,4 +38,8 @@ export function getTransparent() {
     return invoke()<boolean>("get_transparent")
 }
 
-export type SerializeWindowData = { title: string; label: string; zoom: number }
+export function togglePin() {
+    return invoke()<boolean>("toggle_pin")
+}
+
+export type SerializeWindowData = { title: string; label: string; pin: boolean; zoom: number }
