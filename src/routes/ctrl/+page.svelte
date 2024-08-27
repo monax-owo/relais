@@ -7,11 +7,13 @@
   import IconPin from "@tabler/icons-svelte/IconPin.svelte";
   import IconPinnedOff from "@tabler/icons-svelte/IconPinnedOff.svelte";
 
+  import IconGhost from "@tabler/icons-svelte/IconGhost.svelte";
+  import IconGhostOff from "@tabler/icons-svelte/IconGhostOff.svelte";
+
   import IconZoomIn from "@tabler/icons-svelte/IconZoomIn.svelte";
   import IconZoomOut from "@tabler/icons-svelte/IconZoomOut.svelte";
 
   import IconArrowsMove from "@tabler/icons-svelte/IconArrowsMove.svelte";
-  // import IconLockOpen from "@tabler/icons-svelte/IconLockOpen.svelte";
   import IconLock from "@tabler/icons-svelte/IconLock.svelte";
   import IconLockOpen2 from "@tabler/icons-svelte/IconLockOpen2.svelte";
 
@@ -35,7 +37,6 @@
   const handlePin = async () => {
     pinned = await togglePin();
   };
-
   const handleZoomIn = async () => {
     await em("zoomin");
   };
@@ -50,7 +51,7 @@
 
 <!-- TODO: lock/unlock animation -->
 <!-- <button type="button" on:pointerdown={}></button> -->
-<div class="header">
+<div class="header" data-tauri-drag-region>
   <button type="button" on:pointerdown={handleMini}><IconMinus {stroke}></IconMinus></button>
   <button type="button" on:pointerdown={handleClose}><IconX {stroke}></IconX></button>
   <button type="button" on:pointerdown={handlePin}>
@@ -63,9 +64,16 @@
   <button type="button" on:pointerdown={handleTransparent}>
     {#if transparent}
       <IconLockOpen2 {stroke} />
-      <!-- <IconLockOpen {stroke} /> -->
     {:else}
       <IconLock {stroke} />
+    {/if}
+  </button>
+  <button type="button" on:pointerdown={handleTransparent}>
+    {#if transparent}
+      <IconGhostOff {stroke} />
+      <!-- <IconLockOpen {stroke} /> -->
+    {:else}
+      <IconGhost {stroke} />
     {/if}
   </button>
   <button type="button" on:pointerdown={handleZoomIn}><IconZoomIn {stroke} /></button>
@@ -83,7 +91,7 @@
     flex-wrap: wrap;
     align-content: center;
     justify-content: space-evenly;
-    gap: 0.4rem;
+    gap: 0.2rem;
     background-color: var(--bg);
     width: 100%;
     height: 100%;
@@ -95,6 +103,7 @@
       flex-direction: row;
     }
     & > button {
+      padding: 0.2rem;
       width: 1.2rem;
       height: 1.2rem;
       font-size: 0.8rem;

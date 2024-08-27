@@ -38,7 +38,7 @@ pub fn window_hide(window: Window) -> Result<(), String> {
 //
 
 //
-const CTRL_WINDOW_SIZE: (u32, u32) = (40, 280);
+const CTRL_WINDOW_SIZE: (u32, u32) = (40, 320);
 const LABEL_PREFIX: &str = "ctrl_";
 const MIN_INNER_SIZE: (f64, f64) = (400.0, 400.0);
 //
@@ -197,13 +197,9 @@ pub async fn open_window(
               "mini" => arc.0.minimize().unwrap(),
               "close" => close(&app, &arc).unwrap(),
               // "transparent" => toggle_transparent(&app).unwrap(),
-              "transparent" => arc
-                .1
-                .emit_all(
-                  "transparent",
-                  toggle_transparent(&app, &arc.0, &arc.1, 128).unwrap(),
-                )
-                .unwrap(),
+              "transparent" => {
+                toggle_transparent(&app, &arc.0, &arc.1, 128).unwrap();
+              }
               "zoomout" => set_zoom(&app, &arc.0, -0.1).unwrap(),
               "zoomin" => set_zoom(&app, &arc.0, 0.1).unwrap(),
               _ => println!("did not match: {}", v),
@@ -255,8 +251,7 @@ pub fn toggle_transparent(
   let state = app.state::<AppState>();
   let window_hwnd = window.hwnd()?;
   let condition = state.overlay.load(Ordering::Acquire);
-  // TODO
-  // もし半透明モードなら反転
+  // TODO: カーソル通過
   if condition {
     // 不透明
     set_transparent(window_hwnd, 255).unwrap();
