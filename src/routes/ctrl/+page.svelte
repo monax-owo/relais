@@ -15,7 +15,7 @@
   import IconLock from "@tabler/icons-svelte/IconLock.svelte";
   import IconLockOpen2 from "@tabler/icons-svelte/IconLockOpen2.svelte";
 
-  import { getTransparent } from "$lib/generated/specta/bindings";
+  import { getTransparent, togglePin } from "$lib/generated/specta/bindings";
 
   const stroke = 2;
 
@@ -33,7 +33,7 @@
     await em("close");
   };
   const handlePin = async () => {
-    // TODO
+    pinned = await togglePin();
   };
 
   const handleZoomIn = async () => {

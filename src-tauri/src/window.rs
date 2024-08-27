@@ -1,4 +1,7 @@
-use std::sync::{atomic::Ordering, Arc, Mutex};
+use std::sync::{
+  atomic::{AtomicBool, Ordering},
+  Arc, Mutex,
+};
 
 use anyhow::bail;
 use serde_json::Value;
@@ -12,7 +15,8 @@ use uuid::Uuid;
 use windows::Win32::{
   Foundation::HWND,
   UI::WindowsAndMessaging::{
-    SetLayeredWindowAttributes, SetWindowLongPtrW, GWL_EXSTYLE, LWA_ALPHA, WS_EX_LAYERED,
+    SetLayeredWindowAttributes, SetWindowLongPtrW, SetWindowPos, GWL_EXSTYLE, HWND_NOTOPMOST,
+    HWND_TOPMOST, LWA_ALPHA, SWP_NOMOVE, SWP_NOSIZE, WS_EX_LAYERED,
   },
 };
 
@@ -102,6 +106,7 @@ pub async fn open_window(
   let window_data = WindowData {
     title,
     label: label.clone(),
+    pin: Arc::from(AtomicBool::from(false)),
     zoom: Arc::from(Mutex::from(1.0)),
   };
 
@@ -123,7 +128,6 @@ pub async fn open_window(
       SetWindowLongPtrW(window_hwnd, GWL_EXSTYLE, WS_EX_LAYERED.0 as isize);
     }
 
-    // TODO: zoom
     // AppStateのoverlayが無効のときのみctrlを表示+有効のときはwindowを半透明にする
     // if window closing, when remove if from window list
     window.on_window_event({
@@ -232,11 +236,10 @@ pub async fn open_window(
 //
 fn close(app: &AppHandle, arc: &Arc<(Window, Window)>) -> anyhow::Result<()> {
   let state = app.state::<AppState>();
-  let labels = [arc.0.label(), arc.1.label()];
+  let label = arc.0.label();
   arc.1.close()?;
   arc.0.close()?;
-  state.remove_window(labels[0])?;
-  state.remove_window(labels[1])?;
+  state.remove_window(label)?;
   state.sync_windows(app);
   Ok(())
 }
@@ -282,8 +285,54 @@ fn set_transparent(hwnd: HWND, alpha: u8) -> anyhow::Result<()> {
 
 #[tauri::command]
 #[specta::specta]
-pub fn get_transparent(state: State<'_, AppState>) -> Result<bool, &str> {
+pub fn get_transparent(state: State<'_, AppState>) -> Result<bool, String> {
   Ok(state.overlay.load(Ordering::Acquire))
+}
+//
+
+//
+#[tauri::command]
+#[specta::specta]
+pub fn toggle_pin(
+  app: AppHandle,
+  window: Window,
+  state: State<'_, AppState>,
+) -> Result<bool, String> {
+  let Some(window_data) = state.get_window_data(&to_window_label(window.label())) else {
+    return Err("failed to get window data".to_string());
+  };
+  let atomic = Arc::clone(&window_data.pin);
+  let pinned = atomic.load(Ordering::Acquire);
+  dbg!(pinned);
+  set_pin(
+    &app.get_window(&to_window_label(window.label())).unwrap(),
+    !pinned,
+  )?;
+  atomic.store(!pinned, Ordering::Release);
+  Ok(!pinned)
+}
+
+fn set_pin(window: &Window, value: bool) -> Result<(), String> {
+  // window.set_always_on_top(value).map_err(|v| v.to_string())?;
+  let hwndinsertafter = if value { HWND_TOPMOST } else { HWND_NOTOPMOST };
+  let res = unsafe {
+    SetWindowPos(
+      window.hwnd().unwrap(),
+      hwndinsertafter,
+      0,
+      0,
+      0,
+      0,
+      SWP_NOMOVE | SWP_NOSIZE,
+    )
+  }
+  .as_bool();
+
+  if !res {
+    return Err("".to_string());
+  }
+
+  Ok(())
 }
 //
 
@@ -324,8 +373,8 @@ pub fn to_ctrl_window_label<'a, T: Into<&'a str>>(label: T) -> String {
   LABEL_PREFIX.to_string() + label.into()
 }
 
-pub fn to_window_label(label: String) -> String {
-  label.replacen(LABEL_PREFIX, "", 1)
+pub fn to_window_label<'a, T: Into<&'a str>>(label: T) -> String {
+  label.into().replacen(LABEL_PREFIX, "", 1)
 }
 //
 
