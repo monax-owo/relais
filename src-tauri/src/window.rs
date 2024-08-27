@@ -279,22 +279,25 @@ fn set_zoom(app: &AppHandle, window: &Window, diff: f64) -> anyhow::Result<()> {
   };
   let zoom = window_data.zoom.clone();
   let mut lock = zoom.lock().unwrap();
-  window.with_webview({
-    let zoom = Arc::clone(&zoom);
-    move |webview| {
-      let lock = zoom.lock().unwrap();
+  dbg!(*lock);
 
-      #[cfg(windows)]
-      unsafe {
-        // see https://docs.rs/webview2-com/0.19.1/webview2_com/Microsoft/Web/WebView2/Win32/struct.ICoreWebView2Controller.html
-        webview.controller().SetZoomFactor(*lock + diff).unwrap();
+  let scale = *lock + diff;
+  // TODO: 20%~500%
+  if scale > 0.2 {
+    window.with_webview({
+      move |webview| {
+        #[cfg(windows)]
+        unsafe {
+          // see https://docs.rs/webview2-com/0.19.1/webview2_com/Microsoft/Web/WebView2/Win32/struct.ICoreWebView2Controller.html
+          webview.controller().SetZoomFactor(scale).unwrap();
+        }
       }
-    }
-  })?;
+    })?;
 
-  // TODO: window_data.zoomを上書きできるようにする
-  // WindowDataと別にSerialize用のWindowData型を作ったほうがいいかも
-  *lock = *lock + diff;
+    *lock += diff;
+  } else {
+    *lock += 1.0;
+  }
 
   Ok(())
 }
