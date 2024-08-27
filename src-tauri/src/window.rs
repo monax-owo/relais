@@ -34,7 +34,7 @@ pub fn window_hide(window: Window) -> Result<(), String> {
 //
 
 //
-const CTRL_WINDOW_SIZE: (u32, u32) = (40, 260);
+const CTRL_WINDOW_SIZE: (u32, u32) = (40, 280);
 const LABEL_PREFIX: &str = "ctrl_";
 const MIN_INNER_SIZE: (f64, f64) = (400.0, 400.0);
 //
@@ -253,11 +253,13 @@ pub fn toggle_transparent(
   if condition {
     // 不透明
     set_transparent(window_hwnd, 255).unwrap();
+    ctrl_window.show().unwrap();
 
     state.overlay.store(false, Ordering::Release);
   } else {
     // 半透明
     set_transparent(window_hwnd, alpha).unwrap();
+    ctrl_window.hide().unwrap();
 
     state.overlay.store(true, Ordering::Release);
   };

@@ -4,6 +4,9 @@
   import IconMinus from "@tabler/icons-svelte/IconMinus.svelte";
   import IconX from "@tabler/icons-svelte/IconX.svelte";
 
+  import IconPin from "@tabler/icons-svelte/IconPin.svelte";
+  import IconPinnedOff from "@tabler/icons-svelte/IconPinnedOff.svelte";
+
   import IconZoomIn from "@tabler/icons-svelte/IconZoomIn.svelte";
   import IconZoomOut from "@tabler/icons-svelte/IconZoomOut.svelte";
 
@@ -17,6 +20,7 @@
   const stroke = 2;
 
   let transparent = false;
+  let pinned = false;
 
   const em = async (event: unknown) => {
     await appWindow.emit("ctrl", event);
@@ -28,6 +32,10 @@
   const handleClose = async () => {
     await em("close");
   };
+  const handlePin = async () => {
+    // TODO
+  };
+
   const handleZoomIn = async () => {
     await em("zoomin");
   };
@@ -45,6 +53,13 @@
 <div class="header">
   <button type="button" on:pointerdown={handleMini}><IconMinus {stroke}></IconMinus></button>
   <button type="button" on:pointerdown={handleClose}><IconX {stroke}></IconX></button>
+  <button type="button" on:pointerdown={handlePin}>
+    {#if pinned}
+      <IconPinnedOff {stroke} />
+    {:else}
+      <IconPin {stroke} />
+    {/if}
+  </button>
   <button type="button" on:pointerdown={handleTransparent}>
     {#if transparent}
       <IconLockOpen2 {stroke} />
