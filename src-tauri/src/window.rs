@@ -9,8 +9,11 @@ use tauri::{
   WindowUrl,
 };
 use uuid::Uuid;
-use windows::Win32::UI::WindowsAndMessaging::{
-  SetLayeredWindowAttributes, SetWindowLongPtrW, GWL_EXSTYLE, LWA_ALPHA, WS_EX_LAYERED,
+use windows::Win32::{
+  Foundation::HWND,
+  UI::WindowsAndMessaging::{
+    SetLayeredWindowAttributes, SetWindowLongPtrW, GWL_EXSTYLE, LWA_ALPHA, WS_EX_LAYERED,
+  },
 };
 
 use crate::{AppState, WindowData};
@@ -24,7 +27,7 @@ pub fn _window_hide(window: &Window) -> anyhow::Result<()> {
 
 #[tauri::command]
 #[specta::specta]
-pub fn window_hide(_app: AppHandle, window: Window) -> Result<(), String> {
+pub fn window_hide(window: Window) -> Result<(), String> {
   _window_hide(&window).map_err(|e| e.to_string())?;
   Ok(())
 }
@@ -40,7 +43,6 @@ const MIN_INNER_SIZE: (f64, f64) = (400.0, 400.0);
 #[specta::specta]
 pub async fn open_window(
   app: AppHandle,
-  _window: Window,
   state: State<'_, AppState>,
   url: String,
   title: Option<String>,
@@ -157,7 +159,6 @@ pub async fn open_window(
       move |e| match *e {
         WindowEvent::Focused(state) => {
           if state && !app.state::<AppState>().overlay.load(Ordering::Acquire) {
-            dbg!("a");
             if arc.0.is_minimized().unwrap() {
               arc.0.unminimize().unwrap();
             }
@@ -165,9 +166,6 @@ pub async fn open_window(
               .0
               .set_position(ctrl_pos(arc.1.outer_position().unwrap()))
               .unwrap();
-            // if !arc.0.is_visible().unwrap() {
-            //   arc.0.show().unwrap();
-            // }
           } else if !arc.0.is_focused().unwrap() && !arc.1.is_focused().unwrap() {
             arc.1.hide().unwrap();
           }
@@ -180,6 +178,7 @@ pub async fn open_window(
       }
     });
 
+    // commandに切り分けたほうが良さそう
     ctrl_window.listen("ctrl", {
       let arc = arc.clone();
       let app = app.clone();
@@ -253,24 +252,26 @@ pub fn toggle_transparent(
   // もし半透明モードなら反転
   if condition {
     // 不透明
-    let res = unsafe { SetLayeredWindowAttributes(window_hwnd, 0, 255, LWA_ALPHA) };
-    let res_as_bool = res.as_bool();
-    if !res_as_bool {
-      bail!("failed to set window style");
-    }
+    set_transparent(window_hwnd, 255).unwrap();
 
     state.overlay.store(false, Ordering::Release);
   } else {
     // 半透明
-    let _res = unsafe { SetLayeredWindowAttributes(window_hwnd, 0, alpha, LWA_ALPHA) };
-
-    ctrl_window.hide().unwrap();
-    dbg!("hide");
+    set_transparent(window_hwnd, alpha).unwrap();
 
     state.overlay.store(true, Ordering::Release);
   };
   // unsafe {}
   Ok(!condition)
+}
+
+fn set_transparent(hwnd: HWND, alpha: u8) -> anyhow::Result<()> {
+  let res = unsafe { SetLayeredWindowAttributes(hwnd, 0, alpha, LWA_ALPHA) };
+  if res.as_bool() {
+    Ok(())
+  } else {
+    bail!("")
+  }
 }
 
 fn set_zoom(app: &AppHandle, window: &Window, diff: f64) -> anyhow::Result<()> {
@@ -327,12 +328,7 @@ fn _close_window(app: AppHandle, label: String) -> Result<(), ()> {
 
 #[tauri::command]
 #[specta::specta]
-pub fn close_window(
-  app: AppHandle,
-  _window: Window,
-  // state: State<'_, AppState>,
-  label: String,
-) -> Result<(), ()> {
+pub fn close_window(app: AppHandle, label: String) -> Result<(), ()> {
   _close_window(app, label.to_string()).map_err(|_| ())?;
 
   Ok(())
