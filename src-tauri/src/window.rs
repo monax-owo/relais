@@ -200,8 +200,8 @@ pub async fn open_window(
                   toggle_transparent(&app, &arc.0, &arc.1, 128).unwrap(),
                 )
                 .unwrap(),
-              "zoomout" => (),
-              "zoomin" => (),
+              "zoomout" => set_zoom(&app, &arc.0, -0.1).unwrap(),
+              "zoomin" => set_zoom(&app, &arc.0, 0.1).unwrap(),
               _ => println!("did not match: {}", v),
             },
             Value::Array(_) => todo!(),
@@ -270,6 +270,30 @@ pub fn toggle_transparent(
   };
   // unsafe {}
   Ok(!condition)
+}
+
+fn set_zoom(app: &AppHandle, window: &Window, diff: f64) -> anyhow::Result<()> {
+  let state = app.state::<AppState>();
+  let Some(window_data) = state.get_window_data(window.label()) else {
+    bail!("failed to get window data");
+  };
+
+  window.with_webview(move |webview| {
+    #[cfg(windows)]
+    unsafe {
+      // see https://docs.rs/webview2-com/0.19.1/webview2_com/Microsoft/Web/WebView2/Win32/struct.ICoreWebView2Controller.html
+      webview
+        .controller()
+        .SetZoomFactor(window_data.zoom + diff)
+        .unwrap();
+    }
+  })?;
+
+  // TODO: window_data.zoomを上書きできるようにする
+  // WindowDataと別にSerialize用のWindowData型を作ったほうがいいかも
+  // window_data.zoom.set
+
+  Ok(())
 }
 //
 
