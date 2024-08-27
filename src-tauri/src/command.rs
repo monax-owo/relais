@@ -2,10 +2,10 @@
 // use specta::Type;
 use tauri::{AppHandle, Window};
 
-use crate::WindowData;
+use crate::SerializeWindowData;
 
 #[specta::specta]
-pub fn export_types(_a: WindowData) {}
+pub fn export_types(_a: SerializeWindowData) {}
 
 //
 pub fn exit_0(handle: &AppHandle) -> anyhow::Result<()> {

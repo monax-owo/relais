@@ -1,4 +1,4 @@
-use std::sync::{atomic::Ordering, Arc};
+use std::sync::{atomic::Ordering, Arc, Mutex};
 
 use anyhow::bail;
 use serde_json::Value;
@@ -99,7 +99,7 @@ pub async fn open_window(
   let window_data = WindowData {
     title,
     label: label.clone(),
-    zoom: 1.0,
+    zoom: Arc::from(Mutex::from(1.0)),
   };
 
   state.add_window(window_data).map_err(|_| ())?;

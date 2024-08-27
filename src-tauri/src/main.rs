@@ -26,14 +26,27 @@ use window::*;
 // };
 
 // TODO: アプリ全体かウィンドウごとに半透明にするか
-#[derive(Debug, Deserialize, Serialize, Type)]
+#[derive(Debug, Type)]
 pub struct AppState {
   windows: Mutex<Vec<WindowData>>,
   pub overlay: AtomicBool,
 }
 
-#[derive(Debug, Clone, Deserialize, Serialize, Type)]
+// #[derive(Debug, Type)]
+// pub struct SerializeAppState {
+//   windows: Vec<SerializeWindowData>,
+//   pub overlay: AtomicBool,
+// }
+
+#[derive(Debug, Clone, Type)]
 pub struct WindowData {
+  title: String,
+  label: String,
+  zoom: Arc<Mutex<f64>>,
+}
+
+#[derive(Debug, Clone, Deserialize, Serialize, Type)]
+pub struct SerializeWindowData {
   title: String,
   label: String,
   zoom: f64,
@@ -56,14 +69,29 @@ impl AppState {
   }
 
   pub fn sync_windows(&self, handle: &AppHandle) {
+    let windows = self.windows.lock().unwrap();
+    let vec = windows.clone().into_iter().map(|v| v.into()).collect();
     handle
-      .emit_all::<Vec<WindowData>>("update_windows", self.windows.lock().unwrap().to_vec())
+      .emit_all::<Vec<SerializeWindowData>>("update_windows", vec)
       .unwrap();
   }
 
-  pub fn get_window_data(&self, label: &str) -> Option<WindowData> {
+  pub fn get_window_data(&self, label: &str) -> Option<SerializeWindowData> {
     let lock = self.windows.lock().unwrap();
-    lock.iter().find(|v| v.label.as_str() == label).cloned()
+    lock
+      .iter()
+      .find(|v| v.label.as_str() == label)
+      .map(|v| SerializeWindowData::from(v.clone()))
+  }
+}
+
+impl From<WindowData> for SerializeWindowData {
+  fn from(v: WindowData) -> Self {
+    Self {
+      title: v.title,
+      label: v.label,
+      zoom: *v.zoom.lock().unwrap(),
+    }
   }
 }
 
