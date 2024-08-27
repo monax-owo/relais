@@ -10,7 +10,7 @@ declare global {
 // Function avoids 'window not defined' in SSR
 const invoke = () => window.__TAURI_INVOKE__;
 
-export function exportTypes(a: WindowData) {
+export function exportTypes(a: SerializeWindowData) {
     return invoke()<null>("export_types", { a })
 }
 
@@ -38,4 +38,4 @@ export function getTransparent() {
     return invoke()<boolean>("get_transparent")
 }
 
-export type WindowData = { title: string; label: string; zoom: number }
+export type SerializeWindowData = { title: string; label: string; zoom: number }

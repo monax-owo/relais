@@ -76,12 +76,9 @@ impl AppState {
       .unwrap();
   }
 
-  pub fn get_window_data(&self, label: &str) -> Option<SerializeWindowData> {
+  pub fn get_window_data(&self, label: &str) -> Option<WindowData> {
     let lock = self.windows.lock().unwrap();
-    lock
-      .iter()
-      .find(|v| v.label.as_str() == label)
-      .map(|v| SerializeWindowData::from(v.clone()))
+    lock.iter().find(|v| v.label.as_str() == label).cloned()
   }
 }
 
