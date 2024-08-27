@@ -33,6 +33,7 @@ pub fn window_hide(_app: AppHandle, window: Window) -> Result<(), String> {
 //
 const CTRL_WINDOW_SIZE: (u32, u32) = (40, 260);
 const LABEL_PREFIX: &str = "ctrl_";
+const MIN_INNER_SIZE: (f64, f64) = (400.0, 400.0);
 //
 
 #[tauri::command]
@@ -59,7 +60,7 @@ pub async fn open_window(
     .decorations(false)
     .initialization_script(include_str!("./init.js"))
     .maximizable(false)
-    .min_inner_size(500.0, 500.0)
+    .min_inner_size(MIN_INNER_SIZE.0, MIN_INNER_SIZE.1)
     .minimizable(true)
     .title(&title)
     .transparent(true)
