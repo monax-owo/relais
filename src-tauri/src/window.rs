@@ -71,7 +71,7 @@ pub async fn open_window(
 
   let ctrl_window = WindowBuilder::new(
     &app,
-    LABEL_PREFIX.to_string() + &label,
+    to_ctrl_window_label(&*label),
     WindowUrl::App("/ctrl".into()),
   )
   .decorations(false)
@@ -227,7 +227,9 @@ pub async fn open_window(
 
   Ok(())
 }
+//
 
+//
 fn close(app: &AppHandle, arc: &Arc<(Window, Window)>) -> anyhow::Result<()> {
   let state = app.state::<AppState>();
   let labels = [arc.0.label(), arc.1.label()];
@@ -238,7 +240,9 @@ fn close(app: &AppHandle, arc: &Arc<(Window, Window)>) -> anyhow::Result<()> {
   state.sync_windows(app);
   Ok(())
 }
+//
 
+//
 pub fn toggle_transparent(
   app: &AppHandle,
   window: &Window,
@@ -276,6 +280,14 @@ fn set_transparent(hwnd: HWND, alpha: u8) -> anyhow::Result<()> {
   }
 }
 
+#[tauri::command]
+#[specta::specta]
+pub fn get_transparent(state: State<'_, AppState>) -> Result<bool, &str> {
+  Ok(state.overlay.load(Ordering::Acquire))
+}
+//
+
+//
 fn set_zoom(app: &AppHandle, window: &Window, diff: f64) -> anyhow::Result<()> {
   let state = app.state::<AppState>();
   let Some(window_data) = state.get_window_data(window.label()) else {
@@ -308,10 +320,12 @@ fn set_zoom(app: &AppHandle, window: &Window, diff: f64) -> anyhow::Result<()> {
 //
 
 //
-#[tauri::command]
-#[specta::specta]
-pub fn get_transparent(state: State<'_, AppState>) -> Result<bool, &str> {
-  Ok(state.overlay.load(Ordering::Acquire))
+pub fn to_ctrl_window_label<'a, T: Into<&'a str>>(label: T) -> String {
+  LABEL_PREFIX.to_string() + label.into()
+}
+
+pub fn to_window_label(label: String) -> String {
+  label.replacen(LABEL_PREFIX, "", 1)
 }
 //
 

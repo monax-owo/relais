@@ -7,7 +7,7 @@
     "distDir": "../build"
   },
   "package": {
-    "productName": "relais",
+    "productName": "Relais",
     "version": "0.1.0"
   },
   "tauri": {
@@ -17,29 +17,6 @@
         "all": false,
         "hide": true,
         "show": true
-      },
-      "fs": {
-        "all": false,
-        "copyFile": false,
-        "createDir": false,
-        "exists": false,
-        "readDir": false,
-        "readFile": false,
-        "removeDir": false,
-        "removeFile": false,
-        "renameFile": false,
-        "scope": [],
-        "writeFile": false
-      },
-      "globalShortcut": {
-        "all": true
-      },
-      "shell": {
-        "all": false,
-        "execute": false,
-        "open": true,
-        "scope": [],
-        "sidecar": false
       },
       "window": {
         "all": false,

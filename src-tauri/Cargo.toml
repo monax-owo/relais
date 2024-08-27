@@ -26,8 +26,6 @@ tauri = { version = "1.7.0", features = [
   "window-show",
   "window-hide",
   "window-start-dragging",
-  "global-shortcut-all",
-  "shell-open",
   "app-show",
   "app-hide",
   "system-tray",
