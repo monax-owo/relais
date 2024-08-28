@@ -20,7 +20,7 @@ use windows::Win32::{
   },
 };
 
-use crate::{AppState, WindowData};
+use crate::{SourceAppState, SourceWindowData};
 
 //
 pub fn _window_hide(window: &Window) -> anyhow::Result<()> {
@@ -47,7 +47,7 @@ const MIN_INNER_SIZE: (f64, f64) = (400.0, 400.0);
 #[specta::specta]
 pub async fn open_window(
   app: AppHandle,
-  state: State<'_, AppState>,
+  state: State<'_, SourceAppState>,
   url: String,
   title: Option<String>,
   label: Option<String>,
@@ -103,7 +103,7 @@ pub async fn open_window(
   //   }
   // }
 
-  let window_data = WindowData {
+  let window_data = SourceWindowData {
     title,
     label: label.clone(),
     pin: Arc::from(AtomicBool::from(false)),
@@ -162,7 +162,7 @@ pub async fn open_window(
       let app = app.clone();
       move |e| match *e {
         WindowEvent::Focused(state) => {
-          if state && !app.state::<AppState>().overlay.load(Ordering::Acquire) {
+          if state && !app.state::<SourceAppState>().overlay.load(Ordering::Acquire) {
             if arc.0.is_minimized().unwrap() {
               arc.0.unminimize().unwrap();
             }
@@ -231,7 +231,7 @@ pub async fn open_window(
 
 //
 fn close(app: &AppHandle, arc: &Arc<(Window, Window)>) -> anyhow::Result<()> {
-  let state = app.state::<AppState>();
+  let state = app.state::<SourceAppState>();
   let label = arc.0.label();
   arc.1.close()?;
   arc.0.close()?;
@@ -248,7 +248,7 @@ pub fn toggle_transparent(
   ctrl_window: &Window,
   alpha: u8,
 ) -> anyhow::Result<bool> {
-  let state = app.state::<AppState>();
+  let state = app.state::<SourceAppState>();
   let window_hwnd = window.hwnd()?;
   let condition = state.overlay.load(Ordering::Acquire);
   // TODO: カーソル通過
@@ -280,7 +280,7 @@ fn set_transparent(hwnd: HWND, alpha: u8) -> anyhow::Result<()> {
 
 #[tauri::command]
 #[specta::specta]
-pub fn get_transparent(state: State<'_, AppState>) -> Result<bool, String> {
+pub fn get_transparent(state: State<'_, SourceAppState>) -> Result<bool, String> {
   Ok(state.overlay.load(Ordering::Acquire))
 }
 //
@@ -291,7 +291,7 @@ pub fn get_transparent(state: State<'_, AppState>) -> Result<bool, String> {
 pub fn toggle_pin(
   app: AppHandle,
   window: Window,
-  state: State<'_, AppState>,
+  state: State<'_, SourceAppState>,
 ) -> Result<bool, String> {
   let Some(window_data) = state.get_window_data(&to_window_label(window.label())) else {
     return Err("failed to get window data".to_string());
@@ -333,7 +333,7 @@ fn set_pin(window: &Window, value: bool) -> Result<(), String> {
 
 //
 fn set_zoom(app: &AppHandle, window: &Window, diff: f64) -> anyhow::Result<()> {
-  let state = app.state::<AppState>();
+  let state = app.state::<SourceAppState>();
   let Some(window_data) = state.get_window_data(window.label()) else {
     bail!("failed to get window data");
   };
@@ -379,7 +379,7 @@ fn _close_window(app: AppHandle, label: String) -> Result<(), ()> {
     return Err(());
   };
   window.close().map_err(|_| ())?;
-  let state = app.state::<AppState>();
+  let state = app.state::<SourceAppState>();
   state.remove_window(&label).map_err(|_| ())?;
   state.sync_windows(&app);
 

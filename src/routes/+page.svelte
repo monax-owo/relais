@@ -1,8 +1,5 @@
 <script lang="ts">
-  import {
-    openWindow,
-    type SerializeWindowData as WindowData,
-  } from "$lib/generated/specta/bindings";
+  import { openWindow, type WindowData } from "$lib/generated/specta/bindings";
   // import type { PageData } from './$types';
   // export let data: PageData;
   import { Template } from "$lib/imports";
@@ -29,7 +26,7 @@
   });
   ifDev(() => {
     ifThen(windows.length < 1, () => {
-      url = "google.com";
+      url = "www.twitch.tv/stylishnoob4";
       handleOpen();
     });
   });
