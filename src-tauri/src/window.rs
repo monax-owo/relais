@@ -8,12 +8,12 @@ use serde_json::Value;
 // use serde::{Deserialize, Serialize};
 // use specta::Type;
 use tauri::{
-  AppHandle, Manager, PhysicalPosition, PhysicalSize, State, Window, WindowBuilder, WindowEvent,
-  WindowUrl,
+  AppHandle, Listener, Manager, PhysicalPosition, PhysicalSize, State, WebviewUrl, WebviewWindow,
+  WebviewWindowBuilder, WindowEvent,
 };
 use uuid::Uuid;
 use windows::Win32::{
-  Foundation::HWND,
+  Foundation::{COLORREF, HWND},
   UI::WindowsAndMessaging::{
     SetLayeredWindowAttributes, SetWindowLongPtrW, SetWindowPos, GWL_EXSTYLE, HWND_NOTOPMOST,
     HWND_TOPMOST, LWA_ALPHA, SWP_NOMOVE, SWP_NOSIZE, WS_EX_LAYERED,
@@ -23,7 +23,7 @@ use windows::Win32::{
 use crate::{SourceAppState, SourceWindowData};
 
 //
-pub fn _window_hide(window: &Window) -> anyhow::Result<()> {
+pub fn _window_hide(window: &WebviewWindow) -> anyhow::Result<()> {
   window.hide()?;
   // window.set_always_on_top(false)?;
   Ok(())
@@ -31,7 +31,7 @@ pub fn _window_hide(window: &Window) -> anyhow::Result<()> {
 
 #[tauri::command]
 #[specta::specta]
-pub fn window_hide(window: Window) -> Result<(), String> {
+pub fn window_hide(window: WebviewWindow) -> Result<(), String> {
   _window_hide(&window).map_err(|e| e.to_string())?;
   Ok(())
 }
@@ -62,7 +62,7 @@ pub async fn open_window(
   // create window
   let title = title.unwrap_or_default();
   let label = label.unwrap_or(Uuid::new_v4().to_string());
-  let window = WindowBuilder::new(&app, &label, WindowUrl::External(parse_url))
+  let window = WebviewWindowBuilder::new(&app, &label, WebviewUrl::External(parse_url))
     .decorations(false)
     .initialization_script(include_str!("./init.js"))
     .maximizable(false)
@@ -73,10 +73,10 @@ pub async fn open_window(
     .build()
     .map_err(|_| ())?;
 
-  let ctrl_window = WindowBuilder::new(
+  let ctrl_window = WebviewWindowBuilder::new(
     &app,
     to_ctrl_window_label(&*label),
-    WindowUrl::App("/ctrl".into()),
+    WebviewUrl::App("/ctrl".into()),
   )
   .decorations(false)
   .maximizable(false)
@@ -192,26 +192,24 @@ pub async fn open_window(
       let arc = arc.clone();
       let app = app.clone();
       move |e| {
-        if let Some(v) = e.payload() {
-          let payload = serde_json::from_str::<Value>(v).unwrap();
-          match payload {
-            Value::Null => todo!(),
-            Value::Bool(_) => todo!(),
-            Value::Number(_) => todo!(),
-            Value::String(v) => match v.as_str() {
-              "mini" => arc.0.minimize().unwrap(),
-              "close" => close(&app, &arc).unwrap(),
-              // "transparent" => toggle_transparent(&app).unwrap(),
-              "transparent" => {
-                toggle_transparent(&app, &arc.0, &arc.1, 128).unwrap();
-              }
-              "zoomout" => set_zoom(&app, &arc.0, -0.1).unwrap(),
-              "zoomin" => set_zoom(&app, &arc.0, 0.1).unwrap(),
-              _ => println!("did not match: {}", v),
-            },
-            Value::Array(_) => todo!(),
-            Value::Object(_) => todo!(),
-          }
+        let payload = serde_json::from_str::<Value>(e.payload()).unwrap();
+        match payload {
+          Value::Null => todo!(),
+          Value::Bool(_) => todo!(),
+          Value::Number(_) => todo!(),
+          Value::String(v) => match v.as_str() {
+            "mini" => arc.0.minimize().unwrap(),
+            "close" => close(&app, &arc).unwrap(),
+            // "transparent" => toggle_transparent(&app).unwrap(),
+            "transparent" => {
+              toggle_transparent(&app, &arc.0, &arc.1, 128).unwrap();
+            }
+            "zoomout" => set_zoom(&app, &arc.0, -0.1).unwrap(),
+            "zoomin" => set_zoom(&app, &arc.0, 0.1).unwrap(),
+            _ => println!("did not match: {}", v),
+          },
+          Value::Array(_) => todo!(),
+          Value::Object(_) => todo!(),
         }
       }
     });
@@ -228,14 +226,14 @@ pub async fn open_window(
     .map_err(|_| ())?;
   }
 
-  app.get_window("main").unwrap().hide().unwrap();
+  app.get_webview_window("main").unwrap().hide().unwrap();
 
   Ok(())
 }
 //
 
 //
-fn close(app: &AppHandle, arc: &Arc<(Window, Window)>) -> anyhow::Result<()> {
+fn close(app: &AppHandle, arc: &Arc<(WebviewWindow, WebviewWindow)>) -> anyhow::Result<()> {
   let state = app.state::<SourceAppState>();
   let label = arc.0.label();
   arc.1.close()?;
@@ -249,8 +247,8 @@ fn close(app: &AppHandle, arc: &Arc<(Window, Window)>) -> anyhow::Result<()> {
 //
 pub fn toggle_transparent(
   app: &AppHandle,
-  window: &Window,
-  ctrl_window: &Window,
+  window: &WebviewWindow,
+  ctrl_window: &WebviewWindow,
   alpha: u8,
 ) -> anyhow::Result<bool> {
   let state = app.state::<SourceAppState>();
@@ -275,12 +273,8 @@ pub fn toggle_transparent(
 }
 
 fn set_transparent(hwnd: HWND, alpha: u8) -> anyhow::Result<()> {
-  let res = unsafe { SetLayeredWindowAttributes(hwnd, 0, alpha, LWA_ALPHA) };
-  if res.as_bool() {
-    Ok(())
-  } else {
-    bail!("")
-  }
+  unsafe { SetLayeredWindowAttributes(hwnd, COLORREF(0), alpha, LWA_ALPHA)? };
+  Ok(())
 }
 
 #[tauri::command]
@@ -295,7 +289,7 @@ pub fn get_transparent(state: State<'_, SourceAppState>) -> Result<bool, String>
 #[specta::specta]
 pub fn toggle_pin(
   app: AppHandle,
-  window: Window,
+  window: WebviewWindow,
   state: State<'_, SourceAppState>,
 ) -> Result<bool, String> {
   let Some(window_data) = state.get_window_data(&to_window_label(window.label())) else {
@@ -305,17 +299,19 @@ pub fn toggle_pin(
   let pinned = atomic.load(Ordering::Acquire);
   dbg!(pinned);
   set_pin(
-    &app.get_window(&to_window_label(window.label())).unwrap(),
+    &app
+      .get_webview_window(&to_window_label(window.label()))
+      .unwrap(),
     !pinned,
   )?;
   atomic.store(!pinned, Ordering::Release);
   Ok(!pinned)
 }
 
-fn set_pin(window: &Window, value: bool) -> Result<(), String> {
+fn set_pin(window: &WebviewWindow, value: bool) -> Result<(), String> {
   // window.set_always_on_top(value).map_err(|v| v.to_string())?;
   let hwndinsertafter = if value { HWND_TOPMOST } else { HWND_NOTOPMOST };
-  let res = unsafe {
+  unsafe {
     SetWindowPos(
       window.hwnd().unwrap(),
       hwndinsertafter,
@@ -325,11 +321,7 @@ fn set_pin(window: &Window, value: bool) -> Result<(), String> {
       0,
       SWP_NOMOVE | SWP_NOSIZE,
     )
-  }
-  .as_bool();
-
-  if !res {
-    return Err("".to_string());
+    .map_err(|e| e.to_string())?
   }
 
   Ok(())
@@ -337,7 +329,7 @@ fn set_pin(window: &Window, value: bool) -> Result<(), String> {
 //
 
 //
-fn set_zoom(app: &AppHandle, window: &Window, diff: f64) -> anyhow::Result<()> {
+fn set_zoom(app: &AppHandle, window: &WebviewWindow, diff: f64) -> anyhow::Result<()> {
   let state = app.state::<SourceAppState>();
   let Some(window_data) = state.get_window_data(window.label()) else {
     bail!("failed to get window data");
@@ -380,7 +372,7 @@ pub fn to_window_label<'a, T: Into<&'a str>>(label: T) -> String {
 
 //
 fn _close_window(app: AppHandle, label: String) -> Result<(), ()> {
-  let Some(window) = app.get_window(&label) else {
+  let Some(window) = app.get_webview_window(&label) else {
     return Err(());
   };
   window.close().map_err(|_| ())?;
