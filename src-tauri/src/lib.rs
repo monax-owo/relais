@@ -115,15 +115,17 @@ impl From<SourceWindowData> for WindowData {
 // #[tokio::main]
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
-  let specta = tauri_specta::Builder::new().commands(collect_commands![
-    exit,
-    window_focus,
-    window_hide,
-    open_window,
-    close_window,
-    get_transparent,
-    toggle_pin
-  ]);
+  let specta = tauri_specta::Builder::new()
+    .commands(collect_commands![
+      exit,
+      window_focus,
+      window_hide,
+      open_window,
+      close_window,
+      get_transparent,
+      toggle_pin
+    ])
+    .typ::<WindowData>();
   #[cfg(debug_assertions)]
   specta
     .export(
@@ -207,7 +209,11 @@ pub fn run() {
       let _tray_handle = TrayIconBuilder::with_id("tray")
         .menu(&tray_menu)
         .tooltip("Relais")
-        .on_tray_icon_event(move |_tray, e| if let TrayIconEvent::Click { .. } = &e { _window_focus(&main_window).unwrap() })
+        .on_tray_icon_event(move |_tray, e| {
+          if let TrayIconEvent::Click { .. } = &e {
+            _window_focus(&main_window).unwrap()
+          }
+        })
         .build(app)?;
       //
 

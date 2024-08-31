@@ -3,11 +3,6 @@ use anyhow::Context;
 // use specta::Type;
 use tauri::{AppHandle, WebviewWindow};
 
-use crate::WindowData;
-
-#[specta::specta]
-pub fn export_types(_a: WindowData) {}
-
 //
 pub fn exit_0(handle: &AppHandle) -> anyhow::Result<()> {
   handle

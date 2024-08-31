@@ -73,7 +73,7 @@ async togglePin() : Promise<Result<boolean, string>> {
 
 /** user-defined types **/
 
-
+export type WindowData = { title: string; label: string; pin: boolean; zoom: number }
 
 /** tauri-specta globals **/
 
