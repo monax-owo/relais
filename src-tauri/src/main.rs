@@ -2,6 +2,7 @@
 #![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
 
 use std::{
+  collections::HashMap,
   env,
   path::PathBuf,
   sync::{
@@ -10,6 +11,7 @@ use std::{
   },
 };
 
+use config::Config;
 use serde::{Deserialize, Serialize};
 use specta::Type;
 use tauri::{
@@ -37,14 +39,14 @@ const CONFIGFILE_NAME: &str = "relaisrc.toml";
 // TODO: アプリ全体かウィンドウごとに半透明にするか
 #[derive(Debug)]
 pub struct SourceAppState {
-  // config: Config,
+  config: Config,
   windows: Mutex<Vec<SourceWindowData>>,
   pub overlay: AtomicBool,
 }
 
 #[derive(Debug, Clone, Deserialize, Serialize, Type)]
-pub struct SerializeAppState {
-  // config: Config,
+pub struct AppState {
+  config: String,
   windows: Vec<WindowData>,
   pub overlay: bool,
 }
@@ -129,9 +131,14 @@ async fn main() {
     Ok(env::current_exe()?.parent().unwrap().join(CONFIGFILE_NAME))
   })()
   .unwrap();
+  let config = {
+    let mut builder = Config::builder().set_default("key", "value").unwrap();
+    builder = builder.add_source(config::File::with_name(path.to_str().unwrap()));
+    builder.build().unwrap()
+  };
 
   let state = SourceAppState {
-    // config,
+    config,
     windows: Mutex::new(vec![]),
     overlay: AtomicBool::new(false),
   };
@@ -144,6 +151,17 @@ async fn main() {
       #[cfg(not(debug_assertions))]
       {
         _window_focus(&main_window)?;
+      }
+      {
+        let state = app.state::<SourceAppState>();
+        println!(
+          "{:?}",
+          state
+            .config
+            .clone()
+            .try_deserialize::<HashMap<String, String>>()
+            .unwrap()
+        );
       }
       //
 

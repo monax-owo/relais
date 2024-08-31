@@ -162,7 +162,12 @@ pub async fn open_window(
       let app = app.clone();
       move |e| match *e {
         WindowEvent::Focused(state) => {
-          if state && !app.state::<SourceAppState>().overlay.load(Ordering::Acquire) {
+          if state
+            && !app
+              .state::<SourceAppState>()
+              .overlay
+              .load(Ordering::Acquire)
+          {
             if arc.0.is_minimized().unwrap() {
               arc.0.unminimize().unwrap();
             }
