@@ -189,6 +189,7 @@ pub async fn open_window(
     });
 
     // commandに切り分けたほうが良さそう
+    // 実装し直す
     ctrl_window.listen("ctrl", {
       let arc = arc.clone();
       let app = app.clone();
@@ -199,7 +200,7 @@ pub async fn open_window(
           Value::Bool(_) => todo!(),
           Value::Number(_) => todo!(),
           Value::String(v) => match v.as_str() {
-            "mini" => arc.0.minimize().unwrap(),
+            "mini" => arc.1.minimize().unwrap(),
             "close" => close(&app, &arc).unwrap(),
             // "transparent" => toggle_transparent(&app).unwrap(),
             "transparent" => {

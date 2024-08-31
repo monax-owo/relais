@@ -1,8 +1,6 @@
 {
   "$schema": "../gen/schemas/desktop-schema.json",
-  "identifier": "default",
-  "description": "enables the default permissions",
-  "windows": ["main"],
+  "identifier": "ctrl",
   "permissions": [
     "core:event:allow-emit",
     "core:event:default",
@@ -21,5 +19,6 @@
     "core:window:default",
     "core:window:allow-is-minimized",
     "core:window:allow-maximize"
-  ]
+  ],
+  "windows": ["ctrl_window_*"]
 }
