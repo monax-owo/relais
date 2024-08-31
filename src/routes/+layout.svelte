@@ -17,16 +17,16 @@
   // Supports weights 300-700
   import "@fontsource-variable/fira-code";
   //
-  import { register, unregisterAll } from "@tauri-apps/api/globalShortcut";
-  import { mainWindowFocus } from "$lib/util/wrap";
+  // import { register, unregisterAll } from "@tauri-apps/plugin-global-shortcut";
+  // import { mainWindowFocus } from "$lib/util/wrap";
   //
   // TODO:ショートカットキーを割り当てる
-  register("Ctrl+Alt+E", () => mainWindowFocus());
-  onMount(() => {
-    return () => {
-      unregisterAll();
-    };
-  });
+  // register("Ctrl+Alt+E", () => mainWindowFocus());
+  // onMount(() => {
+  //   return () => {
+  //     unregisterAll();
+  //   };
+  // });
   // TODO:configファイルを作る
 </script>
 

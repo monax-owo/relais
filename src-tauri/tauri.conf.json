@@ -19,5 +19,30 @@
     ],
     "targets": ["msi", "nsis"]
   },
+  "app": {
+    "security": {
+      "assetProtocol": {
+        "enable": false,
+        "scope": []
+      },
+      "capabilities": ["default", "window", "ctrl", "all"],
+      "dangerousDisableAssetCspModification": false,
+      "freezePrototype": false,
+      "pattern": {
+        "use": "brownfield"
+      }
+    },
+    "windows": [
+      {
+        "label": "main",
+        "title": "relais",
+        "width": 400,
+        "height": 260,
+        "resizable": false,
+        "url": ""
+      }
+    ],
+    "withGlobalTauri": false
+  },
   "$schema": "../node_modules/@tauri-apps/cli/config.schema.json"
 }

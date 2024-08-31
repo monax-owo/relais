@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { openWindow, type WindowData } from "$lib/generated/specta/bindings";
+  import { commands, type WindowData } from "$lib/generated/specta/bindings";
   // import type { PageData } from './$types';
   // export let data: PageData;
   import { Template } from "$lib/imports";
@@ -17,7 +17,7 @@
       valid = false;
       console.error(e);
     }
-    await openWindow(url, null, null);
+    await commands.openWindow(url, null, null);
   };
   onMount(async () => {
     listen("update_windows", (e) => {

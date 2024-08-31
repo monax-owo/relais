@@ -39,6 +39,7 @@ export default [
       "**/.git",
       "**/.github",
       "**/src-tauri",
+      "**/generated",
     ],
   },
   {

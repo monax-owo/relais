@@ -1,6 +1,6 @@
 // TauriのAPI(Rust/TS)のラッパー関数をまとめるファイル
-import { open as openWithTauri } from "@tauri-apps/api/shell";
-import { invoke } from "@tauri-apps/api/tauri";
+import { open as openWithTauri } from "@tauri-apps/plugin-shell";
+import { invoke } from "@tauri-apps/api/core";
 
 const open = async (path: string): Promise<void> => {
   // config ファイルから設定を読む or ユーザーが指定したサービスを使う

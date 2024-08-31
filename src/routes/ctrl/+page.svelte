@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { appWindow } from "@tauri-apps/api/window";
+  import { getCurrentWebviewWindow } from "@tauri-apps/api/webviewWindow";
 
   import IconMinus from "@tabler/icons-svelte/IconMinus.svelte";
   import IconX from "@tabler/icons-svelte/IconX.svelte";
@@ -17,7 +17,7 @@
   import IconLock from "@tabler/icons-svelte/IconLock.svelte";
   import IconLockOpen2 from "@tabler/icons-svelte/IconLockOpen2.svelte";
 
-  import { getTransparent, togglePin } from "$lib/generated/specta/bindings";
+  import { commands } from "$lib/generated/specta/bindings";
 
   const stroke = 2;
 
@@ -25,7 +25,7 @@
   let pinned = false;
 
   const em = async (event: unknown) => {
-    await appWindow.emit("ctrl", event);
+    await getCurrentWebviewWindow().emit("ctrl", event);
   };
 
   const handleMini = async () => {
@@ -35,7 +35,14 @@
     await em("close");
   };
   const handlePin = async () => {
-    pinned = await togglePin();
+    pinned = await commands.togglePin().then((v) => {
+      switch (v.status) {
+        case "ok":
+          return v.data;
+        case "error":
+          throw new Error("");
+      }
+    });
   };
   const handleZoomIn = async () => {
     await em("zoomin");
@@ -45,7 +52,7 @@
   };
   const handleTransparent = async () => {
     await em("transparent");
-    transparent = await getTransparent();
+    // transparent = await getTransparent();
   };
 </script>
 

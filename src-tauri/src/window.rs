@@ -39,7 +39,8 @@ pub fn window_hide(window: WebviewWindow) -> Result<(), String> {
 
 //
 const CTRL_WINDOW_SIZE: (u32, u32) = (40, 320);
-const LABEL_PREFIX: &str = "ctrl_";
+const WINDOW_LABEL_PREFIX: &str = "window_";
+const CTRL_LABEL_PREFIX: &str = "ctrl_";
 const MIN_INNER_SIZE: (f64, f64) = (400.0, 400.0);
 //
 
@@ -61,13 +62,14 @@ pub async fn open_window(
 
   // create window
   let title = title.unwrap_or_default();
-  let label = label.unwrap_or(Uuid::new_v4().to_string());
+  let label =
+    label.unwrap_or(WINDOW_LABEL_PREFIX.to_string() + Uuid::new_v4().to_string().as_str());
   let window = WebviewWindowBuilder::new(&app, &label, WebviewUrl::External(parse_url))
     .decorations(false)
     .initialization_script(include_str!("./init.js"))
-    .maximizable(false)
+    // .maximizable(false)
     .min_inner_size(MIN_INNER_SIZE.0, MIN_INNER_SIZE.1)
-    .minimizable(true)
+    // .minimizable(true)
     .title(&title)
     .transparent(true)
     .build()
@@ -78,15 +80,20 @@ pub async fn open_window(
     to_ctrl_window_label(&*label),
     WebviewUrl::App("/ctrl".into()),
   )
+  // .parent(&window)
+  // .unwrap()
   .decorations(false)
-  .maximizable(false)
-  .minimizable(false)
+  // .maximizable(false)
+  // .minimizable(false)
   .resizable(false)
   .skip_taskbar(true)
   .title("ctrl")
   .transparent(true)
   .build()
   .map_err(|_| ())?;
+
+  dbg!(window.label());
+  dbg!(ctrl_window.label());
 
   // windows crate 0.39.0
   // set child window
@@ -96,12 +103,6 @@ pub async fn open_window(
 
   //   let handle_window = window.hwnd().map_err(|_| ())?;
   //   let handle_ctrl_window = window.hwnd().map_err(|_| ())?;
-
-  //   unsafe {
-  //     println!("unsafe");
-  //     let _handle = SetParent(handle_ctrl_window, handle_window);
-  //   }
-  // }
 
   let window_data = SourceWindowData {
     title,
@@ -236,8 +237,8 @@ pub async fn open_window(
 fn close(app: &AppHandle, arc: &Arc<(WebviewWindow, WebviewWindow)>) -> anyhow::Result<()> {
   let state = app.state::<SourceAppState>();
   let label = arc.0.label();
-  arc.1.close()?;
-  arc.0.close()?;
+  arc.1.close().unwrap();
+  arc.0.close().unwrap();
   state.remove_window(label)?;
   state.sync_windows(app);
   Ok(())
@@ -328,7 +329,7 @@ fn set_pin(window: &WebviewWindow, value: bool) -> Result<(), String> {
 }
 //
 
-//
+// TODO: ズームをセットする関数がv2にあると思う
 fn set_zoom(app: &AppHandle, window: &WebviewWindow, diff: f64) -> anyhow::Result<()> {
   let state = app.state::<SourceAppState>();
   let Some(window_data) = state.get_window_data(window.label()) else {
@@ -362,11 +363,11 @@ fn set_zoom(app: &AppHandle, window: &WebviewWindow, diff: f64) -> anyhow::Resul
 
 //
 pub fn to_ctrl_window_label<'a, T: Into<&'a str>>(label: T) -> String {
-  LABEL_PREFIX.to_string() + label.into()
+  CTRL_LABEL_PREFIX.to_string() + label.into()
 }
 
 pub fn to_window_label<'a, T: Into<&'a str>>(label: T) -> String {
-  label.into().replacen(LABEL_PREFIX, "", 1)
+  label.into().replacen(CTRL_LABEL_PREFIX, "", 1)
 }
 //
 
