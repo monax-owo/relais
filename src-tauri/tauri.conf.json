@@ -17,24 +17,7 @@
       "icons/icon.icns",
       "icons/icon.ico"
     ],
-    "targets": "all"
+    "targets": ["msi", "nsis"]
   },
-  "app": {
-    "security": {
-      "csp": null
-    },
-    "trayIcon": {
-      "iconPath": "icons/icon.png"
-    },
-    "windows": [
-      {
-        "label": "main",
-        "title": "relais",
-        "width": 400,
-        "height": 260,
-        "resizable": false,
-        "url": ""
-      }
-    ]
-  }
+  "$schema": "../node_modules/@tauri-apps/cli/config.schema.json"
 }
