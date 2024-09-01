@@ -280,16 +280,16 @@ pub fn to_ctrl(window: &WebviewWindow) -> anyhow::Result<WebviewWindow> {
   // TODO
 
   window
-      .get_webview_window(&to_ctrl_label(window.label()))
-      .context("ctrl is not found")
+    .get_webview_window(&to_ctrl_label(window.label()))
+    .context("window is not found")
 }
 
 pub fn to_window(ctrl: &WebviewWindow) -> anyhow::Result<WebviewWindow> {
   // TODO
 
   ctrl
-      .get_webview_window(&to_window_label(ctrl.label()))
-      .context("ctrl is not found")
+    .get_webview_window(&to_window_label(ctrl.label()))
+    .context("ctrl is not found")
 }
 
 pub fn view_close(app: AppHandle, label: String) -> Result<(), ()> {
