@@ -1,6 +1,10 @@
 // Prevents additional console window on Windows in release, DO NOT REMOVE!!
 #![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
 
+use config::Config;
+use serde::{Deserialize, Serialize};
+use specta::Type;
+use specta_typescript::Typescript;
 use std::{
   collections::HashMap,
   env,
@@ -10,24 +14,19 @@ use std::{
     Arc, Mutex,
   },
 };
-
-use config::Config;
-use serde::{Deserialize, Serialize};
-use specta::Type;
-use specta_typescript::Typescript;
 use tauri::{
   generate_context,
   menu::{MenuBuilder, MenuItem},
   tray::{TrayIconBuilder, TrayIconEvent},
   App, AppHandle, Builder, Emitter, Manager, WindowEvent,
 };
+use tauri_specta::collect_commands;
 
 mod command;
 mod window;
 
 use command::*;
-use tauri_specta::collect_commands;
-use window::*;
+use window::command::*;
 
 // #[cfg(target_os = "windows")]
 // use {
