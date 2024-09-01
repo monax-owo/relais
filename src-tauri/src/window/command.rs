@@ -1,17 +1,10 @@
-use serde_json::Value;
-use std::sync::{
-  atomic::{AtomicBool, Ordering},
-  Arc, Mutex,
-};
-use tauri::{
-  AppHandle, Listener, Manager, PhysicalSize, State, WebviewUrl, WebviewWindow,
-  WebviewWindowBuilder,
-};
+use std::sync::{atomic::Ordering, Arc};
+use tauri::{AppHandle, Manager, State, WebviewUrl, WebviewWindow};
 use uuid::Uuid;
-use windows::Win32::UI::WindowsAndMessaging::{SetWindowLongPtrW, GWL_EXSTYLE, WS_EX_LAYERED};
+
+use crate::SourceAppState;
 
 use super::util;
-use crate::{SourceAppState, SourceWindowData};
 
 #[tauri::command]
 #[specta::specta]
@@ -35,176 +28,11 @@ pub async fn open_window(
     format!("https://{}", url)
   };
   let parse_url = url::Url::parse(&url).map_err(|_| ())?;
-
-  // create window
   let title = title.unwrap_or_default();
   let label =
     label.unwrap_or(util::WINDOW_LABEL_PREFIX.to_string() + Uuid::new_v4().to_string().as_str());
-  let window = WebviewWindowBuilder::new(&app, &label, WebviewUrl::External(parse_url))
-    .decorations(false)
-    .initialization_script(include_str!("./init.js"))
-    // .maximizable(false)
-    .min_inner_size(util::WINDOW_MIN_INNER_SIZE.0, util::WINDOW_MIN_INNER_SIZE.1)
-    // .minimizable(true)
-    .title(&title)
-    .transparent(true)
-    .build()
-    .map_err(|_| ())?;
 
-  let ctrl_window = WebviewWindowBuilder::new(
-    &app,
-    util::to_ctrl_window_label(&*label),
-    WebviewUrl::App("/ctrl".into()),
-  )
-  // .parent(&window)
-  // .unwrap()
-  .decorations(false)
-  // .maximizable(false)
-  // .minimizable(false)
-  .resizable(false)
-  // .skip_taskbar(true)
-  .title("ctrl")
-  .transparent(true)
-  .build()
-  .map_err(|_| ())?;
-
-  dbg!(window.label());
-  dbg!(ctrl_window.label());
-
-  // windows crate 0.39.0
-  // set child window
-  // #[cfg(target_os = "windows")]
-  // {
-  //   use windows::Win32::UI::WindowsAndMessaging::SetParent;
-
-  //   let handle_window = window.hwnd().map_err(|_| ())?;
-  //   let handle_ctrl_window = window.hwnd().map_err(|_| ())?;
-
-  let window_data = SourceWindowData {
-    title,
-    label: label.clone(),
-    pin: Arc::from(AtomicBool::from(false)),
-    zoom: Arc::from(Mutex::from(1.0)),
-  };
-
-  state.add_window(window_data).map_err(|_| ())?;
-  state.sync_windows(&app);
-
-  window
-    .set_position(util::ctrl_pos(
-      ctrl_window.outer_position().map_err(|_| ())?,
-    ))
-    .map_err(|_| ())?;
-
-  // ctrl_window.hide().map_err(|_| ())?;
-
-  {
-    let arc = Arc::new((window, ctrl_window));
-    let (ref _window, ref ctrl_window) = *Arc::clone(&arc);
-    let window_hwnd = arc.0.hwnd().map_err(|_| ())?;
-
-    unsafe {
-      SetWindowLongPtrW(window_hwnd, GWL_EXSTYLE, WS_EX_LAYERED.0 as isize);
-    }
-
-    // AppStateのoverlayが無効のときのみctrlを表示+有効のときはwindowを半透明にする
-    // if window closing, when remove if from window list
-
-    // window.on_window_event({
-    //   let arc = arc.clone();
-    //   let app = app.clone();
-    //   move |e| match *e {
-    //     WindowEvent::CloseRequested { .. } => close(&app, &arc).unwrap(),
-    //     WindowEvent::Focused(state) => {
-    //       if state {
-    //         arc.1.show().unwrap();
-
-    //         arc
-    //           .0
-    //           .set_position(ctrl_pos(arc.1.outer_position().unwrap()))
-    //           .unwrap();
-    //       } else if !arc.1.is_focused().unwrap() {
-    //         arc.1.hide().unwrap();
-    //       }
-    //     }
-    //     WindowEvent::Resized(_) => {
-    //       arc
-    //         .1
-    //         .set_position(window_pos(arc.0.outer_position().unwrap()))
-    //         .unwrap();
-    //     }
-    //     _ => (),
-    //   }
-    // });
-
-    // ctrl_window.on_window_event({
-    //   let arc = arc.clone();
-    //   let app = app.clone();
-    //   move |e| match *e {
-    //     WindowEvent::Focused(state) => {
-    //       if state
-    //         && !app
-    //           .state::<SourceAppState>()
-    //           .overlay
-    //           .load(Ordering::Acquire)
-    //       {
-    //         if arc.0.is_minimized().unwrap() {
-    //           arc.0.unminimize().unwrap();
-    //         }
-    //         arc
-    //           .0
-    //           .set_position(ctrl_pos(arc.1.outer_position().unwrap()))
-    //           .unwrap();
-    //       } else if !arc.0.is_focused().unwrap() && !arc.1.is_focused().unwrap() {
-    //         arc.1.hide().unwrap();
-    //       }
-    //     }
-    //     // arc.0.start_dragging()
-    //     WindowEvent::Moved(pos) => {
-    //       arc.0.set_position(ctrl_pos(pos)).unwrap();
-    //     }
-    //     _ => (),
-    //   }
-    // });
-
-    // commandに切り分けたほうが良さそう<-commandに分けないと動作がおかしい
-    // 実装し直す<-commandにするだけで良さそう
-    ctrl_window.listen("ctrl", {
-      let arc = arc.clone();
-      let app = app.clone();
-      move |e| {
-        let payload = serde_json::from_str::<Value>(e.payload()).unwrap();
-        match payload {
-          Value::Null => todo!(),
-          Value::Bool(_) => todo!(),
-          Value::Number(_) => todo!(),
-          Value::String(v) => match v.as_str() {
-            "close" => util::close(&app, &arc).unwrap(),
-            // "transparent" => toggle_transparent(&app).unwrap(),
-            "transparent" => {
-              util::toggle_transparent(&app, &arc.0, &arc.1, 128).unwrap();
-            }
-            "zoomout" => util::set_zoom(&app, &arc.0, -0.1).unwrap(),
-            "zoomin" => util::set_zoom(&app, &arc.0, 0.1).unwrap(),
-            _ => println!("did not match: {}", v),
-          },
-          Value::Array(_) => todo!(),
-          Value::Object(_) => todo!(),
-        }
-      }
-    });
-
-    (|| -> anyhow::Result<()> {
-      let diff_x = ctrl_window.outer_size()?.width - ctrl_window.inner_size()?.width;
-      let diff_y = ctrl_window.outer_size()?.height - ctrl_window.inner_size()?.height;
-      ctrl_window.set_size(PhysicalSize::new(
-        diff_x + util::CTRL_SIZE.0,
-        diff_y + util::CTRL_SIZE.1,
-      ))?;
-      Ok(())
-    })()
-    .map_err(|_| ())?;
-  }
+  util::open_window(&app, state, WebviewUrl::External(parse_url), title, label).unwrap();
 
   Ok(())
 }
