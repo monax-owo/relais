@@ -14,3 +14,8 @@
 - Svelte kit
 - Vite
 - Sass(Scss)
+
+|      |                            |
+| ---- | -------------------------- |
+| view | windowとctrlのセットのこと |
+|      |                            |

@@ -23,7 +23,7 @@ pub const WINDOW_MIN_INNER_SIZE: (f64, f64) = (400.0, 400.0);
 pub const WINDOW_LABEL_PREFIX: &str = "window_";
 pub const CTRL_LABEL_PREFIX: &str = "ctrl_";
 
-pub fn window_create(
+pub fn view_create(
   app: &AppHandle,
   state: State<'_, SourceAppState>,
   url: WebviewUrl,
@@ -189,27 +189,6 @@ pub fn window_create(
   Ok(())
 }
 
-pub fn window_hide(window: &WebviewWindow) -> anyhow::Result<()> {
-  window.hide()?;
-  // window.set_always_on_top(false)?;
-  Ok(())
-}
-
-pub fn mini(window: &WebviewWindow) -> anyhow::Result<()> {
-  window.minimize()?;
-  Ok(())
-}
-
-pub fn close(app: &AppHandle, arc: &Arc<(WebviewWindow, WebviewWindow)>) -> anyhow::Result<()> {
-  let state = app.state::<SourceAppState>();
-  let label = arc.0.label();
-  arc.1.close().unwrap();
-  arc.0.close().unwrap();
-  state.remove_window(label)?;
-  state.sync_windows(app);
-  Ok(())
-}
-
 pub fn toggle_transparent(
   app: &AppHandle,
   window: &WebviewWindow,
@@ -292,7 +271,17 @@ pub fn to_window_label<'a, T: Into<&'a str>>(label: T) -> String {
   label.into().replacen(CTRL_LABEL_PREFIX, "", 1)
 }
 
-pub fn window_close(app: AppHandle, label: String) -> Result<(), ()> {
+pub fn ctrl_pos(pos: PhysicalPosition<i32>) -> PhysicalPosition<i32> {
+  const OFFSET: (i32, i32) = (40, 0);
+  PhysicalPosition::new(pos.x + OFFSET.0, pos.y + OFFSET.1)
+}
+
+pub fn window_pos(pos: PhysicalPosition<i32>) -> PhysicalPosition<i32> {
+  const OFFSET: (i32, i32) = (40, 0);
+  PhysicalPosition::new(pos.x - OFFSET.0, pos.y - OFFSET.1)
+}
+
+pub fn view_close(app: AppHandle, label: String) -> Result<(), ()> {
   let Some(window) = app.get_webview_window(&label) else {
     return Err(());
   };
@@ -304,19 +293,31 @@ pub fn window_close(app: AppHandle, label: String) -> Result<(), ()> {
   Ok(())
 }
 
-pub fn ctrl_pos(pos: PhysicalPosition<i32>) -> PhysicalPosition<i32> {
-  const OFFSET: (i32, i32) = (40, 0);
-  PhysicalPosition::new(pos.x + OFFSET.0, pos.y + OFFSET.1)
-}
-
-pub fn window_pos(pos: PhysicalPosition<i32>) -> PhysicalPosition<i32> {
-  const OFFSET: (i32, i32) = (40, 0);
-  PhysicalPosition::new(pos.x - OFFSET.0, pos.y - OFFSET.1)
+pub fn close(app: &AppHandle, arc: &Arc<(WebviewWindow, WebviewWindow)>) -> anyhow::Result<()> {
+  let state = app.state::<SourceAppState>();
+  let label = arc.0.label();
+  arc.1.close().unwrap();
+  arc.0.close().unwrap();
+  state.remove_window(label)?;
+  state.sync_windows(app);
+  Ok(())
 }
 
 pub fn window_focus(window: &WebviewWindow) -> anyhow::Result<()> {
   window.show()?;
   window.set_focus()?;
   // window.set_always_on_top(true)?;
+  Ok(())
+}
+
+pub fn window_hide(window: &WebviewWindow) -> anyhow::Result<()> {
+  window.hide()?;
+  // window.set_always_on_top(false)?;
+  Ok(())
+}
+
+pub fn view_minimize(window: &WebviewWindow) -> anyhow::Result<()> {
+  //TODO: ctrlからwindowを取得してminimizeする
+  window.minimize()?;
   Ok(())
 }

@@ -8,7 +8,7 @@ use super::util;
 
 #[tauri::command]
 #[specta::specta]
-pub async fn window_create(
+pub async fn view_create(
   app: AppHandle,
   state: State<'_, SourceAppState>,
   url: String,
@@ -25,7 +25,7 @@ pub async fn window_create(
   let label =
     label.unwrap_or(util::WINDOW_LABEL_PREFIX.to_string() + Uuid::new_v4().to_string().as_str());
 
-  util::window_create(&app, state, WebviewUrl::External(parse_url), title, label).unwrap();
+  util::view_create(&app, state, WebviewUrl::External(parse_url), title, label).unwrap();
 
   Ok(())
 }
@@ -61,8 +61,8 @@ pub fn toggle_pin(
 
 #[tauri::command]
 #[specta::specta]
-pub fn window_close(app: AppHandle, label: String) -> Result<(), ()> {
-  util::window_close(app, label.to_string()).map_err(|_| ())?;
+pub fn view_close(app: AppHandle, label: String) -> Result<(), ()> {
+  util::view_close(app, label.to_string()).map_err(|_| ())?;
   Ok(())
 }
 
@@ -82,7 +82,7 @@ pub fn window_hide(window: WebviewWindow) -> Result<(), String> {
 
 #[tauri::command]
 #[specta::specta]
-pub fn mini(window: WebviewWindow) -> Result<(), String> {
-  util::mini(&window).map_err(|e| e.to_string())?;
+pub fn view_minimize(window: WebviewWindow) -> Result<(), String> {
+  util::view_minimize(&window).map_err(|e| e.to_string())?;
   Ok(())
 }

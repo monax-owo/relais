@@ -120,11 +120,11 @@ pub fn run() {
       exit,
       window_focus,
       window_hide,
-      window_create,
-      window_close,
+      view_create,
+      view_close,
       get_transparent,
       toggle_pin,
-      mini
+      view_minimize
     ])
     .typ::<WindowData>();
   #[cfg(debug_assertions)]
