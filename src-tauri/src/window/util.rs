@@ -43,21 +43,18 @@ pub fn view_create(
     .zoom_hotkeys_enabled(true)
     .build()?;
 
-  let ctrl_window = WebviewWindowBuilder::new(
-    app,
-    to_ctrl_window_label(&*label),
-    WebviewUrl::App("/ctrl".into()),
-  )
-  // .parent(&window)
-  // .unwrap()
-  .decorations(false)
-  .maximizable(false)
-  .minimizable(false)
-  .resizable(false)
-  .skip_taskbar(skip_taskbar)
-  .title("ctrl")
-  .transparent(true)
-  .build()?;
+  let ctrl_window =
+    WebviewWindowBuilder::new(app, to_ctrl_label(&*label), WebviewUrl::App("/ctrl".into()))
+      // .parent(&window)
+      // .unwrap()
+      .decorations(false)
+      .maximizable(false)
+      .minimizable(false)
+      .resizable(false)
+      .skip_taskbar(skip_taskbar)
+      .title("ctrl")
+      .transparent(true)
+      .build()?;
 
   dbg!(window.label());
   dbg!(ctrl_window.label());
@@ -263,7 +260,7 @@ pub fn set_zoom(app: &AppHandle, window: &WebviewWindow, diff: f64) -> anyhow::R
   Ok(())
 }
 
-pub fn to_ctrl_window_label<'a, T: Into<&'a str>>(label: T) -> String {
+pub fn to_ctrl_label<'a, T: Into<&'a str>>(label: T) -> String {
   CTRL_LABEL_PREFIX.to_string() + label.into()
 }
 
@@ -279,6 +276,16 @@ pub fn ctrl_pos(pos: PhysicalPosition<i32>) -> PhysicalPosition<i32> {
 pub fn window_pos(pos: PhysicalPosition<i32>) -> PhysicalPosition<i32> {
   const OFFSET: (i32, i32) = (40, 0);
   PhysicalPosition::new(pos.x - OFFSET.0, pos.y - OFFSET.1)
+}
+
+pub fn get_ctrl(window: &WebviewWindow) -> anyhow::Result<()> {
+  // TODO
+  Ok(())
+}
+
+pub fn get_window(window: &WebviewWindow) -> anyhow::Result<()> {
+  // TODO
+  Ok(())
 }
 
 pub fn view_close(app: AppHandle, label: String) -> Result<(), ()> {

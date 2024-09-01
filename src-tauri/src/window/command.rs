@@ -61,6 +61,20 @@ pub fn toggle_pin(
 
 #[tauri::command]
 #[specta::specta]
+pub fn view_zoomin(window: WebviewWindow) -> Result<(), String> {
+  // TODO
+  Ok(())
+}
+
+#[tauri::command]
+#[specta::specta]
+pub fn view_zoomout(window: WebviewWindow) -> Result<(), String> {
+  // TODO
+  Ok(())
+}
+
+#[tauri::command]
+#[specta::specta]
 pub fn view_close(app: AppHandle, label: String) -> Result<(), ()> {
   util::view_close(app, label.to_string()).map_err(|_| ())?;
   Ok(())
