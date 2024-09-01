@@ -15,12 +15,12 @@ use windows::Win32::UI::WindowsAndMessaging::{SetWindowLongPtrW, GWL_EXSTYLE, WS
 
 use crate::{SourceAppState, SourceWindowData};
 
-use super::util::*;
+use super::util;
 
 #[tauri::command]
 #[specta::specta]
 pub fn window_hide(window: WebviewWindow) -> Result<(), String> {
-  _window_hide(&window).map_err(|e| e.to_string())?;
+  util::window_hide(&window).map_err(|e| e.to_string())?;
   Ok(())
 }
 
@@ -43,12 +43,12 @@ pub async fn open_window(
   // create window
   let title = title.unwrap_or_default();
   let label =
-    label.unwrap_or(WINDOW_LABEL_PREFIX.to_string() + Uuid::new_v4().to_string().as_str());
+    label.unwrap_or(util::WINDOW_LABEL_PREFIX.to_string() + Uuid::new_v4().to_string().as_str());
   let window = WebviewWindowBuilder::new(&app, &label, WebviewUrl::External(parse_url))
     .decorations(false)
     .initialization_script(include_str!("./init.js"))
     // .maximizable(false)
-    .min_inner_size(MIN_INNER_SIZE.0, MIN_INNER_SIZE.1)
+    .min_inner_size(util::MIN_INNER_SIZE.0, util::MIN_INNER_SIZE.1)
     // .minimizable(true)
     .title(&title)
     .transparent(true)
@@ -57,7 +57,7 @@ pub async fn open_window(
 
   let ctrl_window = WebviewWindowBuilder::new(
     &app,
-    to_ctrl_window_label(&*label),
+    util::to_ctrl_window_label(&*label),
     WebviewUrl::App("/ctrl".into()),
   )
   // .parent(&window)
@@ -95,7 +95,9 @@ pub async fn open_window(
   state.sync_windows(&app);
 
   window
-    .set_position(ctrl_pos(ctrl_window.outer_position().map_err(|_| ())?))
+    .set_position(util::ctrl_pos(
+      ctrl_window.outer_position().map_err(|_| ())?,
+    ))
     .map_err(|_| ())?;
 
   // ctrl_window.hide().map_err(|_| ())?;
@@ -181,13 +183,13 @@ pub async fn open_window(
           Value::Bool(_) => todo!(),
           Value::Number(_) => todo!(),
           Value::String(v) => match v.as_str() {
-            "close" => close(&app, &arc).unwrap(),
+            "close" => util::close(&app, &arc).unwrap(),
             // "transparent" => toggle_transparent(&app).unwrap(),
             "transparent" => {
-              toggle_transparent(&app, &arc.0, &arc.1, 128).unwrap();
+              util::toggle_transparent(&app, &arc.0, &arc.1, 128).unwrap();
             }
-            "zoomout" => set_zoom(&app, &arc.0, -0.1).unwrap(),
-            "zoomin" => set_zoom(&app, &arc.0, 0.1).unwrap(),
+            "zoomout" => util::set_zoom(&app, &arc.0, -0.1).unwrap(),
+            "zoomin" => util::set_zoom(&app, &arc.0, 0.1).unwrap(),
             _ => println!("did not match: {}", v),
           },
           Value::Array(_) => todo!(),
@@ -200,8 +202,8 @@ pub async fn open_window(
       let diff_x = ctrl_window.outer_size()?.width - ctrl_window.inner_size()?.width;
       let diff_y = ctrl_window.outer_size()?.height - ctrl_window.inner_size()?.height;
       ctrl_window.set_size(PhysicalSize::new(
-        diff_x + CTRL_WINDOW_SIZE.0,
-        diff_y + CTRL_WINDOW_SIZE.1,
+        diff_x + util::CTRL_WINDOW_SIZE.0,
+        diff_y + util::CTRL_WINDOW_SIZE.1,
       ))?;
       Ok(())
     })()
@@ -214,7 +216,7 @@ pub async fn open_window(
 #[tauri::command]
 #[specta::specta]
 pub fn mini(window: WebviewWindow) -> Result<(), String> {
-  _mini(&window).map_err(|e| e.to_string())?;
+  util::mini(&window).map_err(|e| e.to_string())?;
   Ok(())
 }
 
@@ -231,15 +233,15 @@ pub fn toggle_pin(
   window: WebviewWindow,
   state: State<'_, SourceAppState>,
 ) -> Result<bool, String> {
-  let Some(window_data) = state.get_window_data(&to_window_label(window.label())) else {
+  let Some(window_data) = state.get_window_data(&util::to_window_label(window.label())) else {
     return Err("failed to get window data".to_string());
   };
   let atomic = Arc::clone(&window_data.pin);
   let pinned = atomic.load(Ordering::Acquire);
   dbg!(pinned);
-  set_pin(
+  util::set_pin(
     &app
-      .get_webview_window(&to_window_label(window.label()))
+      .get_webview_window(&util::to_window_label(window.label()))
       .unwrap(),
     !pinned,
   )?;
@@ -250,7 +252,7 @@ pub fn toggle_pin(
 #[tauri::command]
 #[specta::specta]
 pub fn close_window(app: AppHandle, label: String) -> Result<(), ()> {
-  _close_window(app, label.to_string()).map_err(|_| ())?;
+  util::close_window(app, label.to_string()).map_err(|_| ())?;
 
   Ok(())
 }

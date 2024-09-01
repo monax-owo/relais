@@ -19,13 +19,13 @@ pub const WINDOW_LABEL_PREFIX: &str = "window_";
 pub const CTRL_LABEL_PREFIX: &str = "ctrl_";
 pub const MIN_INNER_SIZE: (f64, f64) = (400.0, 400.0);
 
-pub fn _window_hide(window: &WebviewWindow) -> anyhow::Result<()> {
+pub fn window_hide(window: &WebviewWindow) -> anyhow::Result<()> {
   window.hide()?;
   // window.set_always_on_top(false)?;
   Ok(())
 }
 
-pub fn _mini(window: &WebviewWindow) -> anyhow::Result<()> {
+pub fn mini(window: &WebviewWindow) -> anyhow::Result<()> {
   window.minimize()?;
   Ok(())
 }
@@ -130,7 +130,7 @@ pub fn to_window_label<'a, T: Into<&'a str>>(label: T) -> String {
   label.into().replacen(CTRL_LABEL_PREFIX, "", 1)
 }
 
-pub fn _close_window(app: AppHandle, label: String) -> Result<(), ()> {
+pub fn close_window(app: AppHandle, label: String) -> Result<(), ()> {
   let Some(window) = app.get_webview_window(&label) else {
     return Err(());
   };
