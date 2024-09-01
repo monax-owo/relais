@@ -30,6 +30,8 @@ pub fn open_window(
   title: String,
   label: String,
 ) -> anyhow::Result<()> {
+  let skip_taskbar = cfg!(not(debug_assertions));
+
   let window = WebviewWindowBuilder::new(app, &label, url)
     .decorations(false)
     .initialization_script(include_str!("./init.js"))
@@ -52,7 +54,7 @@ pub fn open_window(
   .maximizable(false)
   .minimizable(false)
   .resizable(false)
-  // .skip_taskbar(true)
+  .skip_taskbar(skip_taskbar)
   .title("ctrl")
   .transparent(true)
   .build()?;
