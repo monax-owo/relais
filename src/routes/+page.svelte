@@ -1,14 +1,13 @@
 <script lang="ts">
   import { commands, type WindowData } from "$lib/generated/specta/bindings";
-  // import type { PageData } from './$types';
-  // export let data: PageData;
   import { Template } from "$lib/imports";
   import { listen } from "@tauri-apps/api/event";
+
   // let stroke: number = 2;
   let url: string;
   let windows: WindowData[] = [];
   let valid = true;
-  // todo label
+
   const handleOpen = async () => {
     try {
       new URL((url.startsWith("http") ? "" : "https://") + url);
@@ -19,11 +18,13 @@
     }
     await commands.viewCreate(url, null, null);
   };
+
   onMount(async () => {
     listen("update_windows", (e) => {
       windows = e.payload as WindowData[];
     });
   });
+
   ifDev(() => {
     ifThen(windows.length < 1, () => {
       url = "www.twitch.tv/stylishnoob4";

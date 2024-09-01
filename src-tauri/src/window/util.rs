@@ -208,11 +208,13 @@ pub fn toggle_transparent(
     state.overlay.store(true, Ordering::Release);
   };
   // unsafe {}
+
   Ok(!condition)
 }
 
 pub fn set_transparent(hwnd: HWND, alpha: u8) -> anyhow::Result<()> {
   unsafe { SetLayeredWindowAttributes(hwnd, COLORREF(0), alpha, LWA_ALPHA)? };
+
   Ok(())
 }
 
@@ -277,16 +279,12 @@ pub fn window_pos(pos: PhysicalPosition<i32>) -> PhysicalPosition<i32> {
 }
 
 pub fn to_ctrl(window: &WebviewWindow) -> anyhow::Result<WebviewWindow> {
-  // TODO
-
   window
     .get_webview_window(&to_ctrl_label(window.label()))
     .context("window is not found")
 }
 
 pub fn to_window(ctrl: &WebviewWindow) -> anyhow::Result<WebviewWindow> {
-  // TODO
-
   ctrl
     .get_webview_window(&to_window_label(ctrl.label()))
     .context("ctrl is not found")
@@ -311,6 +309,7 @@ pub fn close(app: &AppHandle, arc: &Arc<(WebviewWindow, WebviewWindow)>) -> anyh
   arc.0.close().unwrap();
   state.remove_window(label)?;
   state.sync_windows(app);
+
   Ok(())
 }
 
@@ -318,17 +317,20 @@ pub fn window_focus(window: &WebviewWindow) -> anyhow::Result<()> {
   window.show()?;
   window.set_focus()?;
   // window.set_always_on_top(true)?;
+
   Ok(())
 }
 
 pub fn window_hide(window: &WebviewWindow) -> anyhow::Result<()> {
   window.hide()?;
   // window.set_always_on_top(false)?;
+
   Ok(())
 }
 
 pub fn view_minimize(window: &WebviewWindow) -> anyhow::Result<()> {
   //TODO: ctrlからwindowを取得してminimizeする
   window.minimize()?;
+
   Ok(())
 }
