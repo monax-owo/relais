@@ -29,8 +29,7 @@
   };
 
   const handleMini = async () => {
-    // await em("mini");
-    await commands.mini();
+    await commands.viewMinimize();
   };
   const handleClose = async () => {
     await em("close");
@@ -46,10 +45,17 @@
     });
   };
   const handleZoomIn = async () => {
-    await em("zoomin");
+    await commands.viewZoomin().then((v) => {
+      switch (v.status) {
+        case "ok":
+          return v.data;
+        case "error":
+          throw new Error("");
+      }
+    });
   };
   const handleZoomOut = async () => {
-    await em("zoomout");
+    await commands.viewZoomout();
   };
   const handleTransparent = async () => {
     await em("transparent");

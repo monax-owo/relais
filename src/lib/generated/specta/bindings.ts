@@ -13,38 +13,6 @@ async exit() : Promise<Result<null, string>> {
     else return { status: "error", error: e  as any };
 }
 },
-async windowFocus() : Promise<Result<null, string>> {
-    try {
-    return { status: "ok", data: await TAURI_INVOKE("window_focus") };
-} catch (e) {
-    if(e instanceof Error) throw e;
-    else return { status: "error", error: e  as any };
-}
-},
-async windowHide() : Promise<Result<null, string>> {
-    try {
-    return { status: "ok", data: await TAURI_INVOKE("window_hide") };
-} catch (e) {
-    if(e instanceof Error) throw e;
-    else return { status: "error", error: e  as any };
-}
-},
-async openWindow(url: string, title: string | null, label: string | null) : Promise<Result<null, null>> {
-    try {
-    return { status: "ok", data: await TAURI_INVOKE("open_window", { url, title, label }) };
-} catch (e) {
-    if(e instanceof Error) throw e;
-    else return { status: "error", error: e  as any };
-}
-},
-async closeWindow(label: string) : Promise<Result<null, null>> {
-    try {
-    return { status: "ok", data: await TAURI_INVOKE("close_window", { label }) };
-} catch (e) {
-    if(e instanceof Error) throw e;
-    else return { status: "error", error: e  as any };
-}
-},
 async getTransparent() : Promise<Result<boolean, string>> {
     try {
     return { status: "ok", data: await TAURI_INVOKE("get_transparent") };
@@ -61,9 +29,57 @@ async togglePin() : Promise<Result<boolean, string>> {
     else return { status: "error", error: e  as any };
 }
 },
-async mini() : Promise<Result<null, string>> {
+async viewClose(label: string) : Promise<Result<null, null>> {
     try {
-    return { status: "ok", data: await TAURI_INVOKE("mini") };
+    return { status: "ok", data: await TAURI_INVOKE("view_close", { label }) };
+} catch (e) {
+    if(e instanceof Error) throw e;
+    else return { status: "error", error: e  as any };
+}
+},
+async viewCreate(url: string, title: string | null, label: string | null) : Promise<Result<null, null>> {
+    try {
+    return { status: "ok", data: await TAURI_INVOKE("view_create", { url, title, label }) };
+} catch (e) {
+    if(e instanceof Error) throw e;
+    else return { status: "error", error: e  as any };
+}
+},
+async viewMinimize() : Promise<Result<null, string>> {
+    try {
+    return { status: "ok", data: await TAURI_INVOKE("view_minimize") };
+} catch (e) {
+    if(e instanceof Error) throw e;
+    else return { status: "error", error: e  as any };
+}
+},
+async viewZoomin() : Promise<Result<null, string>> {
+    try {
+    return { status: "ok", data: await TAURI_INVOKE("view_zoomin") };
+} catch (e) {
+    if(e instanceof Error) throw e;
+    else return { status: "error", error: e  as any };
+}
+},
+async viewZoomout() : Promise<Result<null, string>> {
+    try {
+    return { status: "ok", data: await TAURI_INVOKE("view_zoomout") };
+} catch (e) {
+    if(e instanceof Error) throw e;
+    else return { status: "error", error: e  as any };
+}
+},
+async windowFocus() : Promise<Result<null, string>> {
+    try {
+    return { status: "ok", data: await TAURI_INVOKE("window_focus") };
+} catch (e) {
+    if(e instanceof Error) throw e;
+    else return { status: "error", error: e  as any };
+}
+},
+async windowHide() : Promise<Result<null, string>> {
+    try {
+    return { status: "ok", data: await TAURI_INVOKE("window_hide") };
 } catch (e) {
     if(e instanceof Error) throw e;
     else return { status: "error", error: e  as any };

@@ -4,7 +4,7 @@ use uuid::Uuid;
 
 use crate::SourceAppState;
 
-use super::util;
+use super::util::{self, set_zoom, to_window};
 
 #[tauri::command]
 #[specta::specta]
@@ -61,15 +61,17 @@ pub fn toggle_pin(
 
 #[tauri::command]
 #[specta::specta]
-pub fn view_zoomin(window: WebviewWindow) -> Result<(), String> {
+pub fn view_zoomin(app: AppHandle, ctrl: WebviewWindow) -> Result<(), String> {
   // TODO
+  set_zoom(&app, &to_window(&ctrl).map_err(|e| e.to_string())?, 0.1).map_err(|e| e.to_string())?;
   Ok(())
 }
 
 #[tauri::command]
 #[specta::specta]
-pub fn view_zoomout(window: WebviewWindow) -> Result<(), String> {
+pub fn view_zoomout(app: AppHandle, ctrl: WebviewWindow) -> Result<(), String> {
   // TODO
+  set_zoom(&app, &to_window(&ctrl).map_err(|e| e.to_string())?, -0.1).map_err(|e| e.to_string())?;
   Ok(())
 }
 

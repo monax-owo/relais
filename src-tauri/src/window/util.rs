@@ -1,4 +1,4 @@
-use anyhow::bail;
+use anyhow::{bail, Context};
 use serde_json::Value;
 use std::sync::{
   atomic::{AtomicBool, Ordering},
@@ -160,8 +160,6 @@ pub fn view_create(
             "transparent" => {
               toggle_transparent(&app, &arc.0, &arc.1, 128).unwrap();
             }
-            "zoomout" => set_zoom(&app, &arc.0, -0.1).unwrap(),
-            "zoomin" => set_zoom(&app, &arc.0, 0.1).unwrap(),
             _ => println!("did not match: {}", v),
           },
           Value::Array(_) => todo!(),
@@ -278,14 +276,20 @@ pub fn window_pos(pos: PhysicalPosition<i32>) -> PhysicalPosition<i32> {
   PhysicalPosition::new(pos.x - OFFSET.0, pos.y - OFFSET.1)
 }
 
-pub fn get_ctrl(window: &WebviewWindow) -> anyhow::Result<()> {
+pub fn to_ctrl(window: &WebviewWindow) -> anyhow::Result<WebviewWindow> {
   // TODO
-  Ok(())
+
+  window
+      .get_webview_window(&to_ctrl_label(window.label()))
+      .context("ctrl is not found")
 }
 
-pub fn get_window(window: &WebviewWindow) -> anyhow::Result<()> {
+pub fn to_window(ctrl: &WebviewWindow) -> anyhow::Result<WebviewWindow> {
   // TODO
-  Ok(())
+
+  ctrl
+      .get_webview_window(&to_window_label(ctrl.label()))
+      .context("ctrl is not found")
 }
 
 pub fn view_close(app: AppHandle, label: String) -> Result<(), ()> {

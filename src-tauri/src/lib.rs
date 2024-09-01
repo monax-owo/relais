@@ -118,13 +118,15 @@ pub fn run() {
   let specta = tauri_specta::Builder::new()
     .commands(collect_commands![
       exit,
-      window_focus,
-      window_hide,
-      view_create,
-      view_close,
       get_transparent,
       toggle_pin,
-      view_minimize
+      view_close,
+      view_create,
+      view_minimize,
+      view_zoomin,
+      view_zoomout,
+      window_focus,
+      window_hide,
     ])
     .typ::<WindowData>();
   #[cfg(debug_assertions)]

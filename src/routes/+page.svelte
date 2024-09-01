@@ -17,7 +17,7 @@
       valid = false;
       console.error(e);
     }
-    await commands.openWindow(url, null, null);
+    await commands.viewCreate(url, null, null);
   };
   onMount(async () => {
     listen("update_windows", (e) => {
