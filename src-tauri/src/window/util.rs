@@ -52,7 +52,7 @@ pub fn open_window(
   .maximizable(false)
   .minimizable(false)
   .resizable(false)
-  .skip_taskbar(true)
+  // .skip_taskbar(true)
   .title("ctrl")
   .transparent(true)
   .build()?;
@@ -272,15 +272,7 @@ pub fn set_zoom(app: &AppHandle, window: &WebviewWindow, diff: f64) -> anyhow::R
   let scale = *lock + diff;
   // TODO: 20%~500%
   if scale > 0.2 {
-    window.with_webview({
-      move |webview| {
-        #[cfg(windows)]
-        unsafe {
-          // see https://docs.rs/webview2-com/0.19.1/webview2_com/Microsoft/Web/WebView2/Win32/struct.ICoreWebView2Controller.html
-          webview.controller().SetZoomFactor(scale).unwrap();
-        }
-      }
-    })?;
+    window.set_zoom(scale)?;
 
     *lock += diff;
   } else {
