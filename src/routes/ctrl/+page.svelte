@@ -21,11 +21,12 @@
 
   const stroke = 2;
 
+  const appWindow = getCurrentWebviewWindow();
   let transparent = false;
   let pinned = false;
 
   const em = async (event: unknown) => {
-    await getCurrentWebviewWindow().emit("ctrl", event);
+    await appWindow.emit("ctrl", event);
   };
 
   const handleMini = async () => {
@@ -50,16 +51,27 @@
         case "ok":
           return v.data;
         case "error":
-          throw new Error("");
+          err(v.error);
       }
     });
   };
   const handleZoomOut = async () => {
-    await commands.viewZoomout();
+    await commands.viewZoomout().then((v) => {
+      switch (v.status) {
+        case "ok":
+          return v.data;
+        case "error":
+          err(v.error);
+      }
+    });
   };
   const handleTransparent = async () => {
     await em("transparent");
     // transparent = await getTransparent();
+  };
+
+  const err = (err: string) => {
+    appWindow.emitTo(appWindow.label.replace("ctrl_", ""), "err", { err });
   };
 </script>
 

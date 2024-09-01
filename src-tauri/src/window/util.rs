@@ -56,9 +56,6 @@ pub fn view_create(
       .transparent(true)
       .build()?;
 
-  dbg!(window.label());
-  dbg!(ctrl_window.label());
-
   //   let handle_window = window.hwnd().map_err(|_| ())?;
   //   let handle_ctrl_window = window.hwnd().map_err(|_| ())?;
 
@@ -76,12 +73,15 @@ pub fn view_create(
 
   {
     let arc = Arc::new((window, ctrl_window));
-    let (ref _window, ref ctrl_window) = *Arc::clone(&arc);
+    let (ref window, ref ctrl_window) = *Arc::clone(&arc);
     let window_hwnd = arc.0.hwnd()?;
 
     unsafe {
       SetWindowLongPtrW(window_hwnd, GWL_EXSTYLE, WS_EX_LAYERED.0 as isize);
     }
+
+    dbg!(&window.label());
+    dbg!(&ctrl_window.label());
 
     // AppStateのoverlayが無効のときのみctrlを表示+有効のときはwindowを半透明にする
     // if window closing, when remove if from window list
