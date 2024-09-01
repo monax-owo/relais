@@ -22,10 +22,10 @@ pub async fn open_window(
   title: Option<String>,
   label: Option<String>,
 ) -> Result<(), ()> {
-  let url = if url.starts_with("http") {
-    url
-  } else {
+  let url = if !url.starts_with("http") {
     format!("https://{}", url)
+  } else {
+    url
   };
   let parse_url = url::Url::parse(&url).map_err(|_| ())?;
   let title = title.unwrap_or_default();
