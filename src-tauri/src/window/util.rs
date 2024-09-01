@@ -23,7 +23,7 @@ pub const WINDOW_MIN_INNER_SIZE: (f64, f64) = (400.0, 400.0);
 pub const WINDOW_LABEL_PREFIX: &str = "window_";
 pub const CTRL_LABEL_PREFIX: &str = "ctrl_";
 
-pub fn open_window(
+pub fn window_create(
   app: &AppHandle,
   state: State<'_, SourceAppState>,
   url: WebviewUrl,
@@ -292,7 +292,7 @@ pub fn to_window_label<'a, T: Into<&'a str>>(label: T) -> String {
   label.into().replacen(CTRL_LABEL_PREFIX, "", 1)
 }
 
-pub fn close_window(app: AppHandle, label: String) -> Result<(), ()> {
+pub fn window_close(app: AppHandle, label: String) -> Result<(), ()> {
   let Some(window) = app.get_webview_window(&label) else {
     return Err(());
   };

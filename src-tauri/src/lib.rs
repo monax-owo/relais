@@ -120,8 +120,8 @@ pub fn run() {
       exit,
       window_focus,
       window_hide,
-      open_window,
-      close_window,
+      window_create,
+      window_close,
       get_transparent,
       toggle_pin,
       mini
