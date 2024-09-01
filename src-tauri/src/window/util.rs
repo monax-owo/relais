@@ -33,11 +33,12 @@ pub fn open_window(
   let window = WebviewWindowBuilder::new(app, &label, url)
     .decorations(false)
     .initialization_script(include_str!("./init.js"))
-    // .maximizable(false)
+    .maximizable(false)
     .min_inner_size(WINDOW_MIN_INNER_SIZE.0, WINDOW_MIN_INNER_SIZE.1)
-    // .minimizable(true)
+    .minimizable(true)
     .title(&title)
     .transparent(true)
+    .zoom_hotkeys_enabled(true)
     .build()?;
 
   let ctrl_window = WebviewWindowBuilder::new(
@@ -48,22 +49,16 @@ pub fn open_window(
   // .parent(&window)
   // .unwrap()
   .decorations(false)
-  // .maximizable(false)
-  // .minimizable(false)
+  .maximizable(false)
+  .minimizable(false)
   .resizable(false)
-  // .skip_taskbar(true)
+  .skip_taskbar(true)
   .title("ctrl")
   .transparent(true)
   .build()?;
 
   dbg!(window.label());
   dbg!(ctrl_window.label());
-
-  // windows crate 0.39.0
-  // set child window
-  // #[cfg(target_os = "windows")]
-  // {
-  //   use windows::Win32::UI::WindowsAndMessaging::SetParent;
 
   //   let handle_window = window.hwnd().map_err(|_| ())?;
   //   let handle_ctrl_window = window.hwnd().map_err(|_| ())?;
@@ -79,8 +74,6 @@ pub fn open_window(
   state.sync_windows(app);
 
   window.set_position(ctrl_pos(ctrl_window.outer_position()?))?;
-
-  // ctrl_window.hide().map_err(|_| ())?;
 
   {
     let arc = Arc::new((window, ctrl_window));
@@ -188,6 +181,9 @@ pub fn open_window(
       Ok(())
     })()?;
   }
+
+  // ctrl_window.hide()?;
+
   Ok(())
 }
 

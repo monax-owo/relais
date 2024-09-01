@@ -20,6 +20,9 @@
     "targets": ["msi", "nsis"]
   },
   "app": {
+    "trayIcon": {
+      "iconPath": "icons/icon.png"
+    },
     "windows": [
       {
         "label": "main",

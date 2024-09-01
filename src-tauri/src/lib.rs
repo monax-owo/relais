@@ -23,8 +23,8 @@ use tauri::{
 use tauri_specta::collect_commands;
 
 mod command;
-mod window;
 mod util;
+mod window;
 
 use command::*;
 use window::command::*;
