@@ -11,10 +11,10 @@ use windows::Win32::{
 
 use crate::SourceAppState;
 
-pub const CTRL_WINDOW_SIZE: (u32, u32) = (40, 320);
+pub const CTRL_SIZE: (u32, u32) = (40, 320);
+pub const WINDOW_MIN_INNER_SIZE: (f64, f64) = (400.0, 400.0);
 pub const WINDOW_LABEL_PREFIX: &str = "window_";
 pub const CTRL_LABEL_PREFIX: &str = "ctrl_";
-pub const MIN_INNER_SIZE: (f64, f64) = (400.0, 400.0);
 
 pub fn window_hide(window: &WebviewWindow) -> anyhow::Result<()> {
   window.hide()?;

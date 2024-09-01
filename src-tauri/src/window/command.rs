@@ -44,7 +44,7 @@ pub async fn open_window(
     .decorations(false)
     .initialization_script(include_str!("./init.js"))
     // .maximizable(false)
-    .min_inner_size(util::MIN_INNER_SIZE.0, util::MIN_INNER_SIZE.1)
+    .min_inner_size(util::WINDOW_MIN_INNER_SIZE.0, util::WINDOW_MIN_INNER_SIZE.1)
     // .minimizable(true)
     .title(&title)
     .transparent(true)
@@ -198,8 +198,8 @@ pub async fn open_window(
       let diff_x = ctrl_window.outer_size()?.width - ctrl_window.inner_size()?.width;
       let diff_y = ctrl_window.outer_size()?.height - ctrl_window.inner_size()?.height;
       ctrl_window.set_size(PhysicalSize::new(
-        diff_x + util::CTRL_WINDOW_SIZE.0,
-        diff_y + util::CTRL_WINDOW_SIZE.1,
+        diff_x + util::CTRL_SIZE.0,
+        diff_y + util::CTRL_SIZE.1,
       ))?;
       Ok(())
     })()

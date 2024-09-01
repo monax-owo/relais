@@ -24,9 +24,10 @@ use tauri_specta::collect_commands;
 
 mod command;
 mod window;
+mod util;
 
 use command::*;
-use window::{command::*, util};
+use window::command::*;
 
 // #[cfg(target_os = "windows")]
 // use {
@@ -211,7 +212,7 @@ pub fn run() {
         .tooltip("Relais")
         .on_tray_icon_event(move |_tray, e| {
           if let TrayIconEvent::Click { .. } = &e {
-            util::window_focus(&main_window).unwrap()
+            window::util::window_focus(&main_window).unwrap()
           }
         })
         .build(app)?;
