@@ -29,7 +29,8 @@
   };
 
   const handleMini = async () => {
-    await em("mini");
+    // await em("mini");
+    await commands.mini();
   };
   const handleClose = async () => {
     await em("close");

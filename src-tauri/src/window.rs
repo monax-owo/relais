@@ -86,7 +86,7 @@ pub async fn open_window(
   // .maximizable(false)
   // .minimizable(false)
   .resizable(false)
-  .skip_taskbar(true)
+  // .skip_taskbar(true)
   .title("ctrl")
   .transparent(true)
   .build()
@@ -118,7 +118,7 @@ pub async fn open_window(
     .set_position(ctrl_pos(ctrl_window.outer_position().map_err(|_| ())?))
     .map_err(|_| ())?;
 
-  ctrl_window.hide().map_err(|_| ())?;
+  // ctrl_window.hide().map_err(|_| ())?;
 
   {
     let arc = Arc::new((window, ctrl_window));
@@ -131,65 +131,66 @@ pub async fn open_window(
 
     // AppStateのoverlayが無効のときのみctrlを表示+有効のときはwindowを半透明にする
     // if window closing, when remove if from window list
-    window.on_window_event({
-      let arc = arc.clone();
-      let app = app.clone();
-      move |e| match *e {
-        WindowEvent::CloseRequested { .. } => close(&app, &arc).unwrap(),
-        WindowEvent::Focused(state) => {
-          if state {
-            arc.1.show().unwrap();
 
-            arc
-              .0
-              .set_position(ctrl_pos(arc.1.outer_position().unwrap()))
-              .unwrap();
-          } else if !arc.1.is_focused().unwrap() {
-            arc.1.hide().unwrap();
-          }
-        }
-        WindowEvent::Resized(_) => {
-          arc
-            .1
-            .set_position(window_pos(arc.0.outer_position().unwrap()))
-            .unwrap();
-        }
-        _ => (),
-      }
-    });
+    // window.on_window_event({
+    //   let arc = arc.clone();
+    //   let app = app.clone();
+    //   move |e| match *e {
+    //     WindowEvent::CloseRequested { .. } => close(&app, &arc).unwrap(),
+    //     WindowEvent::Focused(state) => {
+    //       if state {
+    //         arc.1.show().unwrap();
 
-    ctrl_window.on_window_event({
-      let arc = arc.clone();
-      let app = app.clone();
-      move |e| match *e {
-        WindowEvent::Focused(state) => {
-          if state
-            && !app
-              .state::<SourceAppState>()
-              .overlay
-              .load(Ordering::Acquire)
-          {
-            if arc.0.is_minimized().unwrap() {
-              arc.0.unminimize().unwrap();
-            }
-            arc
-              .0
-              .set_position(ctrl_pos(arc.1.outer_position().unwrap()))
-              .unwrap();
-          } else if !arc.0.is_focused().unwrap() && !arc.1.is_focused().unwrap() {
-            arc.1.hide().unwrap();
-          }
-        }
-        // arc.0.start_dragging()
-        WindowEvent::Moved(pos) => {
-          arc.0.set_position(ctrl_pos(pos)).unwrap();
-        }
-        _ => (),
-      }
-    });
+    //         arc
+    //           .0
+    //           .set_position(ctrl_pos(arc.1.outer_position().unwrap()))
+    //           .unwrap();
+    //       } else if !arc.1.is_focused().unwrap() {
+    //         arc.1.hide().unwrap();
+    //       }
+    //     }
+    //     WindowEvent::Resized(_) => {
+    //       arc
+    //         .1
+    //         .set_position(window_pos(arc.0.outer_position().unwrap()))
+    //         .unwrap();
+    //     }
+    //     _ => (),
+    //   }
+    // });
 
-    // commandに切り分けたほうが良さそう
-    // 実装し直す
+    // ctrl_window.on_window_event({
+    //   let arc = arc.clone();
+    //   let app = app.clone();
+    //   move |e| match *e {
+    //     WindowEvent::Focused(state) => {
+    //       if state
+    //         && !app
+    //           .state::<SourceAppState>()
+    //           .overlay
+    //           .load(Ordering::Acquire)
+    //       {
+    //         if arc.0.is_minimized().unwrap() {
+    //           arc.0.unminimize().unwrap();
+    //         }
+    //         arc
+    //           .0
+    //           .set_position(ctrl_pos(arc.1.outer_position().unwrap()))
+    //           .unwrap();
+    //       } else if !arc.0.is_focused().unwrap() && !arc.1.is_focused().unwrap() {
+    //         arc.1.hide().unwrap();
+    //       }
+    //     }
+    //     // arc.0.start_dragging()
+    //     WindowEvent::Moved(pos) => {
+    //       arc.0.set_position(ctrl_pos(pos)).unwrap();
+    //     }
+    //     _ => (),
+    //   }
+    // });
+
+    // commandに切り分けたほうが良さそう<-commandに分けないと動作がおかしい
+    // 実装し直す<-commandにするだけで良さそう
     ctrl_window.listen("ctrl", {
       let arc = arc.clone();
       let app = app.clone();
@@ -200,7 +201,6 @@ pub async fn open_window(
           Value::Bool(_) => todo!(),
           Value::Number(_) => todo!(),
           Value::String(v) => match v.as_str() {
-            "mini" => arc.1.minimize().unwrap(),
             "close" => close(&app, &arc).unwrap(),
             // "transparent" => toggle_transparent(&app).unwrap(),
             "transparent" => {
@@ -228,8 +228,20 @@ pub async fn open_window(
     .map_err(|_| ())?;
   }
 
-  app.get_webview_window("main").unwrap().hide().unwrap();
+  Ok(())
+}
+//
 
+//
+fn _mini(window: &WebviewWindow) -> anyhow::Result<()> {
+  window.minimize()?;
+  Ok(())
+}
+
+#[tauri::command]
+#[specta::specta]
+pub fn mini(window: WebviewWindow) -> Result<(), String> {
+  _mini(&window).map_err(|e| e.to_string())?;
   Ok(())
 }
 //

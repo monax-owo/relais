@@ -123,7 +123,8 @@ pub fn run() {
       open_window,
       close_window,
       get_transparent,
-      toggle_pin
+      toggle_pin,
+      mini
     ])
     .typ::<WindowData>();
   #[cfg(debug_assertions)]
