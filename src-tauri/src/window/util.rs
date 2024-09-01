@@ -1,8 +1,5 @@
-use std::sync::{atomic::Ordering, Arc};
-
 use anyhow::bail;
-// use serde::{Deserialize, Serialize};
-// use specta::Type;
+use std::sync::{atomic::Ordering, Arc};
 use tauri::{AppHandle, Manager, PhysicalPosition, WebviewWindow};
 use windows::Win32::{
   Foundation::{COLORREF, HWND},

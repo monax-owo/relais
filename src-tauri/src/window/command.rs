@@ -1,11 +1,8 @@
+use serde_json::Value;
 use std::sync::{
   atomic::{AtomicBool, Ordering},
   Arc, Mutex,
 };
-
-use serde_json::Value;
-// use serde::{Deserialize, Serialize};
-// use specta::Type;
 use tauri::{
   AppHandle, Listener, Manager, PhysicalSize, State, WebviewUrl, WebviewWindow,
   WebviewWindowBuilder,
@@ -13,9 +10,8 @@ use tauri::{
 use uuid::Uuid;
 use windows::Win32::UI::WindowsAndMessaging::{SetWindowLongPtrW, GWL_EXSTYLE, WS_EX_LAYERED};
 
-use crate::{SourceAppState, SourceWindowData};
-
 use super::util;
+use crate::{SourceAppState, SourceWindowData};
 
 #[tauri::command]
 #[specta::specta]
