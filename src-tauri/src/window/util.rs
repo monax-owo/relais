@@ -144,7 +144,14 @@ pub fn ctrl_pos(pos: PhysicalPosition<i32>) -> PhysicalPosition<i32> {
   PhysicalPosition::new(pos.x + OFFSET.0, pos.y + OFFSET.1)
 }
 
-pub fn _window_pos(pos: PhysicalPosition<i32>) -> PhysicalPosition<i32> {
+pub fn window_pos(pos: PhysicalPosition<i32>) -> PhysicalPosition<i32> {
   const OFFSET: (i32, i32) = (40, 0);
   PhysicalPosition::new(pos.x - OFFSET.0, pos.y - OFFSET.1)
+}
+
+pub fn window_focus(window: &WebviewWindow) -> anyhow::Result<()> {
+  window.show()?;
+  window.set_focus()?;
+  // window.set_always_on_top(true)?;
+  Ok(())
 }

@@ -252,3 +252,10 @@ pub fn close_window(app: AppHandle, label: String) -> Result<(), ()> {
 
   Ok(())
 }
+
+#[tauri::command]
+#[specta::specta]
+pub fn window_focus(_app: AppHandle, window: WebviewWindow) -> Result<(), String> {
+  util::window_focus(&window).map_err(|e| e.to_string())?;
+  Ok(())
+}

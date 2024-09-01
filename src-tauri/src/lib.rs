@@ -26,7 +26,7 @@ mod command;
 mod window;
 
 use command::*;
-use window::command::*;
+use window::{command::*, util};
 
 // #[cfg(target_os = "windows")]
 // use {
@@ -211,7 +211,7 @@ pub fn run() {
         .tooltip("Relais")
         .on_tray_icon_event(move |_tray, e| {
           if let TrayIconEvent::Click { .. } = &e {
-            _window_focus(&main_window).unwrap()
+            util::window_focus(&main_window).unwrap()
           }
         })
         .build(app)?;
