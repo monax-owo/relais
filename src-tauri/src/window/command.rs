@@ -2,7 +2,7 @@ use std::sync::{atomic::Ordering, Arc};
 use tauri::{AppHandle, Manager, State, WebviewUrl, WebviewWindow};
 use uuid::Uuid;
 
-use crate::SourceAppState;
+use crate::{util::ErrToString, SourceAppState};
 
 use super::util::{self, set_zoom, to_window};
 
@@ -14,13 +14,13 @@ pub async fn view_create(
   url: String,
   title: Option<String>,
   label: Option<String>,
-) -> Result<(), ()> {
+) -> Result<(), String> {
   let url = if !url.starts_with("http") {
     format!("https://{}", url)
   } else {
     url
   };
-  let parse_url = url::Url::parse(&url).map_err(|_| ())?;
+  let parse_url = url::Url::parse(&url).err_to_string()?;
   let title = title.unwrap_or_default();
   let label =
     label.unwrap_or(util::WINDOW_LABEL_PREFIX.to_string() + Uuid::new_v4().to_string().as_str());
@@ -62,7 +62,7 @@ pub fn toggle_pin(
 #[tauri::command]
 #[specta::specta]
 pub fn view_zoomin(app: AppHandle, ctrl: WebviewWindow) -> Result<(), String> {
-  set_zoom(&app, &to_window(&ctrl).map_err(|e| e.to_string())?, 0.1).map_err(|e| e.to_string())?;
+  set_zoom(&app, &to_window(&ctrl).err_to_string()?, 0.1).err_to_string()?;
 
   Ok(())
 }
@@ -70,15 +70,15 @@ pub fn view_zoomin(app: AppHandle, ctrl: WebviewWindow) -> Result<(), String> {
 #[tauri::command]
 #[specta::specta]
 pub fn view_zoomout(app: AppHandle, ctrl: WebviewWindow) -> Result<(), String> {
-  set_zoom(&app, &to_window(&ctrl).map_err(|e| e.to_string())?, -0.1).map_err(|e| e.to_string())?;
+  set_zoom(&app, &to_window(&ctrl).err_to_string()?, -0.1).err_to_string()?;
 
   Ok(())
 }
 
 #[tauri::command]
 #[specta::specta]
-pub fn view_close(app: AppHandle, label: String) -> Result<(), ()> {
-  util::view_close(app, label.to_string()).map_err(|_| ())?;
+pub fn view_close(app: AppHandle, label: String) -> Result<(), String> {
+  util::view_close(app, label.to_string()).err_to_string()?;
 
   Ok(())
 }
@@ -86,7 +86,7 @@ pub fn view_close(app: AppHandle, label: String) -> Result<(), ()> {
 #[tauri::command]
 #[specta::specta]
 pub fn window_focus(_app: AppHandle, window: WebviewWindow) -> Result<(), String> {
-  util::window_focus(&window).map_err(|e| e.to_string())?;
+  util::window_focus(&window).err_to_string()?;
 
   Ok(())
 }
@@ -94,7 +94,7 @@ pub fn window_focus(_app: AppHandle, window: WebviewWindow) -> Result<(), String
 #[tauri::command]
 #[specta::specta]
 pub fn window_hide(window: WebviewWindow) -> Result<(), String> {
-  util::window_hide(&window).map_err(|e| e.to_string())?;
+  util::window_hide(&window).err_to_string()?;
 
   Ok(())
 }
@@ -102,8 +102,7 @@ pub fn window_hide(window: WebviewWindow) -> Result<(), String> {
 #[tauri::command]
 #[specta::specta]
 pub fn view_minimize(ctrl: WebviewWindow) -> Result<(), String> {
-  util::window_minimize(&to_window(&ctrl).map_err(|e| e.to_string())?)
-    .map_err(|e| e.to_string())?;
+  util::window_minimize(&to_window(&ctrl).err_to_string()?).err_to_string()?;
 
   Ok(())
 }
