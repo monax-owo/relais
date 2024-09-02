@@ -143,6 +143,38 @@ pub fn view_create(
     //   }
     // });
 
+    // window.on_window_event(|e| match e {
+    //   WindowEvent::Resized(_) => (),
+    //   WindowEvent::Moved(_) => (),
+    //   WindowEvent::CloseRequested { api, .. } => (),
+    //   WindowEvent::Destroyed => (),
+    //   WindowEvent::Focused(_) => (),
+    //   WindowEvent::ScaleFactorChanged {
+    //     scale_factor,
+    //     new_inner_size,
+    //     ..
+    //   } => (),
+    //   WindowEvent::DragDrop(_) => (),
+    //   WindowEvent::ThemeChanged(_) => (),
+    //   _ => (),
+    // });
+
+    // ctrl_window.on_window_event(|e| match e {
+    //   WindowEvent::Resized(_) => (),
+    //   WindowEvent::Moved(_) => (),
+    //   WindowEvent::CloseRequested { api, .. } => (),
+    //   WindowEvent::Destroyed => (),
+    //   WindowEvent::Focused(_) => (),
+    //   WindowEvent::ScaleFactorChanged {
+    //     scale_factor,
+    //     new_inner_size,
+    //     ..
+    //   } => (),
+    //   WindowEvent::DragDrop(_) => (),
+    //   WindowEvent::ThemeChanged(_) => (),
+    //   _ => (),
+    // });
+
     // commandに切り分けたほうが良さそう<-commandに分けないと動作がおかしい
     // 実装し直す<-commandにするだけで良さそう
     ctrl_window.listen("ctrl", {
