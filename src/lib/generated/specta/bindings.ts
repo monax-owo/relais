@@ -29,7 +29,7 @@ async togglePin() : Promise<Result<boolean, string>> {
     else return { status: "error", error: e  as any };
 }
 },
-async viewClose(label: string) : Promise<Result<null, null>> {
+async viewClose(label: string) : Promise<Result<null, string>> {
     try {
     return { status: "ok", data: await TAURI_INVOKE("view_close", { label }) };
 } catch (e) {
@@ -37,7 +37,7 @@ async viewClose(label: string) : Promise<Result<null, null>> {
     else return { status: "error", error: e  as any };
 }
 },
-async viewCreate(url: string, title: string | null, label: string | null) : Promise<Result<null, null>> {
+async viewCreate(url: string, title: string | null, label: string | null) : Promise<Result<null, string>> {
     try {
     return { status: "ok", data: await TAURI_INVOKE("view_create", { url, title, label }) };
 } catch (e) {
@@ -93,7 +93,8 @@ async windowHide() : Promise<Result<null, string>> {
 
 /** user-defined constants **/
 
-
+export const WINDOW_LABEL_PREFIX = "window_" as const;
+export const CTRL_LABEL_PREFIX = "ctrl_" as const;
 
 /** user-defined types **/
 

@@ -6,7 +6,7 @@ use std::sync::{
 };
 use tauri::{
   AppHandle, Listener, Manager, PhysicalPosition, PhysicalSize, State, WebviewUrl, WebviewWindow,
-  WebviewWindowBuilder,
+  WebviewWindowBuilder, WindowEvent,
 };
 use windows::Win32::{
   Foundation::{COLORREF, HWND},
@@ -143,37 +143,29 @@ pub fn view_create(
     //   }
     // });
 
-    // window.on_window_event(|e| match e {
-    //   WindowEvent::Resized(_) => (),
-    //   WindowEvent::Moved(_) => (),
-    //   WindowEvent::CloseRequested { api, .. } => (),
-    //   WindowEvent::Destroyed => (),
-    //   WindowEvent::Focused(_) => (),
-    //   WindowEvent::ScaleFactorChanged {
-    //     scale_factor,
-    //     new_inner_size,
-    //     ..
-    //   } => (),
-    //   WindowEvent::DragDrop(_) => (),
-    //   WindowEvent::ThemeChanged(_) => (),
-    //   _ => (),
-    // });
+    window.on_window_event(|e| match e {
+      WindowEvent::Resized(_) => (),
+      WindowEvent::Moved(_) => (),
+      WindowEvent::CloseRequested { .. } => (),
+      WindowEvent::Destroyed => (),
+      WindowEvent::Focused(_) => (),
+      WindowEvent::ScaleFactorChanged { .. } => (),
+      WindowEvent::DragDrop(_) => (),
+      WindowEvent::ThemeChanged(_) => (),
+      _ => (),
+    });
 
-    // ctrl_window.on_window_event(|e| match e {
-    //   WindowEvent::Resized(_) => (),
-    //   WindowEvent::Moved(_) => (),
-    //   WindowEvent::CloseRequested { api, .. } => (),
-    //   WindowEvent::Destroyed => (),
-    //   WindowEvent::Focused(_) => (),
-    //   WindowEvent::ScaleFactorChanged {
-    //     scale_factor,
-    //     new_inner_size,
-    //     ..
-    //   } => (),
-    //   WindowEvent::DragDrop(_) => (),
-    //   WindowEvent::ThemeChanged(_) => (),
-    //   _ => (),
-    // });
+    ctrl_window.on_window_event(|e| match e {
+      WindowEvent::Resized(_) => (),
+      WindowEvent::Moved(_) => (),
+      WindowEvent::CloseRequested { .. } => (),
+      WindowEvent::Destroyed => (),
+      WindowEvent::Focused(_) => (),
+      WindowEvent::ScaleFactorChanged { .. } => (),
+      WindowEvent::DragDrop(_) => (),
+      WindowEvent::ThemeChanged(_) => (),
+      _ => (),
+    });
 
     // commandに切り分けたほうが良さそう<-commandに分けないと動作がおかしい
     // 実装し直す<-commandにするだけで良さそう

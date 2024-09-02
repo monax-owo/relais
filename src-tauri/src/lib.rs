@@ -128,7 +128,9 @@ pub fn run() {
       window_focus,
       window_hide,
     ])
-    .typ::<WindowData>();
+    .typ::<WindowData>()
+    .constant("WINDOW_LABEL_PREFIX", window::util::WINDOW_LABEL_PREFIX)
+    .constant("CTRL_LABEL_PREFIX", window::util::CTRL_LABEL_PREFIX);
   #[cfg(debug_assertions)]
   specta
     .export(

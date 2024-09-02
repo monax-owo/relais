@@ -17,16 +17,20 @@
   import IconLock from "@tabler/icons-svelte/IconLock.svelte";
   import IconLockOpen2 from "@tabler/icons-svelte/IconLockOpen2.svelte";
 
-  import { commands } from "$lib/generated/specta/bindings";
+  import { commands, CTRL_LABEL_PREFIX } from "$lib/generated/specta/bindings";
+  // import { window } from "@tauri-apps/api";
 
   const stroke = 2;
 
-  const appWindow = getCurrentWebviewWindow();
+  const ctrl = getCurrentWebviewWindow();
+  // TODO
+  // const win = window.getAllWindows().find((v) => v.label === CTRL_LABEL_PREFIX + ctrl.label);
+  // if (!window) throw new Error("window is not found");
   let transparent = false;
   let pinned = false;
 
   const em = async (event: unknown) => {
-    await appWindow.emit("ctrl", event);
+    await ctrl.emit("ctrl", event);
   };
 
   const handleMini = async () => {
@@ -69,9 +73,12 @@
     await em("transparent");
     // transparent = await getTransparent();
   };
-
+  const handleDrag = async () => {
+    // TODO
+    // window.startDragging();
+  };
   const err = (err: string) => {
-    appWindow.emitTo(appWindow.label.replace("ctrl_", ""), "err", { err });
+    ctrl.emitTo(ctrl.label.replace(CTRL_LABEL_PREFIX, ""), "err", { err });
   };
 </script>
 
@@ -105,7 +112,7 @@
   <button type="button" on:pointerdown={handleZoomIn}><IconZoomIn {stroke} /></button>
   <button type="button" on:pointerdown={handleZoomOut}><IconZoomOut {stroke} /></button>
 
-  <button type="button" data-tauri-drag-region>
+  <button type="button" on:pointerdown={handleDrag} data-tauri-drag-region>
     <IconArrowsMove {stroke} data-tauri-drag-region />
   </button>
 </div>
