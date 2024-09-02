@@ -360,8 +360,7 @@ pub fn window_hide(window: &WebviewWindow) -> anyhow::Result<()> {
   Ok(())
 }
 
-pub fn view_minimize(window: &WebviewWindow) -> anyhow::Result<()> {
-  //TODO: ctrlからwindowを取得してminimizeする
+pub fn window_minimize(window: &WebviewWindow) -> anyhow::Result<()> {
   window.minimize()?;
 
   Ok(())

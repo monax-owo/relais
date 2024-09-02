@@ -79,6 +79,7 @@ pub fn view_zoomout(app: AppHandle, ctrl: WebviewWindow) -> Result<(), String> {
 #[specta::specta]
 pub fn view_close(app: AppHandle, label: String) -> Result<(), ()> {
   util::view_close(app, label.to_string()).map_err(|_| ())?;
+
   Ok(())
 }
 
@@ -86,6 +87,7 @@ pub fn view_close(app: AppHandle, label: String) -> Result<(), ()> {
 #[specta::specta]
 pub fn window_focus(_app: AppHandle, window: WebviewWindow) -> Result<(), String> {
   util::window_focus(&window).map_err(|e| e.to_string())?;
+
   Ok(())
 }
 
@@ -93,12 +95,15 @@ pub fn window_focus(_app: AppHandle, window: WebviewWindow) -> Result<(), String
 #[specta::specta]
 pub fn window_hide(window: WebviewWindow) -> Result<(), String> {
   util::window_hide(&window).map_err(|e| e.to_string())?;
+
   Ok(())
 }
 
 #[tauri::command]
 #[specta::specta]
-pub fn view_minimize(window: WebviewWindow) -> Result<(), String> {
-  util::view_minimize(&window).map_err(|e| e.to_string())?;
+pub fn view_minimize(ctrl: WebviewWindow) -> Result<(), String> {
+  util::window_minimize(&to_window(&ctrl).map_err(|e| e.to_string())?)
+    .map_err(|e| e.to_string())?;
+
   Ok(())
 }
