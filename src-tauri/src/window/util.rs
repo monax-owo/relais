@@ -45,8 +45,7 @@ pub fn view_create(
 
   let ctrl_window =
     WebviewWindowBuilder::new(app, to_ctrl_label(&*label), WebviewUrl::App("/ctrl".into()))
-      // .parent(&window)
-      // .unwrap()
+      .parent(&window)?
       .decorations(false)
       .maximizable(false)
       .minimizable(false)
@@ -148,7 +147,7 @@ pub fn view_create(
       WindowEvent::Moved(_) => (),
       WindowEvent::CloseRequested { .. } => (),
       WindowEvent::Destroyed => (),
-      WindowEvent::Focused(_) => (),
+      WindowEvent::Focused(state) if *state => (),
       WindowEvent::ScaleFactorChanged { .. } => (),
       WindowEvent::DragDrop(_) => (),
       WindowEvent::ThemeChanged(_) => (),
