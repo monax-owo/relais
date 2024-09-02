@@ -40,7 +40,7 @@ use window::command::*;
 
 const CONFIGFILE_NAME: &str = "relaisrc.toml";
 
-// TODO: アプリ全体かウィンドウごとに半透明にするか
+// TODO: アプリ全体かウィンドウごとに半透明にするか<-ウィンドウごとにする
 #[derive(Debug)]
 pub struct SourceAppState {
   config: Config,

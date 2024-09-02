@@ -269,7 +269,7 @@ pub fn set_pin(window: &WebviewWindow, value: bool) -> Result<(), String> {
   Ok(())
 }
 
-// TODO: ズームをセットする関数がv2にあると思う
+// TODO: f64の代わりにパーセントを使う
 pub fn set_zoom(app: &AppHandle, window: &WebviewWindow, diff: f64) -> anyhow::Result<()> {
   let state = app.state::<SourceAppState>();
   let Some(window_data) = state.get_window_data(window.label()) else {
