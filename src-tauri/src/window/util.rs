@@ -254,7 +254,7 @@ pub fn set_zoom(app: &AppHandle, window: &WebviewWindow, diff: f64) -> anyhow::R
 
     *lock += diff;
   } else {
-    *lock += 1.0;
+    *lock = 1.0;
   }
 
   Ok(())
@@ -290,13 +290,13 @@ pub fn to_window(ctrl: &WebviewWindow) -> anyhow::Result<WebviewWindow> {
     .context("ctrl is not found")
 }
 
-pub fn view_close(app: AppHandle, label: String) -> Result<(), ()> {
-  let Some(window) = app.get_webview_window(&label) else {
-    return Err(());
-  };
-  window.close().map_err(|_| ())?;
+pub fn view_close(app: AppHandle, label: String) -> anyhow::Result<()> {
+  let window = app
+    .get_webview_window(&label)
+    .context("failed to get window")?;
+  window.close()?;
   let state = app.state::<SourceAppState>();
-  state.remove_window(&label).map_err(|_| ())?;
+  state.remove_window(&label)?;
   state.sync_windows(&app);
 
   Ok(())
@@ -305,8 +305,8 @@ pub fn view_close(app: AppHandle, label: String) -> Result<(), ()> {
 pub fn close(app: &AppHandle, arc: &Arc<(WebviewWindow, WebviewWindow)>) -> anyhow::Result<()> {
   let state = app.state::<SourceAppState>();
   let label = arc.0.label();
-  arc.1.close().unwrap();
-  arc.0.close().unwrap();
+  arc.1.close()?;
+  arc.0.close()?;
   state.remove_window(label)?;
   state.sync_windows(app);
 
