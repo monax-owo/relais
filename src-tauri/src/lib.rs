@@ -24,10 +24,7 @@ use tauri_specta::collect_commands;
 
 mod command;
 mod util;
-mod window;
-
-use command::*;
-use window::command::*;
+mod view;
 
 // #[cfg(target_os = "windows")]
 // use {
@@ -117,21 +114,21 @@ impl From<SourceWindowData> for WindowData {
 pub fn run() {
   let specta = tauri_specta::Builder::new()
     .commands(collect_commands![
-      exit,
-      get_transparent,
-      toggle_pin,
-      view_close,
-      view_create,
-      view_drag,
-      view_minimize,
-      view_zoomin,
-      view_zoomout,
-      window_focus,
-      window_hide,
+      command::exit,
+      view::ctrl::command::get_transparent,
+      view::ctrl::command::toggle_pin,
+      view::ctrl::command::view_close,
+      view::command::view_create,
+      view::ctrl::command::view_drag,
+      view::ctrl::command::view_minimize,
+      view::ctrl::command::view_zoomin,
+      view::ctrl::command::view_zoomout,
+      view::command::window_focus,
+      view::command::window_hide,
     ])
     .typ::<WindowData>()
-    .constant("WINDOW_LABEL_PREFIX", window::util::WINDOW_LABEL_PREFIX)
-    .constant("CTRL_LABEL_PREFIX", window::util::CTRL_LABEL_PREFIX);
+    .constant("WINDOW_LABEL_PREFIX", view::util::WINDOW_LABEL_PREFIX)
+    .constant("CTRL_LABEL_PREFIX", view::util::CTRL_LABEL_PREFIX);
   #[cfg(debug_assertions)]
   specta
     .export(
@@ -217,7 +214,7 @@ pub fn run() {
         .tooltip("Relais")
         .on_tray_icon_event(move |_tray, e| {
           if let TrayIconEvent::Click { .. } = &e {
-            window::util::window_focus(&main_window).unwrap()
+            view::util::window_focus(&main_window).unwrap()
           }
         })
         .build(app)?;

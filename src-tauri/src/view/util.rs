@@ -11,9 +11,8 @@ use tauri::{
 use windows::Win32::{
   Foundation::{COLORREF, HWND},
   UI::WindowsAndMessaging::{
-    SetLayeredWindowAttributes, SetWindowLongPtrA, SetWindowLongPtrW, SetWindowPos, GWL_EXSTYLE,
-    HWND_NOTOPMOST, HWND_TOPMOST, LWA_ALPHA, SWP_NOMOVE, SWP_NOSIZE, WS_EX_LAYERED,
-    WS_EX_NOACTIVATE, WS_EX_TOOLWINDOW,
+    SetLayeredWindowAttributes, SetWindowLongPtrW, SetWindowPos, GWL_EXSTYLE, HWND_NOTOPMOST,
+    HWND_TOPMOST, LWA_ALPHA, SWP_NOMOVE, SWP_NOSIZE, WS_EX_LAYERED, WS_EX_TOOLWINDOW,
   },
 };
 
@@ -159,25 +158,11 @@ pub fn view_create(
       }
     });
 
-    ctrl_window.on_window_event({
-      //   let arc = arc.clone();
-      //   let app = app.clone();
-      move |e| match e {
-        // WindowEvent::Resized(_) => (),
-        // WindowEvent::Moved(_) => (),
-        // WindowEvent::CloseRequested { .. } => (),
-        // WindowEvent::Destroyed => (),
-        // WindowEvent::Focused(state) => {
-        //   if *state {
-        //     dbg!("ctrl focused");
-        //   }
-        // }
-        // WindowEvent::ScaleFactorChanged { .. } => (),
-        // WindowEvent::DragDrop(_) => (),
-        // WindowEvent::ThemeChanged(_) => (),
-        _ => (),
-      }
-    });
+    // ctrl_window.on_window_event({
+    //   //   let arc = arc.clone();
+    //   //   let app = app.clone();
+    //   move |e| ()
+    // });
 
     // commandに切り分けたほうが良さそう<-commandに分けないと動作がおかしい
     // 実装し直す<-commandにするだけで良さそう
