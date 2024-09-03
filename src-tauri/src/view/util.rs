@@ -228,16 +228,13 @@ pub fn toggle_transparent(
     // 不透明
     set_transparent(window_hwnd, 255).unwrap();
     ctrl_window.show().unwrap();
-
-    state.overlay.store(false, Ordering::Release);
   } else {
     // 半透明
     set_transparent(window_hwnd, alpha).unwrap();
     ctrl_window.hide().unwrap();
-
-    state.overlay.store(true, Ordering::Release);
   };
-  // unsafe {}
+
+  state.overlay.store(!condition, Ordering::Release);
 
   Ok(!condition)
 }

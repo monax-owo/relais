@@ -115,16 +115,19 @@ pub fn run() {
   let specta = tauri_specta::Builder::new()
     .commands(collect_commands![
       command::exit,
-      view::ctrl::command::get_transparent,
-      view::ctrl::command::toggle_pin,
-      view::ctrl::command::view_close,
       view::command::view_create,
+      view::command::window_focus,
+      view::command::window_hide,
+      view::ctrl::command::get_transparent,
+      view::ctrl::command::set_pointer_ignore,
+      view::ctrl::command::set_transparent,
+      view::ctrl::command::toggle_pin,
+      view::ctrl::command::toggle_transparent,
+      view::ctrl::command::view_close,
       view::ctrl::command::view_drag,
       view::ctrl::command::view_minimize,
       view::ctrl::command::view_zoomin,
       view::ctrl::command::view_zoomout,
-      view::command::window_focus,
-      view::command::window_hide,
     ])
     .typ::<WindowData>()
     .constant("WINDOW_LABEL_PREFIX", view::util::WINDOW_LABEL_PREFIX)

@@ -1,5 +1,8 @@
 pub mod command {
-  use std::sync::{atomic::Ordering, Arc};
+  use std::{
+    sync::{atomic::Ordering, Arc},
+    u8,
+  };
 
   use crate::{util::ErrToString, view::util, SourceAppState};
   use tauri::{AppHandle, Manager, State, WebviewWindow};
@@ -57,8 +60,22 @@ pub mod command {
   }
   #[tauri::command]
   #[specta::specta]
-  pub fn set_transparent() {
+  pub fn toggle_transparent() {
     todo!()
+  }
+  #[tauri::command]
+  #[specta::specta]
+  pub fn set_transparent(
+    ctrl: WebviewWindow,
+    state: State<'_, SourceAppState>,
+    alpha: u8,
+  ) -> Result<(), String> {
+    let window = util::to_window(&ctrl).err_to_string()?;
+    util::set_transparent(window.hwnd().err_to_string()?, alpha).err_to_string()?;
+    let transparent = !alpha == 255;
+    dbg!(transparent);
+    state.overlay.store(transparent, Ordering::Release);
+    Ok(())
   }
   #[tauri::command]
   #[specta::specta]
