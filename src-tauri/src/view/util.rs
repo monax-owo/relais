@@ -10,9 +10,9 @@ use tauri::{
 use windows::Win32::{
   Foundation::{COLORREF, HWND, LPARAM, LRESULT, WPARAM},
   UI::WindowsAndMessaging::{
-    DefWindowProcW, SetLayeredWindowAttributes, SetWindowLongPtrW, SetWindowPos,
-    GWL_EXSTYLE, HWND_NOTOPMOST, HWND_TOPMOST, LWA_ALPHA, SWP_NOMOVE, SWP_NOSIZE,
-    WM_SETFOCUS, WS_EX_LAYERED, WS_EX_NOACTIVATE,
+    DefWindowProcW, SetLayeredWindowAttributes, SetWindowLongPtrW, SetWindowPos, GWL_EXSTYLE,
+    HWND_NOTOPMOST, HWND_TOPMOST, LWA_ALPHA, SWP_NOMOVE, SWP_NOSIZE, WM_SETFOCUS, WS_EX_LAYERED,
+    WS_EX_NOACTIVATE,
   },
 };
 
