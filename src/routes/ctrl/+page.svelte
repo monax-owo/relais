@@ -13,9 +13,6 @@
   import IconZoomIn from "@tabler/icons-svelte/IconZoomIn.svelte";
   import IconZoomOut from "@tabler/icons-svelte/IconZoomOut.svelte";
 
-  import IconLock from "@tabler/icons-svelte/IconLock.svelte";
-  import IconLockOpen2 from "@tabler/icons-svelte/IconLockOpen2.svelte";
-
   import IconPointer from "@tabler/icons-svelte/IconPointer.svelte";
   import IconPointerOff from "@tabler/icons-svelte/IconPointerOff.svelte";
 
@@ -102,13 +99,6 @@
       <IconPinnedOff {stroke} />
     {:else}
       <IconPin {stroke} />
-    {/if}
-  </button>
-  <button type="button" on:pointerdown={handleTransparent}>
-    {#if transparent}
-      <IconLockOpen2 {stroke} />
-    {:else}
-      <IconLock {stroke} />
     {/if}
   </button>
   <button type="button" on:pointerdown={handleTransparent}>

@@ -1,4 +1,4 @@
-use anyhow::{bail, Context};
+use anyhow::Context;
 use serde_json::Value;
 use std::sync::{
   atomic::{AtomicBool, Ordering},
@@ -16,7 +16,7 @@ use windows::Win32::{
   },
 };
 
-use crate::{SourceAppState, SourceWindowData};
+use crate::util::{SourceAppState, SourceWindowData};
 
 pub const CTRL_SIZE: (u32, u32) = (40, 320);
 pub const WINDOW_MIN_INNER_SIZE: (f64, f64) = (400.0, 400.0);
@@ -267,12 +267,11 @@ pub fn set_pin(window: &WebviewWindow, value: bool) -> Result<(), String> {
 // TODO: f64の代わりにパーセントを使う
 pub fn set_zoom(app: &AppHandle, window: &WebviewWindow, diff: f64) -> anyhow::Result<()> {
   let state = app.state::<SourceAppState>();
-  let Some(window_data) = state.get_window_data(window.label()) else {
-    bail!("failed to get window data");
-  };
+  let window_data = state
+    .get_window_data(window.label())
+    .context("failed to get window data")?;
   let zoom = window_data.zoom.clone();
   let mut lock = zoom.lock().unwrap();
-  dbg!(*lock);
 
   let scale = *lock + diff;
   // TODO: 20%~500%
@@ -283,6 +282,8 @@ pub fn set_zoom(app: &AppHandle, window: &WebviewWindow, diff: f64) -> anyhow::R
   } else {
     *lock = 1.0;
   }
+
+  dbg!(*lock);
 
   Ok(())
 }

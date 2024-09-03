@@ -2,25 +2,20 @@
 #![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
 
 use config::Config;
-use serde::{Deserialize, Serialize};
-use specta::Type;
 use specta_typescript::Typescript;
 use std::{
   collections::HashMap,
   env,
-  path::PathBuf,
-  sync::{
-    atomic::{AtomicBool, Ordering},
-    Arc, Mutex,
-  },
+  sync::{atomic::AtomicBool, Arc, Mutex},
 };
 use tauri::{
   generate_context,
   menu::{MenuBuilder, MenuItem},
   tray::{TrayIconBuilder, TrayIconEvent},
-  App, AppHandle, Builder, Emitter, Manager, WindowEvent,
+  App, Builder, Manager, WindowEvent,
 };
 use tauri_specta::collect_commands;
+use util::{SourceAppState, WindowData};
 
 mod command;
 mod util;
@@ -35,81 +30,7 @@ mod view;
 //   },
 // };
 
-const CONFIGFILE_NAME: &str = "relaisrc.toml";
-
-// TODO: アプリ全体かウィンドウごとに半透明にするか<-ウィンドウごとにする
-#[derive(Debug)]
-pub struct SourceAppState {
-  config: Config,
-  windows: Mutex<Vec<SourceWindowData>>,
-  pub overlay: AtomicBool,
-}
-
-#[derive(Debug, Clone, Deserialize, Serialize, Type)]
-pub struct AppState {
-  config: String,
-  windows: Vec<WindowData>,
-  pub overlay: bool,
-}
-
-#[derive(Debug, Clone)]
-pub struct SourceWindowData {
-  title: String,
-  label: String,
-  pin: Arc<AtomicBool>,
-  zoom: Arc<Mutex<f64>>,
-}
-
-#[derive(Debug, Clone, Deserialize, Serialize, Type)]
-pub struct WindowData {
-  title: String,
-  label: String,
-  pin: bool,
-  zoom: f64,
-}
-
-impl SourceAppState {
-  pub fn add_window(&self, window: SourceWindowData) -> anyhow::Result<()> {
-    let mut lock = self.windows.lock().unwrap();
-    lock.push(window);
-    dbg!(&lock);
-    Ok(())
-  }
-
-  // labelに一致する値がなかったらErrにする
-  pub fn remove_window(&self, label: &str) -> anyhow::Result<()> {
-    let mut lock = self.windows.lock().unwrap();
-    lock.retain(|v| v.label.as_str() != label);
-    dbg!(&lock);
-    Ok(())
-  }
-
-  pub fn sync_windows(&self, handle: &AppHandle) {
-    let windows = self.windows.lock().unwrap();
-    let vec = windows.clone().into_iter().map(|v| v.into()).collect();
-    handle
-      .emit::<Vec<WindowData>>("update_windows", vec)
-      .unwrap();
-  }
-
-  pub fn get_window_data(&self, label: &str) -> Option<SourceWindowData> {
-    let lock = self.windows.lock().unwrap();
-    lock.iter().find(|v| v.label.as_str() == label).cloned()
-  }
-}
-
-impl From<SourceWindowData> for WindowData {
-  fn from(v: SourceWindowData) -> Self {
-    Self {
-      title: v.title,
-      label: v.label,
-      pin: v.pin.clone().load(Ordering::Acquire),
-      zoom: *v.zoom.lock().unwrap(),
-    }
-  }
-}
-
-// #[tokio::main]
+// TODO: specta,event "update_windows"
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
   let specta = tauri_specta::Builder::new()
@@ -140,10 +61,12 @@ pub fn run() {
     )
     .expect("failed to generate types");
 
-  let path = (|| -> anyhow::Result<PathBuf> {
-    Ok(env::current_exe()?.parent().unwrap().join(CONFIGFILE_NAME))
-  })()
-  .unwrap();
+  let path = env::current_exe()
+    .unwrap()
+    .parent()
+    .unwrap()
+    .join(util::CONFIGFILE_NAME);
+
   let config = {
     let mut builder = Config::builder().set_default("key", "value").unwrap();
     if path.exists() {
@@ -152,7 +75,7 @@ pub fn run() {
     builder.build().unwrap()
   };
 
-  let state = SourceAppState {
+  let state = util::SourceAppState {
     config,
     windows: Mutex::new(vec![]),
     overlay: AtomicBool::new(false),
@@ -172,7 +95,7 @@ pub fn run() {
       //
       #[cfg(not(debug_assertions))]
       {
-        _window_focus(&main_window)?;
+        view::util::window_focus(&main_window)?;
       }
       {
         let state = app.state::<SourceAppState>();

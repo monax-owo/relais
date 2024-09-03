@@ -1,10 +1,10 @@
 pub mod command {
-  use std::{
-    sync::{atomic::Ordering, Arc},
-    u8,
-  };
+  use std::sync::{atomic::Ordering, Arc};
 
-  use crate::{util::ErrToString, view::util, SourceAppState};
+  use crate::{
+    util::{ErrToString, SourceAppState},
+    view::util,
+  };
   use tauri::{AppHandle, Manager, State, WebviewWindow};
 
   #[tauri::command]

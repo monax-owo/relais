@@ -1,7 +1,7 @@
 use tauri::{AppHandle, State, WebviewUrl, WebviewWindow};
 use uuid::Uuid;
 
-use crate::{util::ErrToString, SourceAppState};
+use crate::util::{ErrToString, SourceAppState};
 
 use super::util;
 
