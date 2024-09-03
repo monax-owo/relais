@@ -27,11 +27,11 @@ pub fn view_create(
   app: &AppHandle,
   state: State<'_, SourceAppState>,
   url: WebviewUrl,
-  title: String,
   label: String,
 ) -> anyhow::Result<()> {
   let skip_taskbar = cfg!(not(debug_assertions));
 
+  let title = "".to_string();
   let window = WebviewWindowBuilder::new(app, &label, url)
     .decorations(false)
     .initialization_script(include_str!("./init.js"))
@@ -76,14 +76,10 @@ pub fn view_create(
     dbg!(&window.label());
     dbg!(&ctrl_window.label());
 
-    // AppStateのoverlayが無効のときのみctrlを表示+有効のときはwindowを半透明にする
-    // if window closing, when remove if from window list
-
     window.on_window_event({
       let arc = arc.clone();
       // let app = app.clone();
       move |e| match e {
-        // WindowEvent::Resized(_) => (),
         WindowEvent::Moved(pos) => arc.1.set_position(window_pos(*pos)).unwrap(),
         // WindowEvent::CloseRequested { .. } => (),
         // WindowEvent::Destroyed => (),
@@ -95,9 +91,6 @@ pub fn view_create(
             arc.1.hide().unwrap();
           }
         }
-        // WindowEvent::ScaleFactorChanged { .. } => (),
-        // WindowEvent::DragDrop(_) => (),
-        // WindowEvent::ThemeChanged(_) => (),
         _ => (),
       }
     });

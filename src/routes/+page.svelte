@@ -16,7 +16,7 @@
       valid = false;
       console.error(e);
     }
-    await commands.viewCreate(url, null, null);
+    await commands.viewCreate(url, null);
   };
 
   onMount(async () => {

@@ -16,9 +16,9 @@ async exit() : Promise<Result<null, string>> {
     else return { status: "error", error: e  as any };
 }
 },
-async viewCreate(url: string, title: string | null, label: string | null) : Promise<Result<null, string>> {
+async viewCreate(url: string, label: string | null) : Promise<Result<null, string>> {
     try {
-    return { status: "ok", data: await TAURI_INVOKE("view_create", { url, title, label }) };
+    return { status: "ok", data: await TAURI_INVOKE("view_create", { url, label }) };
 } catch (e) {
     if(e instanceof Error) throw e;
     else return { status: "error", error: e  as any };

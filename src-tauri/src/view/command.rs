@@ -11,7 +11,6 @@ pub async fn view_create(
   app: AppHandle,
   state: State<'_, SourceAppState>,
   url: String,
-  title: Option<String>,
   label: Option<String>,
 ) -> Result<(), String> {
   let url = if !url.starts_with("http") {
@@ -20,11 +19,10 @@ pub async fn view_create(
     url
   };
   let parse_url = url::Url::parse(&url).err_to_string()?;
-  let title = title.unwrap_or_default();
   let label =
     label.unwrap_or(util::WINDOW_LABEL_PREFIX.to_string() + Uuid::new_v4().to_string().as_str());
 
-  util::view_create(&app, state, WebviewUrl::External(parse_url), title, label).unwrap();
+  util::view_create(&app, state, WebviewUrl::External(parse_url), label).unwrap();
 
   Ok(())
 }

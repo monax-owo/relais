@@ -136,10 +136,15 @@ pub fn run() {
         .tooltip("Relais")
         .on_tray_icon_event({
           let main_window = Arc::clone(&main_window);
-          move |_tray, e| if let TrayIconEvent::Click {
+          move |_tray, e| {
+            if let TrayIconEvent::Click {
               button: MouseButton::Left,
               ..
-            } = e { view::util::window_focus(&main_window).unwrap() }
+            } = e
+            {
+              view::util::window_focus(&main_window).unwrap()
+            }
+          }
         })
         .on_menu_event({
           let main_window = Arc::clone(&main_window);
