@@ -8,10 +8,11 @@ use tauri::{
   WebviewWindowBuilder, WindowEvent,
 };
 use windows::Win32::{
-  Foundation::{COLORREF, HWND},
+  Foundation::{COLORREF, HWND, LPARAM, LRESULT, WPARAM},
   UI::WindowsAndMessaging::{
-    SetLayeredWindowAttributes, SetWindowLongPtrW, SetWindowPos, GWL_EXSTYLE, HWND_NOTOPMOST,
-    HWND_TOPMOST, LWA_ALPHA, SWP_NOMOVE, SWP_NOSIZE, WS_EX_LAYERED, WS_EX_TOOLWINDOW,
+    DefWindowProcW, SetLayeredWindowAttributes, SetWindowLongPtrW, SetWindowPos,
+    GWL_EXSTYLE, HWND_NOTOPMOST, HWND_TOPMOST, LWA_ALPHA, SWP_NOMOVE, SWP_NOSIZE,
+    WM_SETFOCUS, WS_EX_LAYERED, WS_EX_NOACTIVATE,
   },
 };
 
@@ -78,63 +79,6 @@ pub fn view_create(
     // AppStateのoverlayが無効のときのみctrlを表示+有効のときはwindowを半透明にする
     // if window closing, when remove if from window list
 
-    // window.on_window_event({
-    //   let arc = arc.clone();
-    //   let app = app.clone();
-    //   move |e| match *e {
-    //     WindowEvent::CloseRequested { .. } => close(&app, &arc).unwrap(),
-    //     WindowEvent::Focused(state) => {
-    //       if state {
-    //         arc.1.show().unwrap();
-
-    //         arc
-    //           .0
-    //           .set_position(ctrl_pos(arc.1.outer_position().unwrap()))
-    //           .unwrap();
-    //       } else if !arc.1.is_focused().unwrap() {
-    //         arc.1.hide().unwrap();
-    //       }
-    //     }
-    //     WindowEvent::Resized(_) => {
-    //       arc
-    //         .1
-    //         .set_position(window_pos(arc.0.outer_position().unwrap()))
-    //         .unwrap();
-    //     }
-    //     _ => (),
-    //   }
-    // });
-
-    // ctrl_window.on_window_event({
-    //   let arc = arc.clone();
-    //   let app = app.clone();
-    //   move |e| match *e {
-    //     WindowEvent::Focused(state) => {
-    //       if state
-    //         && !app
-    //           .state::<SourceAppState>()
-    //           .overlay
-    //           .load(Ordering::Acquire)
-    //       {
-    //         if arc.0.is_minimized().unwrap() {
-    //           arc.0.unminimize().unwrap();
-    //         }
-    //         arc
-    //           .0
-    //           .set_position(ctrl_pos(arc.1.outer_position().unwrap()))
-    //           .unwrap();
-    //       } else if !arc.0.is_focused().unwrap() && !arc.1.is_focused().unwrap() {
-    //         arc.1.hide().unwrap();
-    //       }
-    //     }
-    //     // arc.0.start_dragging()
-    //     WindowEvent::Moved(pos) => {
-    //       arc.0.set_position(ctrl_pos(pos)).unwrap();
-    //     }
-    //     _ => (),
-    //   }
-    // });
-
     window.on_window_event({
       let arc = arc.clone();
       // let app = app.clone();
@@ -163,8 +107,9 @@ pub fn view_create(
       SetWindowLongPtrW(
         ctrl_hwnd,
         GWL_EXSTYLE,
-        WS_EX_LAYERED.0 as isize | WS_EX_TOOLWINDOW.0 as isize,
+        WS_EX_LAYERED.0 as isize | WS_EX_NOACTIVATE.0 as isize,
       );
+      // SetWindowLongPtrW(ctrl_hwnd, GWLP_WNDPROC, ctrl_proc as isize);
     }
 
     (|| -> anyhow::Result<()> {
@@ -181,6 +126,18 @@ pub fn view_create(
   // ctrl_window.hide()?;
 
   Ok(())
+}
+
+unsafe extern "system" fn ctrl_proc(
+  hwnd: HWND,
+  msg: u32,
+  wparam: WPARAM,
+  lparam: LPARAM,
+) -> LRESULT {
+  match msg {
+    WM_SETFOCUS => LRESULT(0),
+    _ => DefWindowProcW(hwnd, msg, wparam, lparam),
+  }
 }
 
 pub fn toggle_transparent(

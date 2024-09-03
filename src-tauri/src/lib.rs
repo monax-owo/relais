@@ -21,20 +21,12 @@ mod command;
 mod util;
 mod view;
 
-// #[cfg(target_os = "windows")]
-// use {
-//   std::os::raw::c_void,
-//   windows::Win32::{
-//     Foundation::{BOOL, HWND},
-//     Graphics::Dwm::{DwmSetWindowAttribute, DWMWA_TRANSITIONS_FORCEDISABLED},
-//   },
-// };
-
 // TODO: specta,event "update_windows"
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
   let specta = tauri_specta::Builder::new()
     .commands(collect_commands![
+      command::get_windows,
       command::exit,
       view::command::view_create,
       view::command::window_focus,

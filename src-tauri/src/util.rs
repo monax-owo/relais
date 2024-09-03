@@ -72,6 +72,11 @@ impl SourceAppState {
     let lock = self.windows.lock().unwrap();
     lock.iter().find(|v| v.label.as_str() == label).cloned()
   }
+
+  pub fn get_windows(&self) -> Vec<WindowData> {
+    let lock = self.windows.lock().unwrap();
+    lock.clone().into_iter().map(|v| v.into()).collect()
+  }
 }
 
 impl From<SourceWindowData> for WindowData {

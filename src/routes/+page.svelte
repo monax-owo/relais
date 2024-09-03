@@ -20,15 +20,18 @@
   };
 
   onMount(async () => {
-    listen("update_windows", (e) => {
-      windows = e.payload as WindowData[];
-    });
-  });
+    const f = async () => (windows = await commands.getWindows());
+    await f();
 
-  ifDev(() => {
-    ifThen(windows.length < 1, () => {
-      url = "www.twitch.tv/stylishnoob4";
-      handleOpen();
+    listen("update_windows", async () => await f());
+
+    ifDev(() => {
+      console.log(windows.length);
+
+      ifThen(windows.length < 1, () => {
+        url = "www.twitch.tv/stylishnoob4";
+        handleOpen();
+      });
     });
   });
 </script>
