@@ -29,17 +29,13 @@
   // if (!window) throw new Error("window is not found");
   let transparent = false;
   let pinned = false;
-
-  const em = async (event: unknown) => {
-    await ctrl.emit("ctrl", event);
-  };
+  let pointerIgnored = false;
 
   const handleMini = async () => {
     await commands.viewMinimize();
   };
   const handleClose = async () => {
-    // TODO
-    // await em("close");
+    await commands.viewClose(ctrl.label.replace(CTRL_LABEL_PREFIX, ""));
   };
   const handlePin = async () => {
     pinned = await commands.togglePin().then((v) => {
@@ -47,7 +43,7 @@
         case "ok":
           return v.data;
         case "error":
-          throw new Error("");
+          throw err(v.error);
       }
     });
   };
@@ -57,7 +53,7 @@
         case "ok":
           return v.data;
         case "error":
-          err(v.error);
+          throw err(v.error);
       }
     });
   };
@@ -67,12 +63,19 @@
         case "ok":
           return v.data;
         case "error":
-          err(v.error);
+          throw err(v.error);
       }
     });
   };
   const handleTransparent = async () => {
-    await em("transparent");
+    transparent = await commands.toggleTransparent(127).then((v) => {
+      switch (v.status) {
+        case "ok":
+          return v.data;
+        case "error":
+          throw err(v.error);
+      }
+    });
     // transparent = await getTransparent();
   };
   const handlePointerIgnore = async () => {
@@ -110,7 +113,7 @@
     {/if}
   </button>
   <button type="button" on:pointerdown={handlePointerIgnore}>
-    {#if transparent}
+    {#if pointerIgnored}
       <IconPointerOff {stroke} />
       <!-- <IconLockOpen {stroke} /> -->
     {:else}

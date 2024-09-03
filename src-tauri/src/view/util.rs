@@ -1,11 +1,10 @@
 use anyhow::Context;
-use serde_json::Value;
 use std::sync::{
   atomic::{AtomicBool, Ordering},
   Arc, Mutex,
 };
 use tauri::{
-  AppHandle, Listener, Manager, PhysicalPosition, PhysicalSize, State, WebviewUrl, WebviewWindow,
+  AppHandle, Manager, PhysicalPosition, PhysicalSize, State, WebviewUrl, WebviewWindow,
   WebviewWindowBuilder, WindowEvent,
 };
 use windows::Win32::{
@@ -147,6 +146,7 @@ pub fn view_create(
         WindowEvent::Focused(state) => {
           if *state {
             arc.1.show().unwrap();
+            arc.0.set_focus().unwrap();
           } else if !arc.0.is_focused().unwrap() && !arc.1.is_focused().unwrap() {
             arc.1.hide().unwrap();
           }
@@ -155,37 +155,6 @@ pub fn view_create(
         // WindowEvent::DragDrop(_) => (),
         // WindowEvent::ThemeChanged(_) => (),
         _ => (),
-      }
-    });
-
-    // ctrl_window.on_window_event({
-    //   //   let arc = arc.clone();
-    //   //   let app = app.clone();
-    //   move |e| ()
-    // });
-
-    // commandに切り分けたほうが良さそう<-commandに分けないと動作がおかしい
-    // 実装し直す<-commandにするだけで良さそう
-    ctrl_window.listen("ctrl", {
-      let arc = arc.clone();
-      let app = app.clone();
-      move |e| {
-        let payload = serde_json::from_str::<Value>(e.payload()).unwrap();
-        match payload {
-          Value::Null => todo!(),
-          Value::Bool(_) => todo!(),
-          Value::Number(_) => todo!(),
-          Value::String(v) => match v.as_str() {
-            "close" => close(&app, &arc).unwrap(),
-            // "transparent" => toggle_transparent(&app).unwrap(),
-            "transparent" => {
-              toggle_transparent(&app, &arc.0, &arc.1, 128).unwrap();
-            }
-            _ => println!("did not match: {}", v),
-          },
-          Value::Array(_) => todo!(),
-          Value::Object(_) => todo!(),
-        }
       }
     });
 

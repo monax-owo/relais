@@ -3,7 +3,7 @@ pub mod command {
 
   use crate::{
     util::{ErrToString, SourceAppState},
-    view::util,
+    view::util::{self, to_window},
   };
   use tauri::{AppHandle, Manager, State, WebviewWindow};
 
@@ -60,8 +60,25 @@ pub mod command {
   }
   #[tauri::command]
   #[specta::specta]
-  pub fn toggle_transparent() {
-    todo!()
+  pub fn toggle_transparent(
+    ctrl: WebviewWindow,
+    state: State<'_, SourceAppState>,
+    alpha: u8,
+  ) -> Result<bool, String> {
+    let window = to_window(&ctrl).err_to_string()?;
+    let window_hwnd = window.hwnd().err_to_string()?;
+    let condition = state.overlay.load(Ordering::Acquire);
+    if condition {
+      // 不透明
+      util::set_transparent(window_hwnd, 255).unwrap();
+    } else {
+      // 半透明
+      util::set_transparent(window_hwnd, alpha).unwrap();
+    };
+
+    state.overlay.store(!condition, Ordering::Release);
+
+    Ok(!condition)
   }
   #[tauri::command]
   #[specta::specta]

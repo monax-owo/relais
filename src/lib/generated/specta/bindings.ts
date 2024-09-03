@@ -64,8 +64,13 @@ async togglePin() : Promise<Result<boolean, string>> {
     else return { status: "error", error: e  as any };
 }
 },
-async toggleTransparent() : Promise<void> {
-    await TAURI_INVOKE("toggle_transparent");
+async toggleTransparent(alpha: number) : Promise<Result<boolean, string>> {
+    try {
+    return { status: "ok", data: await TAURI_INVOKE("toggle_transparent", { alpha }) };
+} catch (e) {
+    if(e instanceof Error) throw e;
+    else return { status: "error", error: e  as any };
+}
 },
 async viewClose(label: string) : Promise<Result<null, string>> {
     try {
@@ -115,8 +120,8 @@ async viewZoomout() : Promise<Result<null, string>> {
 
 /** user-defined constants **/
 
-export const WINDOW_LABEL_PREFIX = "window_" as const;
 export const CTRL_LABEL_PREFIX = "ctrl_" as const;
+export const WINDOW_LABEL_PREFIX = "window_" as const;
 
 /** user-defined types **/
 
