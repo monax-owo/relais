@@ -45,6 +45,14 @@ async viewCreate(url: string, title: string | null, label: string | null) : Prom
     else return { status: "error", error: e  as any };
 }
 },
+async viewDrag() : Promise<Result<null, string>> {
+    try {
+    return { status: "ok", data: await TAURI_INVOKE("view_drag") };
+} catch (e) {
+    if(e instanceof Error) throw e;
+    else return { status: "error", error: e  as any };
+}
+},
 async viewMinimize() : Promise<Result<null, string>> {
     try {
     return { status: "ok", data: await TAURI_INVOKE("view_minimize") };

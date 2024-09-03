@@ -122,6 +122,7 @@ pub fn run() {
       toggle_pin,
       view_close,
       view_create,
+      view_drag,
       view_minimize,
       view_zoomin,
       view_zoomout,

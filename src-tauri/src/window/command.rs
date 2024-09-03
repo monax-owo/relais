@@ -61,6 +61,15 @@ pub fn toggle_pin(
 
 #[tauri::command]
 #[specta::specta]
+pub fn view_drag(app: AppHandle, ctrl: WebviewWindow) -> Result<(), String> {
+  let window = to_window(&ctrl).err_to_string()?;
+  window.start_dragging().err_to_string()?;
+
+  Ok(())
+}
+
+#[tauri::command]
+#[specta::specta]
 pub fn view_zoomin(app: AppHandle, ctrl: WebviewWindow) -> Result<(), String> {
   set_zoom(&app, &to_window(&ctrl).err_to_string()?, 0.1).err_to_string()?;
 
@@ -78,6 +87,7 @@ pub fn view_zoomout(app: AppHandle, ctrl: WebviewWindow) -> Result<(), String> {
 #[tauri::command]
 #[specta::specta]
 pub fn view_close(app: AppHandle, label: String) -> Result<(), String> {
+  // TODO
   util::view_close(app, label.to_string()).err_to_string()?;
 
   Ok(())

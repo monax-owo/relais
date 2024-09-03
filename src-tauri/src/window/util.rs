@@ -11,8 +11,9 @@ use tauri::{
 use windows::Win32::{
   Foundation::{COLORREF, HWND},
   UI::WindowsAndMessaging::{
-    SetLayeredWindowAttributes, SetWindowLongPtrW, SetWindowPos, GWL_EXSTYLE, HWND_NOTOPMOST,
-    HWND_TOPMOST, LWA_ALPHA, SWP_NOMOVE, SWP_NOSIZE, WS_EX_LAYERED,
+    SetLayeredWindowAttributes, SetWindowLongPtrA, SetWindowLongPtrW, SetWindowPos, GWL_EXSTYLE,
+    HWND_NOTOPMOST, HWND_TOPMOST, LWA_ALPHA, SWP_NOMOVE, SWP_NOSIZE, WS_EX_LAYERED,
+    WS_EX_NOACTIVATE, WS_EX_TOOLWINDOW,
   },
 };
 
@@ -55,9 +56,6 @@ pub fn view_create(
       .transparent(true)
       .build()?;
 
-  //   let handle_window = window.hwnd().map_err(|_| ())?;
-  //   let handle_ctrl_window = window.hwnd().map_err(|_| ())?;
-
   let window_data = SourceWindowData {
     title,
     label: label.clone(),
@@ -74,10 +72,7 @@ pub fn view_create(
     let arc = Arc::new((window, ctrl_window));
     let (ref window, ref ctrl_window) = *Arc::clone(&arc);
     let window_hwnd = arc.0.hwnd()?;
-
-    unsafe {
-      SetWindowLongPtrW(window_hwnd, GWL_EXSTYLE, WS_EX_LAYERED.0 as isize);
-    }
+    let ctrl_hwnd = arc.1.hwnd()?;
 
     dbg!(&window.label());
     dbg!(&ctrl_window.label());
@@ -142,28 +137,46 @@ pub fn view_create(
     //   }
     // });
 
-    window.on_window_event(|e| match e {
-      WindowEvent::Resized(_) => (),
-      WindowEvent::Moved(_) => (),
-      WindowEvent::CloseRequested { .. } => (),
-      WindowEvent::Destroyed => (),
-      WindowEvent::Focused(state) if *state => (),
-      WindowEvent::ScaleFactorChanged { .. } => (),
-      WindowEvent::DragDrop(_) => (),
-      WindowEvent::ThemeChanged(_) => (),
-      _ => (),
+    window.on_window_event({
+      let arc = arc.clone();
+      // let app = app.clone();
+      move |e| match e {
+        // WindowEvent::Resized(_) => (),
+        WindowEvent::Moved(pos) => arc.1.set_position(window_pos(*pos)).unwrap(),
+        // WindowEvent::CloseRequested { .. } => (),
+        // WindowEvent::Destroyed => (),
+        WindowEvent::Focused(state) => {
+          if *state {
+            arc.1.show().unwrap();
+          } else if !arc.0.is_focused().unwrap() && !arc.1.is_focused().unwrap() {
+            arc.1.hide().unwrap();
+          }
+        }
+        // WindowEvent::ScaleFactorChanged { .. } => (),
+        // WindowEvent::DragDrop(_) => (),
+        // WindowEvent::ThemeChanged(_) => (),
+        _ => (),
+      }
     });
 
-    ctrl_window.on_window_event(|e| match e {
-      WindowEvent::Resized(_) => (),
-      WindowEvent::Moved(_) => (),
-      WindowEvent::CloseRequested { .. } => (),
-      WindowEvent::Destroyed => (),
-      WindowEvent::Focused(_) => (),
-      WindowEvent::ScaleFactorChanged { .. } => (),
-      WindowEvent::DragDrop(_) => (),
-      WindowEvent::ThemeChanged(_) => (),
-      _ => (),
+    ctrl_window.on_window_event({
+      //   let arc = arc.clone();
+      //   let app = app.clone();
+      move |e| match e {
+        // WindowEvent::Resized(_) => (),
+        // WindowEvent::Moved(_) => (),
+        // WindowEvent::CloseRequested { .. } => (),
+        // WindowEvent::Destroyed => (),
+        // WindowEvent::Focused(state) => {
+        //   if *state {
+        //     dbg!("ctrl focused");
+        //   }
+        // }
+        // WindowEvent::ScaleFactorChanged { .. } => (),
+        // WindowEvent::DragDrop(_) => (),
+        // WindowEvent::ThemeChanged(_) => (),
+        _ => (),
+      }
     });
 
     // commandに切り分けたほうが良さそう<-commandに分けないと動作がおかしい
@@ -190,6 +203,15 @@ pub fn view_create(
         }
       }
     });
+
+    unsafe {
+      SetWindowLongPtrW(window_hwnd, GWL_EXSTYLE, WS_EX_LAYERED.0 as isize);
+      SetWindowLongPtrW(
+        ctrl_hwnd,
+        GWL_EXSTYLE,
+        WS_EX_LAYERED.0 as isize | WS_EX_TOOLWINDOW.0 as isize,
+      );
+    }
 
     (|| -> anyhow::Result<()> {
       let diff_x = ctrl_window.outer_size()?.width - ctrl_window.inner_size()?.width;

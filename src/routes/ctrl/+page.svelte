@@ -13,9 +13,13 @@
   import IconZoomIn from "@tabler/icons-svelte/IconZoomIn.svelte";
   import IconZoomOut from "@tabler/icons-svelte/IconZoomOut.svelte";
 
-  import IconArrowsMove from "@tabler/icons-svelte/IconArrowsMove.svelte";
   import IconLock from "@tabler/icons-svelte/IconLock.svelte";
   import IconLockOpen2 from "@tabler/icons-svelte/IconLockOpen2.svelte";
+
+  import IconPointer from "@tabler/icons-svelte/IconPointer.svelte";
+  import IconPointerOff from "@tabler/icons-svelte/IconPointerOff.svelte";
+
+  import IconArrowsMove from "@tabler/icons-svelte/IconArrowsMove.svelte";
 
   import { commands, CTRL_LABEL_PREFIX } from "$lib/generated/specta/bindings";
   // import { window } from "@tauri-apps/api";
@@ -37,7 +41,8 @@
     await commands.viewMinimize();
   };
   const handleClose = async () => {
-    await em("close");
+    // TODO
+    // await em("close");
   };
   const handlePin = async () => {
     pinned = await commands.togglePin().then((v) => {
@@ -73,9 +78,13 @@
     await em("transparent");
     // transparent = await getTransparent();
   };
+  const handlePointerIgnore = async () => {
+    // TODO
+  };
   const handleDrag = async () => {
     // TODO
     // window.startDragging();
+    await commands.viewDrag();
   };
   const err = (err: string) => {
     ctrl.emitTo(ctrl.label.replace(CTRL_LABEL_PREFIX, ""), "err", { err });
@@ -83,8 +92,9 @@
 </script>
 
 <!-- TODO: lock/unlock animation -->
+<!-- TODO: opacity level slider -->
 <!-- <button type="button" on:pointerdown={}></button> -->
-<div class="header" data-tauri-drag-region>
+<div class="header">
   <button type="button" on:pointerdown={handleMini}><IconMinus {stroke}></IconMinus></button>
   <button type="button" on:pointerdown={handleClose}><IconX {stroke}></IconX></button>
   <button type="button" on:pointerdown={handlePin}>
@@ -109,11 +119,19 @@
       <IconGhost {stroke} />
     {/if}
   </button>
+  <button type="button" on:pointerdown={handlePointerIgnore}>
+    {#if transparent}
+      <IconPointerOff {stroke} />
+      <!-- <IconLockOpen {stroke} /> -->
+    {:else}
+      <IconPointer {stroke} />
+    {/if}
+  </button>
   <button type="button" on:pointerdown={handleZoomIn}><IconZoomIn {stroke} /></button>
   <button type="button" on:pointerdown={handleZoomOut}><IconZoomOut {stroke} /></button>
 
-  <button type="button" on:pointerdown={handleDrag} data-tauri-drag-region>
-    <IconArrowsMove {stroke} data-tauri-drag-region />
+  <button type="button" class="drag" on:pointerdown={handleDrag}>
+    <IconArrowsMove {stroke} />
   </button>
 </div>
 
@@ -141,10 +159,9 @@
       height: 1.2rem;
       font-size: 0.8rem;
       text-align: center;
-      &[data-tauri-drag-region] {
-        cursor: move;
-        pointer-events: fill;
-      }
+    }
+    .drag {
+      cursor: move;
     }
   }
 </style>
