@@ -24,9 +24,6 @@
       "capabilities": ["default", "view", "ctrl"],
       "csp": null
     },
-    "trayIcon": {
-      "iconPath": "icons/icon.png"
-    },
     "windows": [
       {
         "label": "main",
