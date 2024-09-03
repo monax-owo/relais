@@ -1,6 +1,6 @@
 {
   "productName": "Relais",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "identifier": "io.github.monax-owo.relais",
   "build": {
     "beforeBuildCommand": "pnpm vite:build",
