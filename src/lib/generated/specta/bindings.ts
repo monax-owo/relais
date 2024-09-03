@@ -5,9 +5,6 @@
 
 
 export const commands = {
-async getWindows() : Promise<WindowData[]> {
-    return await TAURI_INVOKE("get_windows");
-},
 async exit() : Promise<Result<null, string>> {
     try {
     return { status: "ok", data: await TAURI_INVOKE("exit") };
@@ -15,6 +12,9 @@ async exit() : Promise<Result<null, string>> {
     if(e instanceof Error) throw e;
     else return { status: "error", error: e  as any };
 }
+},
+async getWindows() : Promise<WindowData[]> {
+    return await TAURI_INVOKE("get_windows");
 },
 async viewCreate(url: string, label: string | null) : Promise<Result<null, string>> {
     try {

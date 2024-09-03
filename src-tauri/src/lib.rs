@@ -28,8 +28,8 @@ mod view;
 pub fn run() {
   let specta = tauri_specta::Builder::new()
     .commands(collect_commands![
-      command::get_windows,
       command::exit,
+      command::get_windows,
       view::command::view_create,
       view::command::window_focus,
       view::command::window_hide,
