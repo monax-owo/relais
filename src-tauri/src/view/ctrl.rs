@@ -27,8 +27,18 @@ pub mod command {
 
   #[command]
   #[specta]
-  pub fn toggle_ignore_cursor_events(_ctrl: WebviewWindow, _state: State<'_, SourceAppState>) {
-    todo!()
+  pub fn toggle_ignore_cursor_events(
+    ctrl: WebviewWindow,
+    state: State<'_, SourceAppState>,
+  ) -> Result<bool, String> {
+    let window = to_window(&ctrl).err_to_string()?;
+    let window_data = state.get_window_data(window.label()).err_to_string()?;
+    let atomic = Arc::clone(&window_data.ignore);
+    let condition = atomic.load(Ordering::Acquire);
+
+    set_ignore_cursor_events(ctrl, state, !condition)?;
+
+    Ok(!condition)
   }
 
   #[command]
@@ -67,21 +77,40 @@ pub mod command {
     let window = to_window(&ctrl).err_to_string()?;
     let window_data = state.get_window_data(window.label()).err_to_string()?;
     let atomic = Arc::clone(&window_data.pin);
-    let pinned = atomic.load(Ordering::Acquire);
+    let condition = atomic.load(Ordering::Acquire);
 
-    util::set_pin(&window, !pinned)?;
-    atomic.store(!pinned, Ordering::Release);
+    util::set_pin(&window, !condition)?;
+    atomic.store(!condition, Ordering::Release);
 
-    Ok(!pinned)
+    Ok(!condition)
   }
 
   #[command]
   #[specta]
-  pub fn set_pin() {}
+  pub fn set_pin(
+    ctrl: WebviewWindow,
+    state: State<'_, SourceAppState>,
+    value: bool,
+  ) -> Result<(), String> {
+    let window = to_window(&ctrl).err_to_string()?;
+    let window_data = state.get_window_data(window.label()).err_to_string()?;
+    let atomic = Arc::clone(&window_data.pin);
+
+    util::set_pin(&window, value).err_to_string()?;
+    atomic.store(value, Ordering::Release);
+
+    Ok(())
+  }
 
   #[command]
   #[specta]
-  pub fn get_pin() {}
+  pub fn get_pin(ctrl: WebviewWindow, state: State<'_, SourceAppState>) -> Result<bool, String> {
+    let window = to_window(&ctrl).err_to_string()?;
+    let window_data = state.get_window_data(window.label()).err_to_string()?;
+    let atomic = Arc::clone(&window_data.pin);
+
+    Ok(atomic.load(Ordering::Acquire))
+  }
 
   #[command]
   #[specta]
@@ -106,18 +135,15 @@ pub mod command {
     state: State<'_, SourceAppState>,
     alpha: u8,
   ) -> Result<bool, String> {
-    let window = to_window(&ctrl).err_to_string()?;
-    let window_hwnd = window.hwnd().err_to_string()?;
     let condition = state.overlay.load(Ordering::Acquire);
+
     if condition {
       // 不透明
-      util::set_transparent(window_hwnd, 255).unwrap();
+      set_transparent(ctrl, state, 255)?;
     } else {
       // 半透明
-      util::set_transparent(window_hwnd, alpha).unwrap();
+      set_transparent(ctrl, state, alpha)?;
     };
-
-    state.overlay.store(!condition, Ordering::Release);
 
     Ok(!condition)
   }

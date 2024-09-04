@@ -47,6 +47,27 @@
       }
     });
   };
+  const handleTransparent = async () => {
+    transparent = await commands.toggleTransparent(127).then((v) => {
+      switch (v.status) {
+        case "ok":
+          return v.data;
+        case "error":
+          throw err(v.error);
+      }
+    });
+    // transparent = await getTransparent();
+  };
+  const handlePointerIgnore = async () => {
+    pointerIgnored = await commands.toggleIgnoreCursorEvents().then((v) => {
+      switch (v.status) {
+        case "ok":
+          return v.data;
+        case "error":
+          throw err(v.error);
+      }
+    });
+  };
   const handleZoomIn = async () => {
     await commands.viewZoomin().then((v) => {
       switch (v.status) {
@@ -66,20 +87,6 @@
           throw err(v.error);
       }
     });
-  };
-  const handleTransparent = async () => {
-    transparent = await commands.toggleTransparent(127).then((v) => {
-      switch (v.status) {
-        case "ok":
-          return v.data;
-        case "error":
-          throw err(v.error);
-      }
-    });
-    // transparent = await getTransparent();
-  };
-  const handlePointerIgnore = async () => {
-    // TODO
   };
   const handleDrag = async () => {
     // TODO

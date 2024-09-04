@@ -78,8 +78,13 @@ async setTransparent(alpha: number) : Promise<Result<null, string>> {
     else return { status: "error", error: e  as any };
 }
 },
-async toggleIgnoreCursorEvents() : Promise<void> {
-    await TAURI_INVOKE("toggle_ignore_cursor_events");
+async toggleIgnoreCursorEvents() : Promise<Result<boolean, string>> {
+    try {
+    return { status: "ok", data: await TAURI_INVOKE("toggle_ignore_cursor_events") };
+} catch (e) {
+    if(e instanceof Error) throw e;
+    else return { status: "error", error: e  as any };
+}
 },
 async togglePin() : Promise<Result<boolean, string>> {
     try {
@@ -145,8 +150,8 @@ async viewZoomout() : Promise<Result<null, string>> {
 
 /** user-defined constants **/
 
-export const CTRL_LABEL_PREFIX = "ctrl_" as const;
 export const WINDOW_LABEL_PREFIX = "window_" as const;
+export const CTRL_LABEL_PREFIX = "ctrl_" as const;
 
 /** user-defined types **/
 
