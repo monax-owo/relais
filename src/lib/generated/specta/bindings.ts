@@ -123,8 +123,8 @@ async viewZoomout() : Promise<Result<null, string>> {
 
 /** user-defined constants **/
 
-export const CTRL_LABEL_PREFIX = "ctrl_" as const;
 export const WINDOW_LABEL_PREFIX = "window_" as const;
+export const CTRL_LABEL_PREFIX = "ctrl_" as const;
 
 /** user-defined types **/
 

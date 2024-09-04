@@ -1,20 +1,20 @@
 use anyhow::Context;
-use std::sync::{
-  atomic::{AtomicBool, Ordering},
-  Arc, Mutex,
-};
+use std::sync::{atomic::AtomicBool, Arc, Mutex};
 use tauri::{
   AppHandle, Manager, PhysicalPosition, PhysicalSize, State, WebviewUrl, WebviewWindow,
   WebviewWindowBuilder, WindowEvent,
 };
 use windows::Win32::{
-  Foundation::{COLORREF, HWND, LPARAM, LRESULT, WPARAM},
-  UI::WindowsAndMessaging::{
-    DefWindowProcW, SetLayeredWindowAttributes, SetWindowLongPtrW, SetWindowPos, GWL_EXSTYLE,
-    HWND_NOTOPMOST, HWND_TOPMOST, LWA_ALPHA, SWP_NOMOVE, SWP_NOSIZE, WM_SETFOCUS, WS_EX_LAYERED,
-    WS_EX_NOACTIVATE,
-  },
-};
+    Foundation::{COLORREF, HWND, LPARAM, LRESULT, WPARAM},
+    UI::{
+      Shell::DefSubclassProc,
+      WindowsAndMessaging::{
+        SetLayeredWindowAttributes, SetWindowLongPtrW, SetWindowPos, GWL_EXSTYLE,
+        HWND_NOTOPMOST, HWND_TOPMOST, LWA_ALPHA, SWP_NOMOVE, SWP_NOSIZE, WM_SETFOCUS,
+        WS_EX_LAYERED, WS_EX_NOACTIVATE,
+      },
+    },
+  };
 
 use crate::util::{SourceAppState, SourceWindowData};
 
@@ -102,7 +102,8 @@ pub fn view_create(
         GWL_EXSTYLE,
         WS_EX_LAYERED.0 as isize | WS_EX_NOACTIVATE.0 as isize,
       );
-      // SetWindowLongPtrW(ctrl_hwnd, GWLP_WNDPROC, ctrl_proc as isize);
+      // let res = SetWindowSubclass(ctrl_hwnd, Some(ctrl_proc), 0, 0).as_bool();
+      // dbg!(res);
     }
 
     (|| -> anyhow::Result<()> {
@@ -116,46 +117,24 @@ pub fn view_create(
     })()?;
   }
 
-  // ctrl_window.hide()?;
-
   Ok(())
 }
 
-unsafe extern "system" fn ctrl_proc(
+extern "system" fn ctrl_proc(
   hwnd: HWND,
-  msg: u32,
+  umsg: u32,
   wparam: WPARAM,
   lparam: LPARAM,
+  _uidsubclass: usize,
+  _dwrefdata: usize,
 ) -> LRESULT {
-  match msg {
-    WM_SETFOCUS => LRESULT(0),
-    _ => DefWindowProcW(hwnd, msg, wparam, lparam),
+  match umsg {
+    WM_SETFOCUS => {
+      println!("WM_SETFOCUS");
+      LRESULT(0)
+    }
+    _ => unsafe { DefSubclassProc(hwnd, umsg, wparam, lparam) },
   }
-}
-
-pub fn toggle_transparent(
-  app: &AppHandle,
-  window: &WebviewWindow,
-  ctrl_window: &WebviewWindow,
-  alpha: u8,
-) -> anyhow::Result<bool> {
-  let state = app.state::<SourceAppState>();
-  let window_hwnd = window.hwnd()?;
-  let condition = state.overlay.load(Ordering::Acquire);
-  // TODO: カーソル通過
-  if condition {
-    // 不透明
-    set_transparent(window_hwnd, 255).unwrap();
-    ctrl_window.show().unwrap();
-  } else {
-    // 半透明
-    set_transparent(window_hwnd, alpha).unwrap();
-    ctrl_window.hide().unwrap();
-  };
-
-  state.overlay.store(!condition, Ordering::Release);
-
-  Ok(!condition)
 }
 
 pub fn set_transparent(hwnd: HWND, alpha: u8) -> anyhow::Result<()> {

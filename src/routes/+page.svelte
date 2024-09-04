@@ -9,13 +9,13 @@
   let valid = true;
 
   const handleOpen = async () => {
-    try {
-      new URL((url.startsWith("http") ? "" : "https://") + url);
-      valid = true;
-    } catch (e) {
-      valid = false;
-      console.error(e);
-    }
+    // try {
+    //   new URL((url.startsWith("http") ? "" : "https://") + url);
+    //   valid = true;
+    // } catch (e) {
+    //   valid = false;
+    //   console.error(e);
+    // }
     await commands.viewCreate(url, null);
   };
 
@@ -26,9 +26,9 @@
     listen("update_windows", async () => await f());
 
     ifDev(() => {
-      console.log(windows.length);
-
       ifThen(windows.length < 1, () => {
+        console.log(windows.length);
+
         url = "www.twitch.tv/stylishnoob4";
         handleOpen();
       });
