@@ -15,6 +15,7 @@ pub mod command {
 
     Ok(())
   }
+
   #[command]
   #[specta]
   pub fn view_close(app: AppHandle, label: String) -> Result<(), String> {
@@ -23,6 +24,7 @@ pub mod command {
 
     Ok(())
   }
+
   #[command]
   #[specta]
   pub fn toggle_pin(
@@ -45,6 +47,7 @@ pub mod command {
     atomic.store(!pinned, Ordering::Release);
     Ok(!pinned)
   }
+
   #[command]
   #[specta]
   pub fn view_zoomin(app: AppHandle, ctrl: WebviewWindow) -> Result<(), String> {
@@ -52,6 +55,7 @@ pub mod command {
 
     Ok(())
   }
+
   #[command]
   #[specta]
   pub fn view_zoomout(app: AppHandle, ctrl: WebviewWindow) -> Result<(), String> {
@@ -59,6 +63,7 @@ pub mod command {
 
     Ok(())
   }
+
   #[command]
   #[specta]
   pub fn toggle_transparent(
@@ -81,6 +86,7 @@ pub mod command {
 
     Ok(!condition)
   }
+
   #[command]
   #[specta]
   pub fn set_transparent(
@@ -95,16 +101,19 @@ pub mod command {
     state.overlay.store(transparent, Ordering::Release);
     Ok(())
   }
+
   #[command]
   #[specta]
   pub fn get_transparent(state: State<'_, SourceAppState>) -> Result<bool, String> {
     Ok(state.overlay.load(Ordering::Acquire))
   }
+
   #[command]
   #[specta]
   pub fn set_pointer_ignore() {
     todo!()
   }
+
   #[command]
   #[specta]
   pub fn view_drag(ctrl: WebviewWindow) -> Result<(), String> {
