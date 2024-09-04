@@ -32,7 +32,8 @@ pub struct AppState {
 pub struct SourceWindowData {
   pub title: String,
   pub label: String,
-  pub pin: Arc<AtomicBool>,
+  pub(crate) ignore: Arc<AtomicBool>,
+  pub(crate) pin: Arc<AtomicBool>,
   pub zoom: Arc<Mutex<f64>>,
 }
 
@@ -40,6 +41,7 @@ pub struct SourceWindowData {
 pub struct WindowData {
   title: String,
   label: String,
+  ignore: bool,
   pin: bool,
   zoom: f64,
 }
@@ -68,9 +70,13 @@ impl SourceAppState {
       .unwrap();
   }
 
-  pub fn get_window_data(&self, label: &str) -> Option<SourceWindowData> {
+  pub fn get_window_data(&self, label: &str) -> anyhow::Result<SourceWindowData> {
     let lock = self.windows.lock().unwrap();
-    lock.iter().find(|v| v.label.as_str() == label).cloned()
+    lock
+      .iter()
+      .find(|v| v.label.as_str() == label)
+      .cloned()
+      .context("failed to get window data")
   }
 
   pub fn get_windows(&self) -> Vec<WindowData> {
@@ -84,7 +90,8 @@ impl From<SourceWindowData> for WindowData {
     Self {
       title: v.title,
       label: v.label,
-      pin: v.pin.clone().load(Ordering::Acquire),
+      ignore: Arc::clone(&v.ignore).load(Ordering::Acquire),
+      pin: Arc::clone(&v.pin).load(Ordering::Acquire),
       zoom: *v.zoom.lock().unwrap(),
     }
   }

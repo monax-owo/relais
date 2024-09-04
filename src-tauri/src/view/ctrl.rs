@@ -6,12 +6,12 @@ pub mod command {
 
   use specta::specta;
   use std::sync::{atomic::Ordering, Arc};
-  use tauri::{command, AppHandle, Manager, State, WebviewWindow};
+  use tauri::{command, AppHandle, State, WebviewWindow};
 
   #[command]
   #[specta]
   pub fn view_minimize(ctrl: WebviewWindow) -> Result<(), String> {
-    util::window_minimize(&util::to_window(&ctrl).err_to_string()?).err_to_string()?;
+    util::window_minimize(&to_window(&ctrl).err_to_string()?).err_to_string()?;
 
     Ok(())
   }
@@ -27,39 +27,74 @@ pub mod command {
 
   #[command]
   #[specta]
-  pub fn toggle_pin(
-    app: AppHandle,
-    window: WebviewWindow,
-    state: State<'_, SourceAppState>,
-  ) -> Result<bool, String> {
-    let Some(window_data) = state.get_window_data(&util::to_window_label(window.label())) else {
-      return Err("failed to get window data".to_string());
-    };
-    let atomic = Arc::clone(&window_data.pin);
-    let pinned = atomic.load(Ordering::Acquire);
-    dbg!(pinned);
-    util::set_pin(
-      &app
-        .get_webview_window(&util::to_window_label(window.label()))
-        .unwrap(),
-      !pinned,
-    )?;
-    atomic.store(!pinned, Ordering::Release);
-    Ok(!pinned)
+  pub fn toggle_ignore_cursor_events(_ctrl: WebviewWindow, _state: State<'_, SourceAppState>) {
+    todo!()
   }
 
   #[command]
   #[specta]
-  pub fn view_zoomin(app: AppHandle, ctrl: WebviewWindow) -> Result<(), String> {
-    util::set_zoom(&app, &util::to_window(&ctrl).err_to_string()?, 0.1).err_to_string()?;
+  pub fn set_ignore_cursor_events(
+    ctrl: WebviewWindow,
+    state: State<'_, SourceAppState>,
+    value: bool,
+  ) -> Result<(), String> {
+    let window = to_window(&ctrl).err_to_string()?;
+    let window_data = state.get_window_data(window.label()).err_to_string()?;
+    let atomic = Arc::clone(&window_data.ignore);
+
+    window.set_ignore_cursor_events(value).err_to_string()?;
+    atomic.store(value, Ordering::Release);
 
     Ok(())
   }
 
   #[command]
   #[specta]
-  pub fn view_zoomout(app: AppHandle, ctrl: WebviewWindow) -> Result<(), String> {
-    util::set_zoom(&app, &util::to_window(&ctrl).err_to_string()?, -0.1).err_to_string()?;
+  pub fn get_ignore_cursor_events(
+    ctrl: WebviewWindow,
+    state: State<'_, SourceAppState>,
+  ) -> Result<bool, String> {
+    let window = to_window(&ctrl).err_to_string()?;
+    let window_data = state.get_window_data(window.label()).err_to_string()?;
+    let atomic = Arc::clone(&window_data.ignore);
+
+    Ok(atomic.load(Ordering::Acquire))
+  }
+
+  #[command]
+  #[specta]
+  pub fn toggle_pin(ctrl: WebviewWindow, state: State<'_, SourceAppState>) -> Result<bool, String> {
+    let window = to_window(&ctrl).err_to_string()?;
+    let window_data = state.get_window_data(window.label()).err_to_string()?;
+    let atomic = Arc::clone(&window_data.pin);
+    let pinned = atomic.load(Ordering::Acquire);
+
+    util::set_pin(&window, !pinned)?;
+    atomic.store(!pinned, Ordering::Release);
+
+    Ok(!pinned)
+  }
+
+  #[command]
+  #[specta]
+  pub fn set_pin() {}
+
+  #[command]
+  #[specta]
+  pub fn get_pin() {}
+
+  #[command]
+  #[specta]
+  pub fn view_zoomin(ctrl: WebviewWindow, state: State<'_, SourceAppState>) -> Result<(), String> {
+    util::set_zoom(&to_window(&ctrl).err_to_string()?, state, 0.1).err_to_string()?;
+
+    Ok(())
+  }
+
+  #[command]
+  #[specta]
+  pub fn view_zoomout(ctrl: WebviewWindow, state: State<'_, SourceAppState>) -> Result<(), String> {
+    util::set_zoom(&to_window(&ctrl).err_to_string()?, state, -0.1).err_to_string()?;
 
     Ok(())
   }
@@ -94,11 +129,10 @@ pub mod command {
     state: State<'_, SourceAppState>,
     alpha: u8,
   ) -> Result<(), String> {
-    let window = util::to_window(&ctrl).err_to_string()?;
+    let window = to_window(&ctrl).err_to_string()?;
     util::set_transparent(window.hwnd().err_to_string()?, alpha).err_to_string()?;
-    let transparent = !alpha == 255;
-    dbg!(transparent);
-    state.overlay.store(transparent, Ordering::Release);
+    state.overlay.store(!alpha == 255, Ordering::Release);
+
     Ok(())
   }
 
@@ -110,14 +144,8 @@ pub mod command {
 
   #[command]
   #[specta]
-  pub fn set_pointer_ignore() {
-    todo!()
-  }
-
-  #[command]
-  #[specta]
   pub fn view_drag(ctrl: WebviewWindow) -> Result<(), String> {
-    let window = util::to_window(&ctrl).err_to_string()?;
+    let window = to_window(&ctrl).err_to_string()?;
     window.start_dragging().err_to_string()?;
 
     Ok(())

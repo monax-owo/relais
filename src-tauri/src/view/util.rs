@@ -58,6 +58,7 @@ pub fn view_create(
   let window_data = SourceWindowData {
     title,
     label: label.clone(),
+    ignore: Arc::from(AtomicBool::from(false)),
     pin: Arc::from(AtomicBool::from(false)),
     zoom: Arc::from(Mutex::from(1.0)),
   };
@@ -77,7 +78,7 @@ pub fn view_create(
     dbg!(&ctrl_window.label());
 
     window.on_window_event({
-      let arc = arc.clone();
+      let arc = Arc::clone(&arc);
       // let app = app.clone();
       move |e| match e {
         WindowEvent::Moved(pos) => arc.1.set_position(window_pos(*pos)).unwrap(),
@@ -163,11 +164,12 @@ pub fn set_pin(window: &WebviewWindow, value: bool) -> Result<(), String> {
 }
 
 // TODO: f64の代わりにパーセントを使う
-pub fn set_zoom(app: &AppHandle, window: &WebviewWindow, diff: f64) -> anyhow::Result<()> {
-  let state = app.state::<SourceAppState>();
-  let window_data = state
-    .get_window_data(window.label())
-    .context("failed to get window data")?;
+pub fn set_zoom(
+  window: &WebviewWindow,
+  state: State<'_, SourceAppState>,
+  diff: f64,
+) -> anyhow::Result<()> {
+  let window_data = state.get_window_data(window.label())?;
   let zoom = window_data.zoom.clone();
   let mut lock = zoom.lock().unwrap();
 

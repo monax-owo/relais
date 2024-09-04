@@ -40,6 +40,17 @@ async windowHide() : Promise<Result<null, string>> {
     else return { status: "error", error: e  as any };
 }
 },
+async getIgnoreCursorEvents() : Promise<Result<boolean, string>> {
+    try {
+    return { status: "ok", data: await TAURI_INVOKE("get_ignore_cursor_events") };
+} catch (e) {
+    if(e instanceof Error) throw e;
+    else return { status: "error", error: e  as any };
+}
+},
+async getPin() : Promise<void> {
+    await TAURI_INVOKE("get_pin");
+},
 async getTransparent() : Promise<Result<boolean, string>> {
     try {
     return { status: "ok", data: await TAURI_INVOKE("get_transparent") };
@@ -48,8 +59,16 @@ async getTransparent() : Promise<Result<boolean, string>> {
     else return { status: "error", error: e  as any };
 }
 },
-async setPointerIgnore() : Promise<void> {
-    await TAURI_INVOKE("set_pointer_ignore");
+async setIgnoreCursorEvents(value: boolean) : Promise<Result<null, string>> {
+    try {
+    return { status: "ok", data: await TAURI_INVOKE("set_ignore_cursor_events", { value }) };
+} catch (e) {
+    if(e instanceof Error) throw e;
+    else return { status: "error", error: e  as any };
+}
+},
+async setPin() : Promise<void> {
+    await TAURI_INVOKE("set_pin");
 },
 async setTransparent(alpha: number) : Promise<Result<null, string>> {
     try {
@@ -58,6 +77,9 @@ async setTransparent(alpha: number) : Promise<Result<null, string>> {
     if(e instanceof Error) throw e;
     else return { status: "error", error: e  as any };
 }
+},
+async toggleIgnoreCursorEvents() : Promise<void> {
+    await TAURI_INVOKE("toggle_ignore_cursor_events");
 },
 async togglePin() : Promise<Result<boolean, string>> {
     try {
@@ -123,12 +145,12 @@ async viewZoomout() : Promise<Result<null, string>> {
 
 /** user-defined constants **/
 
-export const WINDOW_LABEL_PREFIX = "window_" as const;
 export const CTRL_LABEL_PREFIX = "ctrl_" as const;
+export const WINDOW_LABEL_PREFIX = "window_" as const;
 
 /** user-defined types **/
 
-export type WindowData = { title: string; label: string; pin: boolean; zoom: number }
+export type WindowData = { title: string; label: string; ignore: boolean; pin: boolean; zoom: number }
 
 /** tauri-specta globals **/
 
