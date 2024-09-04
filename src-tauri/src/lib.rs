@@ -125,7 +125,7 @@ pub fn run() {
 
       let tray_icon = {
         // Image::from_path("icons/icon.png").unwrap()
-        Image::from_bytes(include_bytes!("../icons/icon.png")).unwrap()
+        Image::from_bytes(include_bytes!("../icons/128x128.png")).unwrap()
       };
       let tray_menu = MenuBuilder::new(app)
         .items(&[
