@@ -1,12 +1,12 @@
-use tauri::{AppHandle, State, WebviewUrl, WebviewWindow};
-use uuid::Uuid;
-
+use super::util;
 use crate::util::{ErrToString, SourceAppState};
 
-use super::util;
+use specta::specta;
+use tauri::{command, AppHandle, State, WebviewUrl, WebviewWindow};
+use uuid::Uuid;
 
-#[tauri::command]
-#[specta::specta]
+#[command]
+#[specta]
 pub async fn view_create(
   app: AppHandle,
   state: State<'_, SourceAppState>,
@@ -27,16 +27,16 @@ pub async fn view_create(
   Ok(())
 }
 
-#[tauri::command]
-#[specta::specta]
+#[command]
+#[specta]
 pub fn window_focus(_app: AppHandle, window: WebviewWindow) -> Result<(), String> {
   util::window_focus(&window).err_to_string()?;
 
   Ok(())
 }
 
-#[tauri::command]
-#[specta::specta]
+#[command]
+#[specta]
 pub fn window_hide(window: WebviewWindow) -> Result<(), String> {
   util::window_hide(&window).err_to_string()?;
 

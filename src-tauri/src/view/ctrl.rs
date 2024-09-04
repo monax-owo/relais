@@ -1,29 +1,30 @@
 pub mod command {
-  use std::sync::{atomic::Ordering, Arc};
-
   use crate::{
     util::{ErrToString, SourceAppState},
     view::util::{self, to_window},
   };
-  use tauri::{AppHandle, Manager, State, WebviewWindow};
 
-  #[tauri::command]
-  #[specta::specta]
+  use specta::specta;
+  use std::sync::{atomic::Ordering, Arc};
+  use tauri::{command, AppHandle, Manager, State, WebviewWindow};
+
+  #[command]
+  #[specta]
   pub fn view_minimize(ctrl: WebviewWindow) -> Result<(), String> {
     util::window_minimize(&util::to_window(&ctrl).err_to_string()?).err_to_string()?;
 
     Ok(())
   }
-  #[tauri::command]
-  #[specta::specta]
+  #[command]
+  #[specta]
   pub fn view_close(app: AppHandle, label: String) -> Result<(), String> {
     // TODO
     util::view_close(app, label.to_string()).err_to_string()?;
 
     Ok(())
   }
-  #[tauri::command]
-  #[specta::specta]
+  #[command]
+  #[specta]
   pub fn toggle_pin(
     app: AppHandle,
     window: WebviewWindow,
@@ -44,22 +45,22 @@ pub mod command {
     atomic.store(!pinned, Ordering::Release);
     Ok(!pinned)
   }
-  #[tauri::command]
-  #[specta::specta]
+  #[command]
+  #[specta]
   pub fn view_zoomin(app: AppHandle, ctrl: WebviewWindow) -> Result<(), String> {
     util::set_zoom(&app, &util::to_window(&ctrl).err_to_string()?, 0.1).err_to_string()?;
 
     Ok(())
   }
-  #[tauri::command]
-  #[specta::specta]
+  #[command]
+  #[specta]
   pub fn view_zoomout(app: AppHandle, ctrl: WebviewWindow) -> Result<(), String> {
     util::set_zoom(&app, &util::to_window(&ctrl).err_to_string()?, -0.1).err_to_string()?;
 
     Ok(())
   }
-  #[tauri::command]
-  #[specta::specta]
+  #[command]
+  #[specta]
   pub fn toggle_transparent(
     ctrl: WebviewWindow,
     state: State<'_, SourceAppState>,
@@ -80,8 +81,8 @@ pub mod command {
 
     Ok(!condition)
   }
-  #[tauri::command]
-  #[specta::specta]
+  #[command]
+  #[specta]
   pub fn set_transparent(
     ctrl: WebviewWindow,
     state: State<'_, SourceAppState>,
@@ -94,18 +95,18 @@ pub mod command {
     state.overlay.store(transparent, Ordering::Release);
     Ok(())
   }
-  #[tauri::command]
-  #[specta::specta]
+  #[command]
+  #[specta]
   pub fn get_transparent(state: State<'_, SourceAppState>) -> Result<bool, String> {
     Ok(state.overlay.load(Ordering::Acquire))
   }
-  #[tauri::command]
-  #[specta::specta]
+  #[command]
+  #[specta]
   pub fn set_pointer_ignore() {
     todo!()
   }
-  #[tauri::command]
-  #[specta::specta]
+  #[command]
+  #[specta]
   pub fn view_drag(ctrl: WebviewWindow) -> Result<(), String> {
     let window = util::to_window(&ctrl).err_to_string()?;
     window.start_dragging().err_to_string()?;

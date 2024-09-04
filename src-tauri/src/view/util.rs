@@ -1,3 +1,5 @@
+use crate::util::{SourceAppState, SourceWindowData};
+
 use anyhow::Context;
 use std::sync::{atomic::AtomicBool, Arc, Mutex};
 use tauri::{
@@ -5,18 +7,16 @@ use tauri::{
   WebviewWindowBuilder, WindowEvent,
 };
 use windows::Win32::{
-    Foundation::{COLORREF, HWND, LPARAM, LRESULT, WPARAM},
-    UI::{
-      Shell::DefSubclassProc,
-      WindowsAndMessaging::{
-        SetLayeredWindowAttributes, SetWindowLongPtrW, SetWindowPos, GWL_EXSTYLE,
-        HWND_NOTOPMOST, HWND_TOPMOST, LWA_ALPHA, SWP_NOMOVE, SWP_NOSIZE, WM_SETFOCUS,
-        WS_EX_LAYERED, WS_EX_NOACTIVATE,
-      },
+  Foundation::{COLORREF, HWND, LPARAM, LRESULT, WPARAM},
+  UI::{
+    Shell::DefSubclassProc,
+    WindowsAndMessaging::{
+      SetLayeredWindowAttributes, SetWindowLongPtrW, SetWindowPos, GWL_EXSTYLE, HWND_NOTOPMOST,
+      HWND_TOPMOST, LWA_ALPHA, SWP_NOMOVE, SWP_NOSIZE, WM_SETFOCUS, WS_EX_LAYERED,
+      WS_EX_NOACTIVATE,
     },
-  };
-
-use crate::util::{SourceAppState, SourceWindowData};
+  },
+};
 
 pub const CTRL_SIZE: (u32, u32) = (40, 320);
 pub const WINDOW_MIN_INNER_SIZE: (f64, f64) = (400.0, 400.0);
