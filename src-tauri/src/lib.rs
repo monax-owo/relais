@@ -47,6 +47,7 @@ pub fn run() {
       view::ctrl::command::view_minimize,
       view::ctrl::command::view_zoomin,
       view::ctrl::command::view_zoomout,
+      view::extension::command::test,
     ])
     .typ::<WindowData>()
     .constant("WINDOW_LABEL_PREFIX", view::util::WINDOW_LABEL_PREFIX)

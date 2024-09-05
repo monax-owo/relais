@@ -10,7 +10,7 @@ pub mod command {
   use tauri::{command, AppHandle, State, WebviewWindow};
   use tauri_plugin_dialog::DialogExt;
   use webview2_com::Microsoft::Web::WebView2::Win32::{
-    ICoreWebView2, ICoreWebView2Profile7, ICoreWebView2_13, ICoreWebView2_8,
+    ICoreWebView2Profile7, ICoreWebView2_13,
   };
   use windows::core::Interface;
 
@@ -40,7 +40,7 @@ pub mod command {
               .blocking_pick_folder()
               .context("failed to get dir path")
               .unwrap();
-            let handler = todo!();
+            todo!();
             // let res = webview_profile_7.AddBrowserExtension(path.to_str().unwrap().into(), handler);
 
             Ok(())
