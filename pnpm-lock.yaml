@@ -20,6 +20,9 @@ importers:
       '@tauri-apps/api':
         specifier: 2.0.0-rc.0
         version: 2.0.0-rc.0
+      '@tauri-apps/plugin-dialog':
+        specifier: 2.0.0-rc.1
+        version: 2.0.0-rc.1
       '@tauri-apps/plugin-shell':
         specifier: 2.0.0-rc.0
         version: 2.0.0-rc.0
@@ -796,6 +799,9 @@ packages:
     resolution: {integrity: sha512-hB6Pa0IaJs/As3Hc5IOiiK4Ilh9jspEA+2uPURCRQg4BkzQWwQzNdGQ4gjAzFNFAWPzy/4uuIXdnd1a+jC4wLA==}
     engines: {node: '>= 10'}
     hasBin: true
+
+  '@tauri-apps/plugin-dialog@2.0.0-rc.1':
+    resolution: {integrity: sha512-H28gh6BfZtjflHQ+HrmWwunDriBI3AQLAKnMs50GA6zeNUULqbQr7VXbAAKeJL/0CmWcecID4PKXVoSlaWRhEg==}
 
   '@tauri-apps/plugin-global-shortcut@2.0.0-rc.1':
     resolution: {integrity: sha512-4o4D9Hb3VTf3xZqzfrySCVSZ13K9FsID4HZrXwyR81bHH1hMkJFfxq9yeMn/DRHmg5GtZBHxx0/FEEWwgm652g==}
@@ -2779,6 +2785,10 @@ snapshots:
       '@tauri-apps/cli-win32-arm64-msvc': 2.0.0-rc.8
       '@tauri-apps/cli-win32-ia32-msvc': 2.0.0-rc.8
       '@tauri-apps/cli-win32-x64-msvc': 2.0.0-rc.8
+
+  '@tauri-apps/plugin-dialog@2.0.0-rc.1':
+    dependencies:
+      '@tauri-apps/api': 2.0.0-rc.4
 
   '@tauri-apps/plugin-global-shortcut@2.0.0-rc.1':
     dependencies:
