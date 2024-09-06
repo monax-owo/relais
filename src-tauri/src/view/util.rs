@@ -121,7 +121,7 @@ pub fn view_create(
   Ok(())
 }
 
-extern "system" fn ctrl_proc(
+extern "system" fn _ctrl_proc(
   hwnd: HWND,
   umsg: u32,
   wparam: WPARAM,
@@ -206,7 +206,7 @@ pub fn window_pos(pos: PhysicalPosition<i32>) -> PhysicalPosition<i32> {
   PhysicalPosition::new(pos.x - OFFSET.0, pos.y - OFFSET.1)
 }
 
-pub fn to_ctrl(window: &WebviewWindow) -> anyhow::Result<WebviewWindow> {
+pub fn _to_ctrl(window: &WebviewWindow) -> anyhow::Result<WebviewWindow> {
   window
     .get_webview_window(&to_ctrl_label(window.label()))
     .context("window is not found")
@@ -230,7 +230,7 @@ pub fn view_close(app: AppHandle, label: String) -> anyhow::Result<()> {
   Ok(())
 }
 
-pub fn close(app: &AppHandle, arc: &Arc<(WebviewWindow, WebviewWindow)>) -> anyhow::Result<()> {
+pub fn _close(app: &AppHandle, arc: &Arc<(WebviewWindow, WebviewWindow)>) -> anyhow::Result<()> {
   let state = app.state::<SourceAppState>();
   let label = arc.0.label();
   arc.1.close()?;
