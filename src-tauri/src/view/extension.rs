@@ -9,9 +9,7 @@ pub mod command {
   use specta::specta;
   use tauri::{command, AppHandle, State, WebviewWindow};
   use tauri_plugin_dialog::DialogExt;
-  use webview2_com::Microsoft::Web::WebView2::Win32::{
-    ICoreWebView2Profile7, ICoreWebView2_13,
-  };
+  use webview2_com::Microsoft::Web::WebView2::Win32::{ICoreWebView2Profile7, ICoreWebView2_13};
   use windows::core::Interface;
 
   #[command]
