@@ -1,8 +1,8 @@
-use derive::TryToHashMap;
-
+use derive::HashMap;
+use serde::Serialize;
 #[test]
 fn run() {
-  #[derive(Debug, TryToHashMap)]
+  #[derive(Debug, HashMap, Serialize)]
   struct TestStruct<'a> {
     one: u32,
     two: i32,
@@ -17,6 +17,7 @@ fn run() {
     four: true,
     five: "test text",
   };
-  dbg!(val);
-  // println!("{}", val.try_to_hashmap());
+  dbg!(&val);
+  val.try_to_hashmap().unwrap();
+  // println!("{}", );
 }

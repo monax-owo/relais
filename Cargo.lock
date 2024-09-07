@@ -910,7 +910,11 @@ dependencies = [
 name = "derive"
 version = "0.1.0"
 dependencies = [
+ "derive_util",
+ "proc-macro2",
  "quote",
+ "serde",
+ "serde_json",
  "syn 2.0.77",
 ]
 
@@ -926,6 +930,10 @@ dependencies = [
  "rustc_version",
  "syn 2.0.77",
 ]
+
+[[package]]
+name = "derive_util"
+version = "0.1.0"
 
 [[package]]
 name = "digest"

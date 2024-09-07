@@ -1,3 +1,10 @@
 [workspace]
 members = ["src-tauri", "crates/*"]
 resolver = "2"
+
+[workspace.dependencies]
+derive = { path = "crates/derive" }
+derive_util = { path = "crates/derive_util" }
+
+serde = "1.0"
+serde_json = "1.0"
