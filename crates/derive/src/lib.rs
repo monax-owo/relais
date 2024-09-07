@@ -1,16 +1,21 @@
+use std::{any::Any, collections::HashMap};
+
+use derive_util::Input;
 use proc_macro::TokenStream;
 use quote::quote;
 use syn::{parse_macro_input, DeriveInput};
 
-// #[proc_macro]
-// pub fn hashmap(input: TokenStream) -> TokenStream {
-//   quote! {
-//     (|| {
-
-//     })();
-//   }
-//   .into()
-// }
+#[proc_macro]
+pub fn hashmap(input: TokenStream) -> TokenStream {
+  let input: Input = parse_macro_input!(input);
+  (|| -> Result<HashMap<&str, &dyn Any>, ()> {
+    let hashmap: HashMap<&str, &dyn Any> = HashMap::new();
+    Ok(hashmap)
+  })()
+  .unwrap();
+  println!("te");
+  quote! {}.into()
+}
 
 #[proc_macro_derive(HashMap)]
 pub fn derive_try_to_hashmap(input: TokenStream) -> TokenStream {
@@ -22,20 +27,18 @@ pub fn derive_try_to_hashmap(input: TokenStream) -> TokenStream {
 }
 
 fn impl_try_to_hashmap(input: &DeriveInput) -> Result<TokenStream, syn::Error> {
-  let data = match &input.data {
-    syn::Data::Struct(v) => v,
-    _ => return Err(syn::Error::new_spanned(input, "")),
-  };
-  let field = match &data.fields {
-    syn::Fields::Named(v) => v,
-    _ => return Err(syn::Error::new_spanned(input, "")),
-  };
-  let struct_name = &input.ident;
+  let ident = &input.ident;
   let (impl_generics, _, where_clause) = &input.generics.split_for_impl();
   Ok(
     quote! {
-      use derive_util::TryToHashMap;
-      impl #impl_generics TryToHashMap for #struct_name<'_> #where_clause {}
+      use derive_util::{TryToHashMap};
+      impl #impl_generics TryToHashMap for #ident<'_> #where_clause {
+        fn try_to_hashmap(&self) -> Result<(), ()> {
+          println!("try");
+          crate::hashmap!(self);
+          Ok(())
+        }
+      }
     }
     .into(),
   )

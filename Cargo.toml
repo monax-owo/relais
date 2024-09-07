@@ -8,3 +8,4 @@ derive_util = { path = "crates/derive_util" }
 
 serde = "1.0"
 serde_json = "1.0"
+syn = "2.0.77"

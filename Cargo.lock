@@ -934,6 +934,10 @@ dependencies = [
 [[package]]
 name = "derive_util"
 version = "0.1.0"
+dependencies = [
+ "serde_json",
+ "syn 2.0.77",
+]
 
 [[package]]
 name = "digest"
