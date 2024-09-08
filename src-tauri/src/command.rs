@@ -18,6 +18,6 @@ pub fn get_windows(state: State<'_, SourceAppState>) -> Vec<WindowData> {
 
 #[command]
 #[specta]
-pub fn get_config(state: State<'_, SourceAppState>) {
+pub fn get_config(_state: State<'_, SourceAppState>) {
   todo!()
 }

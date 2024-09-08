@@ -1,7 +1,7 @@
 // Prevents additional console window on Windows in release, DO NOT REMOVE!!
 #![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
 
-use config::Config;
+use conf::AppConfig;
 use specta_typescript::Typescript;
 use std::{
   collections::HashMap,
@@ -20,6 +20,7 @@ use util::{exit_0, SourceAppState, WindowData};
 use view::util::window_focus;
 
 mod command;
+mod conf;
 mod util;
 mod view;
 
@@ -29,6 +30,7 @@ pub fn run() {
   let specta = tauri_specta::Builder::new()
     .commands(collect_commands![
       command::exit,
+      command::get_config,
       command::get_windows,
       view::command::view_create,
       view::command::window_focus,
@@ -60,16 +62,24 @@ pub fn run() {
     )
     .expect("failed to generate types");
 
-  let current_dir = env::current_dir().unwrap();
+  let current_exe = env::current_exe().unwrap();
+  let current_dir = current_exe.parent().unwrap();
   let path = current_dir.join(util::CONFIGFILE_NAME);
 
   let config = {
-    let mut builder = Config::builder().set_default("key", "value").unwrap();
+    let mut builder = config::Config::builder();
+    builder = builder.set_default("key", "value").unwrap();
+    dbg!(&path);
     if path.exists() {
       builder = builder.add_source(config::File::with_name(path.to_str().unwrap()));
     }
     builder.build().unwrap()
   };
+
+  println!(
+    "{:?}",
+    config.clone().try_deserialize::<AppConfig>().unwrap()
+  );
 
   let state = util::SourceAppState {
     config,

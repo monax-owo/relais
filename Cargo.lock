@@ -81,6 +81,8 @@ dependencies = [
  "anyhow",
  "axum",
  "config",
+ "derive",
+ "derive_util",
  "percent-encoding",
  "reqwest 0.11.27",
  "serde",

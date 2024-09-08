@@ -13,6 +13,9 @@ async exit() : Promise<Result<null, string>> {
     else return { status: "error", error: e  as any };
 }
 },
+async getConfig() : Promise<void> {
+    await TAURI_INVOKE("get_config");
+},
 async getWindows() : Promise<WindowData[]> {
     return await TAURI_INVOKE("get_windows");
 },
@@ -168,8 +171,8 @@ async test() : Promise<Result<null, string>> {
 
 /** user-defined constants **/
 
-export const CTRL_LABEL_PREFIX = "ctrl_" as const;
 export const WINDOW_LABEL_PREFIX = "window_" as const;
+export const CTRL_LABEL_PREFIX = "ctrl_" as const;
 
 /** user-defined types **/
 

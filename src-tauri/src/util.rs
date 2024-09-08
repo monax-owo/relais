@@ -1,5 +1,6 @@
 use anyhow::Context;
 use config::Config;
+use derive::ToHashMap;
 use serde::{Deserialize, Serialize};
 use specta::Type;
 use std::{
@@ -21,10 +22,10 @@ pub struct SourceAppState {
   pub overlay: AtomicBool,
 }
 
-#[derive(Debug, Clone, Deserialize, Serialize, Type)]
+#[derive(Debug, Clone, Deserialize, Serialize, Type, ToHashMap)]
 pub struct AppState {
-  config: String,
-  windows: Vec<WindowData>,
+  pub config: String,
+  pub windows: Vec<WindowData>,
   pub overlay: bool,
 }
 
