@@ -31,10 +31,21 @@
   // const win = window.getAllWindows().find((v) => v.label === CTRL_LABEL_PREFIX + ctrl.label);
   // if (!window) throw new Error("window is not found");
   // TODO:onMountでrust側と同期する
-  let transparent = false;
   let pinned = false;
+  let transparent = false;
   let pointerIgnored = false;
   let mobileMode = false;
+
+  onMount(async () => {
+    [transparent, pinned, pointerIgnored, mobileMode] = await commands.getStatus().then((v) => {
+      switch (v.status) {
+        case "ok":
+          return v.data;
+        case "error":
+          throw err(v.error);
+      }
+    });
+  });
 
   const handleMini = async () => {
     await commands.viewMinimize();

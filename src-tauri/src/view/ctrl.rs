@@ -53,4 +53,27 @@ pub mod command {
 
     Ok(())
   }
+
+  #[command]
+  #[specta]
+  pub fn get_status(
+    ctrl: WebviewWindow,
+    state: State<'_, SourceAppState>,
+  ) -> Result<(bool, bool, bool, bool), String> {
+    let window = to_window(&ctrl).err_to_string()?;
+    let window_data = state.get_window_data(window.label()).err_to_string()?;
+
+    let status = (
+      state.overlay.load(std::sync::atomic::Ordering::Acquire),
+      window_data.pin.load(std::sync::atomic::Ordering::Acquire),
+      window_data
+        .ignore
+        .load(std::sync::atomic::Ordering::Acquire),
+      window_data
+        .mobile_mode
+        .load(std::sync::atomic::Ordering::Acquire),
+    );
+    
+    Ok(status)
+  }
 }

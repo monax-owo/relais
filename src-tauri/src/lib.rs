@@ -34,6 +34,7 @@ pub fn run() {
       view::command::view_create,
       view::command::window_focus,
       view::command::window_hide,
+      view::ctrl::command::get_status,
       view::ctrl::command::view_close,
       view::ctrl::command::view_drag,
       view::ctrl::command::view_minimize,

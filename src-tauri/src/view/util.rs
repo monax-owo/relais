@@ -214,6 +214,10 @@ pub fn _to_ctrl(window: &WebviewWindow) -> anyhow::Result<WebviewWindow> {
     .context("window is not found")
 }
 
+// TODO:まとめる関数を書く<-大事
+// let window = to_window(&ctrl).err_to_string()?;
+// let window_data = state.get_window_data(window.label()).err_to_string()?;
+
 pub fn to_window(ctrl: &WebviewWindow) -> anyhow::Result<WebviewWindow> {
   ctrl
     .get_webview_window(&to_window_label(ctrl.label()))
