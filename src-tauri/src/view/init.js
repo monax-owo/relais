@@ -1,6 +1,6 @@
-// TODO: initialization_script
+// todo: initialization_script
 (() => {
   console.log("initialized");
 
-  const tauri = window.__TAURI__;
+  // const tauri = window.__TAURI__;
 })();

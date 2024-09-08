@@ -4,7 +4,7 @@ const $ = browser ? document.querySelector.bind(document) : null;
 const $$ = browser ? document.querySelectorAll.bind(document) : null;
 
 const todo = () => {
-  throw new Error("--------TODO--------");
+  throw new Error("--------todo--------");
 };
 
 const ifThen = <T = void>(condition: boolean, successFn: () => T, failureFn?: () => T): T => {
