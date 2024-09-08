@@ -21,7 +21,7 @@
 
   import IconArrowsMove from "@tabler/icons-svelte/IconArrowsMove.svelte";
 
-  import { commands, CTRL_LABEL_PREFIX } from "$lib/generated/specta/bindings";
+  import { commands, CTRL_LABEL_PREFIX, type Result } from "$lib/generated/specta/bindings";
   // import { window } from "@tauri-apps/api";
 
   const stroke = 2;
@@ -37,15 +37,21 @@
   let mobileMode = false;
 
   onMount(async () => {
-    [transparent, pinned, pointerIgnored, mobileMode] = await commands.getStatus().then((v) => {
-      switch (v.status) {
-        case "ok":
-          return v.data;
-        case "error":
-          throw err(v.error);
-      }
-    });
+    [transparent, pinned, pointerIgnored, mobileMode] = unwrap(await commands.getStatus());
   });
+
+  const err = (err: string) => {
+    ctrl.emitTo(ctrl.label.replace(CTRL_LABEL_PREFIX, ""), "err", { err });
+  };
+
+  const unwrap = <T,>(v: Result<T, string>): T => {
+    switch (v.status) {
+      case "ok":
+        return v.data;
+      case "error":
+        throw err(v.error);
+    }
+  };
 
   const handleMini = async () => {
     await commands.viewMinimize();
@@ -54,73 +60,26 @@
     await commands.viewClose(ctrl.label.replace(CTRL_LABEL_PREFIX, ""));
   };
   const handlePin = async () => {
-    pinned = await commands.togglePin().then((v) => {
-      switch (v.status) {
-        case "ok":
-          return v.data;
-        case "error":
-          throw err(v.error);
-      }
-    });
+    pinned = unwrap(await commands.togglePin());
   };
   const handleTransparent = async () => {
-    transparent = await commands.toggleTransparent(127).then((v) => {
-      switch (v.status) {
-        case "ok":
-          return v.data;
-        case "error":
-          throw err(v.error);
-      }
-    });
+    transparent = unwrap(await commands.toggleTransparent(127));
   };
   const handlePointerIgnore = async () => {
-    pointerIgnored = await commands.toggleIgnoreCursorEvents().then((v) => {
-      switch (v.status) {
-        case "ok":
-          return v.data;
-        case "error":
-          throw err(v.error);
-      }
-    });
+    pointerIgnored = unwrap(await commands.toggleIgnoreCursorEvents());
   };
   const handleMobileMode = async () => {
     // TODO;
-    mobileMode = await commands.toggleUserAgent().then((v) => {
-      switch (v.status) {
-        case "ok":
-          return v.data;
-        case "error":
-          throw err(v.error);
-      }
-    });
+    mobileMode = unwrap(await commands.toggleUserAgent());
   };
   const handleZoomIn = async () => {
-    await commands.viewZoomin().then((v) => {
-      switch (v.status) {
-        case "ok":
-          return v.data;
-        case "error":
-          throw err(v.error);
-      }
-    });
+    unwrap(await commands.viewZoomin());
   };
   const handleZoomOut = async () => {
-    await commands.viewZoomout().then((v) => {
-      switch (v.status) {
-        case "ok":
-          return v.data;
-        case "error":
-          throw err(v.error);
-      }
-    });
+    unwrap(await commands.viewZoomout());
   };
   const handleDrag = async () => {
-    // TODO
-    // window.startDragging();
-    await commands.viewDrag();
-  };
-  const err = (err: string) => {
-    ctrl.emitTo(ctrl.label.replace(CTRL_LABEL_PREFIX, ""), "err", { err });
+    unwrap(await commands.viewDrag());
   };
 </script>
 
