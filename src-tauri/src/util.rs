@@ -34,8 +34,9 @@ pub struct SourceWindowData {
   pub title: String,
   pub label: String,
   pub(crate) ignore: Arc<AtomicBool>,
+  pub(crate) mobile_mode: Arc<AtomicBool>,
   pub(crate) pin: Arc<AtomicBool>,
-  pub zoom: Arc<Mutex<f64>>,
+  pub(crate) zoom: Arc<Mutex<f64>>,
 }
 
 #[derive(Debug, Clone, Deserialize, Serialize, Type)]
@@ -43,6 +44,7 @@ pub struct WindowData {
   title: String,
   label: String,
   ignore: bool,
+  mobile_mode: bool,
   pin: bool,
   zoom: f64,
 }
@@ -92,6 +94,7 @@ impl From<SourceWindowData> for WindowData {
       title: v.title,
       label: v.label,
       ignore: Arc::clone(&v.ignore).load(Ordering::Acquire),
+      mobile_mode: Arc::clone(&v.mobile_mode).load(Ordering::Acquire),
       pin: Arc::clone(&v.pin).load(Ordering::Acquire),
       zoom: *v.zoom.lock().unwrap(),
     }

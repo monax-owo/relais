@@ -1,6 +1,7 @@
 pub mod ignore_cursor_events;
 pub mod pin;
 pub mod transparent;
+pub mod user_agent;
 
 pub mod command {
   use specta::specta;

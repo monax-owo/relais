@@ -48,6 +48,9 @@ pub fn run() {
       view::ctrl::transparent::get_transparent,
       view::ctrl::transparent::set_transparent,
       view::ctrl::transparent::toggle_transparent,
+      view::ctrl::user_agent::get_user_agent,
+      view::ctrl::user_agent::set_user_agent,
+      view::ctrl::user_agent::toggle_user_agent,
       view::extension::command::test,
     ])
     .typ::<WindowData>()

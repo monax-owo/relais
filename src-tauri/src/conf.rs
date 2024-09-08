@@ -7,12 +7,11 @@ use specta::Type;
 use crate::util::SourceAppState;
 
 #[derive(Debug, Clone, Deserialize, Serialize, Type)]
-pub struct AppConfig<'a> {
+pub struct AppConfig {
   key: String,
-  test: &'a str,
 }
 
-impl AppConfig<'_> {
+impl AppConfig {
   pub fn build<P: AsRef<Path>>(path: P) -> Config {
     let path = path.as_ref();
     let mut builder = config::Config::builder();
@@ -24,7 +23,7 @@ impl AppConfig<'_> {
     builder.build().unwrap()
   }
 
-  pub fn try_deserialize(config: &Config) -> anyhow::Result<AppConfig<'static>> {
+  pub fn try_deserialize(config: &Config) -> anyhow::Result<AppConfig> {
     Ok(config.clone().try_deserialize::<AppConfig>()?)
   }
 }

@@ -55,10 +55,12 @@ pub fn view_create(
       .transparent(true)
       .build()?;
 
+  // TODO:SourceWindowData::new()
   let window_data = SourceWindowData {
     title,
     label: label.clone(),
     ignore: Arc::from(AtomicBool::from(false)),
+    mobile_mode: Arc::from(AtomicBool::from(false)),
     pin: Arc::from(AtomicBool::from(false)),
     zoom: Arc::from(Mutex::from(1.0)),
   };

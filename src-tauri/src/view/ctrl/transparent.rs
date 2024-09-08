@@ -37,7 +37,7 @@ pub fn set_transparent(
 ) -> Result<(), String> {
   let window = to_window(&ctrl).err_to_string()?;
   util::set_transparent(window.hwnd().err_to_string()?, alpha).err_to_string()?;
-  state.overlay.store(!alpha == 255, Ordering::Release);
+  state.overlay.store(alpha != 255, Ordering::Release);
 
   Ok(())
 }

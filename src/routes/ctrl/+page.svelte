@@ -30,6 +30,7 @@
   // TODO
   // const win = window.getAllWindows().find((v) => v.label === CTRL_LABEL_PREFIX + ctrl.label);
   // if (!window) throw new Error("window is not found");
+  // TODO:onMountでrust側と同期する
   let transparent = false;
   let pinned = false;
   let pointerIgnored = false;
@@ -60,7 +61,6 @@
           throw err(v.error);
       }
     });
-    // transparent = await getTransparent();
   };
   const handlePointerIgnore = async () => {
     pointerIgnored = await commands.toggleIgnoreCursorEvents().then((v) => {
@@ -73,15 +73,15 @@
     });
   };
   const handleMobileMode = async () => {
-    // TODO
-    // await commands.todo(mobileMode).then((v) => {
-    //   switch (v.status) {
-    //     case "ok":
-    //       return v.data;
-    //     case "error":
-    //       throw err(v.error);
-    //   }
-    // });
+    // TODO;
+    mobileMode = await commands.toggleUserAgent().then((v) => {
+      switch (v.status) {
+        case "ok":
+          return v.data;
+        case "error":
+          throw err(v.error);
+      }
+    });
   };
   const handleZoomIn = async () => {
     await commands.viewZoomin().then((v) => {

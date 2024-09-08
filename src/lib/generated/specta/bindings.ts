@@ -155,6 +155,25 @@ async toggleTransparent(alpha: number) : Promise<Result<boolean, string>> {
     else return { status: "error", error: e  as any };
 }
 },
+async getUserAgent() : Promise<void> {
+    await TAURI_INVOKE("get_user_agent");
+},
+async setUserAgent(value: boolean) : Promise<Result<null, string>> {
+    try {
+    return { status: "ok", data: await TAURI_INVOKE("set_user_agent", { value }) };
+} catch (e) {
+    if(e instanceof Error) throw e;
+    else return { status: "error", error: e  as any };
+}
+},
+async toggleUserAgent() : Promise<Result<boolean, string>> {
+    try {
+    return { status: "ok", data: await TAURI_INVOKE("toggle_user_agent") };
+} catch (e) {
+    if(e instanceof Error) throw e;
+    else return { status: "error", error: e  as any };
+}
+},
 async test() : Promise<Result<null, string>> {
     try {
     return { status: "ok", data: await TAURI_INVOKE("test") };
@@ -176,7 +195,7 @@ export const CTRL_LABEL_PREFIX = "ctrl_" as const;
 
 /** user-defined types **/
 
-export type WindowData = { title: string; label: string; ignore: boolean; pin: boolean; zoom: number }
+export type WindowData = { title: string; label: string; ignore: boolean; mobile_mode: boolean; pin: boolean; zoom: number }
 
 /** tauri-specta globals **/
 
