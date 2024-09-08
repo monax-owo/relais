@@ -16,7 +16,7 @@ pub fn toggle_pin(ctrl: WebviewWindow, state: State<'_, SourceAppState>) -> Resu
   let atomic = Arc::clone(&window_data.pin);
   let condition = atomic.load(Ordering::Acquire);
 
-  util::set_pin(&window, !condition)?;
+  set_pin(ctrl, state, !condition)?;
 
   Ok(!condition)
 }
