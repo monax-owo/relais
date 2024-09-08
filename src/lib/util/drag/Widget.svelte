@@ -26,8 +26,8 @@
   });
 </script>
 
-<!-- TODO: dragのカーソルをどっちにするか決める -->
-<!-- TODO: サイズ変更等 -->
+<!-- todo: dragのカーソルをどっちにするか決める -->
+<!-- todo: サイズ変更等 -->
 <div class="root">
   <div
     class="widget"

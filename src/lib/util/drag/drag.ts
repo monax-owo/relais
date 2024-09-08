@@ -26,9 +26,9 @@ interface HandleElementsReq {
 
 export type HandleElements = Partial<HandleElementsReq>;
 
-// TODO: 呼び出し元に操作用の関数を渡す(返す)？
-// TODO: 初期状態を最小化にする
-// TODO: ハンドルを掴んだときのヘルパー関数を作る
+// todo: 呼び出し元に操作用の関数を渡す(返す)？
+// todo: 初期状態を最小化にする
+// todo: ハンドルを掴んだときのヘルパー関数を作る
 const draggable: Action<HTMLElement, DraggableParam> = (node, param) => {
   let target = param.target ?? node;
   let handles = param.handles;

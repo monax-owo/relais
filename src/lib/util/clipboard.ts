@@ -1,5 +1,5 @@
 import type { Action } from "svelte/action";
-// TODO: クリップボードAPIはtauriにもあるので必要になったらそっちにする
+// todo: クリップボードAPIはtauriにもあるので必要になったらそっちにする
 
 const copyText = (text: string): void => {
   navigator.clipboard.writeText(text);
