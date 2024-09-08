@@ -28,6 +28,9 @@
   //   };
   // });
   // TODO:configファイルを作る
+  onMount(() => {
+    // TODO:commandでsvelteのstoreとconfigを同期する
+  });
 </script>
 
 <svelte:window on:contextmenu|preventDefault={() => console.log("contextmenu")} />

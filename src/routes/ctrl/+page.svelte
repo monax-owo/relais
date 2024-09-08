@@ -10,11 +10,14 @@
   import IconGhost from "@tabler/icons-svelte/IconGhost.svelte";
   import IconGhostOff from "@tabler/icons-svelte/IconGhostOff.svelte";
 
-  import IconZoomIn from "@tabler/icons-svelte/IconZoomIn.svelte";
-  import IconZoomOut from "@tabler/icons-svelte/IconZoomOut.svelte";
-
   import IconPointer from "@tabler/icons-svelte/IconPointer.svelte";
   import IconPointerOff from "@tabler/icons-svelte/IconPointerOff.svelte";
+
+  import IconDeviceMobile from "@tabler/icons-svelte/IconDeviceMobile.svelte";
+  import IconDeviceDesktop from "@tabler/icons-svelte/IconDeviceDesktop.svelte";
+
+  import IconZoomIn from "@tabler/icons-svelte/IconZoomIn.svelte";
+  import IconZoomOut from "@tabler/icons-svelte/IconZoomOut.svelte";
 
   import IconArrowsMove from "@tabler/icons-svelte/IconArrowsMove.svelte";
 
@@ -30,6 +33,7 @@
   let transparent = false;
   let pinned = false;
   let pointerIgnored = false;
+  let mobileMode = false;
 
   const handleMini = async () => {
     await commands.viewMinimize();
@@ -67,6 +71,17 @@
           throw err(v.error);
       }
     });
+  };
+  const handleMobileMode = async () => {
+    // TODO
+    // await commands.todo(mobileMode).then((v) => {
+    //   switch (v.status) {
+    //     case "ok":
+    //       return v.data;
+    //     case "error":
+    //       throw err(v.error);
+    //   }
+    // });
   };
   const handleZoomIn = async () => {
     await commands.viewZoomin().then((v) => {
@@ -114,7 +129,6 @@
   <button type="button" on:pointerdown={handleTransparent}>
     {#if transparent}
       <IconGhostOff {stroke} />
-      <!-- <IconLockOpen {stroke} /> -->
     {:else}
       <IconGhost {stroke} />
     {/if}
@@ -122,9 +136,15 @@
   <button type="button" on:pointerdown={handlePointerIgnore}>
     {#if pointerIgnored}
       <IconPointerOff {stroke} />
-      <!-- <IconLockOpen {stroke} /> -->
     {:else}
       <IconPointer {stroke} />
+    {/if}
+  </button>
+  <button type="button" on:pointerdown={handleMobileMode}>
+    {#if mobileMode}
+      <IconDeviceDesktop {stroke} />
+    {:else}
+      <IconDeviceMobile {stroke} />
     {/if}
   </button>
   <button type="button" on:pointerdown={handleZoomIn}><IconZoomIn {stroke} /></button>
