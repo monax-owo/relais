@@ -15,10 +15,11 @@
     "check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch",
     "lint": "prettier --check . && eslint .",
     "format": "prettier --write .",
+    "rust:test": "cargo test",
     "rust:fmt": "cargo fmt",
     "rust:lint": "cargo clippy",
     "rust:fix": "cargo clippy --fix --allow-dirty --allow-staged",
-    "deploy-check": "pnpm format && pnpm rust:fmt && pnpm check && pnpm lint && pnpm rust:fix && echo success!",
+    "deploy-check": "pnpm format && pnpm rust:fmt && pnpm check && pnpm lint && pnpm rust:fix && pnpm rust:test && echo success!",
     "prepare": "husky"
   },
   "devDependencies": {
