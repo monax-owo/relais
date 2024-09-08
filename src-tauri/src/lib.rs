@@ -4,7 +4,6 @@
 use conf::AppConfig;
 use specta_typescript::Typescript;
 use std::{
-  collections::HashMap,
   env,
   sync::{atomic::AtomicBool, Arc, Mutex},
 };
@@ -66,23 +65,8 @@ pub fn run() {
   let current_dir = current_exe.parent().unwrap();
   let path = current_dir.join(util::CONFIGFILE_NAME);
 
-  let config = {
-    let mut builder = config::Config::builder();
-    builder = builder.set_default("key", "value").unwrap();
-    dbg!(&path);
-    if path.exists() {
-      builder = builder.add_source(config::File::with_name(path.to_str().unwrap()));
-    }
-    builder.build().unwrap()
-  };
-
-  println!(
-    "{:?}",
-    config.clone().try_deserialize::<AppConfig>().unwrap()
-  );
-
   let state = util::SourceAppState {
-    config,
+    config: AppConfig::build(path),
     windows: Mutex::new(vec![]),
     overlay: AtomicBool::new(false),
   };
@@ -91,6 +75,7 @@ pub fn run() {
     .invoke_handler(specta.invoke_handler())
     .setup(move |app: &mut App| {
       let _handle = app.handle();
+      let state = app.state::<SourceAppState>();
       specta.mount_events(app);
 
       let main_window = Arc::new(
@@ -98,23 +83,15 @@ pub fn run() {
           .get_webview_window("main")
           .expect("Failed to get main window"),
       );
-      //
+
       #[cfg(not(debug_assertions))]
       {
         view::util::window_focus(&main_window)?;
       }
+
       {
-        let state = app.state::<SourceAppState>();
-        println!(
-          "{:?}",
-          state
-            .config
-            .clone()
-            .try_deserialize::<HashMap<String, String>>()
-            .unwrap()
-        );
+        println!("{:?}", AppConfig::try_deserialize(&state.config).unwrap())
       }
-      //
 
       //
       main_window.on_window_event({
