@@ -17,7 +17,6 @@ pub fn toggle_pin(ctrl: WebviewWindow, state: State<'_, SourceAppState>) -> Resu
   let condition = atomic.load(Ordering::Acquire);
 
   util::set_pin(&window, !condition)?;
-  atomic.store(!condition, Ordering::Release);
 
   Ok(!condition)
 }
