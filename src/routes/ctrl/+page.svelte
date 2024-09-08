@@ -25,12 +25,7 @@
   // import { window } from "@tauri-apps/api";
 
   const stroke = 2;
-
   const ctrl = getCurrentWebviewWindow();
-  // TODO
-  // const win = window.getAllWindows().find((v) => v.label === CTRL_LABEL_PREFIX + ctrl.label);
-  // if (!window) throw new Error("window is not found");
-  // TODO:onMountでrust側と同期する
   let pinned = false;
   let transparent = false;
   let pointerIgnored = false;
@@ -54,10 +49,10 @@
   };
 
   const handleMini = async () => {
-    await commands.viewMinimize();
+    unwrap(await commands.viewMinimize());
   };
   const handleClose = async () => {
-    await commands.viewClose(ctrl.label.replace(CTRL_LABEL_PREFIX, ""));
+    unwrap(await commands.viewClose(ctrl.label.replace(CTRL_LABEL_PREFIX, "")));
   };
   const handlePin = async () => {
     pinned = unwrap(await commands.togglePin());
@@ -69,7 +64,6 @@
     pointerIgnored = unwrap(await commands.toggleIgnoreCursorEvents());
   };
   const handleMobileMode = async () => {
-    // TODO;
     mobileMode = unwrap(await commands.toggleUserAgent());
   };
   const handleZoomIn = async () => {
