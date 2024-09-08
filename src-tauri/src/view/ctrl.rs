@@ -73,7 +73,7 @@ pub mod command {
         .mobile_mode
         .load(std::sync::atomic::Ordering::Acquire),
     );
-    
+
     Ok(status)
   }
 }

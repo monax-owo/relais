@@ -141,8 +141,12 @@ extern "system" fn _ctrl_proc(
 }
 
 pub fn set_transparent(hwnd: HWND, alpha: u8) -> anyhow::Result<()> {
-  unsafe { SetLayeredWindowAttributes(hwnd, COLORREF(0), alpha, LWA_ALPHA)? };
-
+  dbg!("0");
+  unsafe {
+    // bug: ignore_cursorと相性が悪い。よくわからない。
+    SetLayeredWindowAttributes(hwnd, COLORREF(0), alpha, LWA_ALPHA)?;
+  };
+  dbg!("1");
   Ok(())
 }
 

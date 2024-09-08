@@ -9,3 +9,4 @@ yarn.lock
 **/generated
 **/target
 **/gen
+src/lib/generated/specta/bindings.ts

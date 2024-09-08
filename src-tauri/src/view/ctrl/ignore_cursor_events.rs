@@ -35,6 +35,7 @@ pub fn set_ignore_cursor_events(
   let window_data = state.get_window_data(window.label()).err_to_string()?;
   let atomic = Arc::clone(&window_data.ignore);
 
+  // TODO:winapiを使って判定をなくす
   window.set_ignore_cursor_events(value).err_to_string()?;
   atomic.store(value, Ordering::Release);
 
