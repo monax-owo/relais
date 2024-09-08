@@ -163,8 +163,13 @@ async toggleTransparent(alpha: number) : Promise<Result<boolean, string>> {
     else return { status: "error", error: e  as any };
 }
 },
-async getUserAgent() : Promise<void> {
-    await TAURI_INVOKE("get_user_agent");
+async getUserAgent() : Promise<Result<boolean, string>> {
+    try {
+    return { status: "ok", data: await TAURI_INVOKE("get_user_agent") };
+} catch (e) {
+    if(e instanceof Error) throw e;
+    else return { status: "error", error: e  as any };
+}
 },
 async setUserAgent(value: boolean) : Promise<Result<null, string>> {
     try {

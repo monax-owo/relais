@@ -33,8 +33,8 @@ pub fn set_user_agent(
   state: State<'_, SourceAppState>,
   value: bool,
 ) -> Result<(), String> {
-  const MOBILE:PCWSTR = w!("Mozilla/5.0 (Linux; Android 13; Pixel 7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/116.0.0.0 Mobile Safari/537.36");
-  const DESKTOP: PCWSTR = w!("");
+  const MOBILE: PCWSTR = w!("Mozilla/5.0 (Linux; Android 13; Pixel 7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/116.0.0.0 Mobile Safari/537.36");
+  const DESKTOP: PCWSTR = w!("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36 Edg/128.0.0.0");
 
   let window = to_window(&ctrl).err_to_string()?;
   let window_data = state.get_window_data(window.label()).err_to_string()?;
@@ -61,6 +61,13 @@ pub fn set_user_agent(
 
 #[command]
 #[specta]
-pub fn get_user_agent(_ctrl: WebviewWindow, _state: State<'_, SourceAppState>) {
-  // todo!()
+pub fn get_user_agent(
+  ctrl: WebviewWindow,
+  state: State<'_, SourceAppState>,
+) -> Result<bool, String> {
+  let window = to_window(&ctrl).err_to_string()?;
+  let window_data = state.get_window_data(window.label()).err_to_string()?;
+  let atomic = Arc::clone(&window_data.mobile_mode);
+
+  Ok(atomic.load(Ordering::Acquire))
 }
