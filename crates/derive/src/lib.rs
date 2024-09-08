@@ -39,6 +39,6 @@ fn impl_try_to_hashmap(input: &DeriveInput) -> Result<TokenStream, syn::Error> {
       }
     }
   };
-  println!("{}", format!("{}", quote));
+  // println!("{}", format!("{}", quote));
   Ok(quote.into())
 }
