@@ -15,9 +15,9 @@
     "check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch",
     "lint": "prettier --check . && eslint .",
     "format": "prettier --write .",
-    "rust:fmt": "cd ./src-tauri && cargo fmt && cd ..",
-    "rust:lint": "cd ./src-tauri && cargo clippy && cd ..",
-    "rust:fix": "cd ./src-tauri && cargo clippy --fix --allow-dirty --allow-staged && cd ..",
+    "rust:fmt": "cargo fmt",
+    "rust:lint": "cargo clippy",
+    "rust:fix": "cargo clippy --fix --allow-dirty --allow-staged",
     "deploy-check": "pnpm format && pnpm rust:fmt && pnpm check && pnpm lint && pnpm rust:fix && echo success!",
     "prepare": "husky"
   },
