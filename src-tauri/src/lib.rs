@@ -94,7 +94,7 @@ pub fn run() {
       }
 
       {
-        println!("{:?}", AppConfig::try_deserialize(&state.config).unwrap())
+        println!("{:?}", state.config)
       }
 
       //

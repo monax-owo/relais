@@ -1,5 +1,4 @@
 use anyhow::Context;
-use config::Config;
 use derive::ToHashMap;
 use serde::{Deserialize, Serialize};
 use specta::Type;
@@ -12,12 +11,14 @@ use std::{
 };
 use tauri::{AppHandle, Emitter};
 
+use crate::conf::AppConfig;
+
 pub const CONFIGFILE_NAME: &str = "relaisrc.toml";
 
 // TODO: アプリ全体かウィンドウごとに半透明にするか<-ウィンドウごとにする
 #[derive(Debug)]
 pub struct SourceAppState {
-  pub(crate) config: Config,
+  pub(crate) config: AppConfig,
   pub(crate) windows: Mutex<Vec<SourceWindowData>>,
   pub overlay: AtomicBool,
 }

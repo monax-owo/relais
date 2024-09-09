@@ -20,7 +20,7 @@ derive_util = { workspace = true }
 
 anyhow = "1.0.86"
 axum = "0.7.5"
-config = { version = "0.14.0", features = ["toml"] }
+confy = "0.6.1"
 percent-encoding = "2.3.1"
 reqwest = "0.11.18"
 serde = { workspace = true, features = ["derive"] }

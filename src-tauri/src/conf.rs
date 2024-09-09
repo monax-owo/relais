@@ -1,6 +1,5 @@
 use std::path::Path;
 
-use config::Config;
 use serde::{Deserialize, Serialize};
 use specta::Type;
 
@@ -12,19 +11,16 @@ pub struct AppConfig {
 }
 
 impl AppConfig {
-  pub fn build<P: AsRef<Path>>(path: P) -> Config {
-    let path = path.as_ref();
-    let mut builder = config::Config::builder();
-    builder = builder.set_default("key", "value").unwrap();
-    dbg!(&path);
-    if path.exists() {
-      builder = builder.add_source(config::File::with_name(path.to_str().unwrap()));
-    }
-    builder.build().unwrap()
-  }
-
-  pub fn try_deserialize(config: &Config) -> anyhow::Result<AppConfig> {
-    Ok(config.clone().try_deserialize::<AppConfig>()?)
+  pub fn build<P: AsRef<Path>>(_path: P) -> Self {
+    // let path = path.as_ref();
+    // let mut builder = config::Config::builder();
+    // builder = builder.set_default("key", "value").unwrap();
+    // dbg!(&path);
+    // if path.exists() {
+    //   builder = builder.add_source(config::File::with_name(path.to_str().unwrap()));
+    // }
+    // builder.build().unwrap()
+    todo!()
   }
 }
 
