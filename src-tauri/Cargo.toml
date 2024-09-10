@@ -36,8 +36,8 @@ tauri = { version = "=2.0.0-rc.3", features = [
 tauri-plugin-dialog = "2.0.0-rc"
 tauri-specta = { version = "=2.0.0-rc.17", features = ["derive", "typescript"] }
 tokio = { version = "1.40.0", features = ["full"] }
-toml = "0.7.3"
-toml_edit = "0.19.8"
+toml = "0.8.19"
+toml_edit = "0.22.20"
 url = "2.5.2"
 uuid = { version = "1.10.0", features = ["v4"] }
 webview2-com = "0.33.0"
