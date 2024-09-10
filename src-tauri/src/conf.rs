@@ -2,6 +2,7 @@ use std::{
   fs::OpenOptions,
   io::{BufReader, Read},
   path::Path,
+  sync::{atomic::AtomicBool, Mutex, MutexGuard},
 };
 
 use serde::{Deserialize, Serialize};
@@ -10,12 +11,10 @@ use specta::Type;
 use crate::util::SourceAppState;
 
 #[derive(Debug, Clone, Deserialize, Serialize, Type)]
-#[derive(Default)]
 pub struct AppConfig {
-  configfile_path: String,
+  #[serde(default = "default::key")]
   key: String,
 }
-
 
 // todo:必要になったらBuilder patternにする(AppConfigBuilder)
 impl AppConfig {
@@ -36,10 +35,30 @@ impl AppConfig {
 }
 
 impl SourceAppState {
+  pub fn new<P: AsRef<Path>>(config_path: P) -> anyhow::Result<Self> {
+    Ok(Self {
+      config: Mutex::new(AppConfig::new(config_path)?),
+      windows: Mutex::new(Vec::new()),
+      // TODO:ウィンドウごとにする
+      overlay: AtomicBool::new(false),
+    })
+  }
+
+  pub fn c(&self) -> MutexGuard<'_, AppConfig> {
+    self.config.lock().unwrap()
+  }
+
   pub fn _write(&self) -> anyhow::Result<()> {
     todo!()
   }
+
   pub fn _read(&self) -> anyhow::Result<()> {
     todo!()
+  }
+}
+
+pub mod default {
+  pub fn key() -> String {
+    String::from("teststest")
   }
 }

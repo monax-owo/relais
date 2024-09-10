@@ -1,12 +1,8 @@
 // Prevents additional console window on Windows in release, DO NOT REMOVE!!
 #![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
 
-use conf::AppConfig;
 use specta_typescript::Typescript;
-use std::{
-  env,
-  sync::{atomic::AtomicBool, Arc, Mutex},
-};
+use std::{env, sync::Arc};
 use tauri::{
   generate_context,
   image::Image,
@@ -18,10 +14,10 @@ use tauri_specta::collect_commands;
 use util::{exit_0, SourceAppState, WindowData};
 use view::util::window_focus;
 
-mod command;
-mod conf;
-mod util;
-mod view;
+pub mod command;
+pub mod conf;
+pub mod util;
+pub mod view;
 
 // TODO: specta,event "update_windows"
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
@@ -69,11 +65,7 @@ pub fn run() {
   let current_dir = current_exe.parent().unwrap();
   let path = current_dir.join(util::CONFIGFILE_NAME);
 
-  let state = util::SourceAppState {
-    config: Mutex::new(AppConfig::new(path).unwrap()),
-    windows: Mutex::new(vec![]),
-    overlay: AtomicBool::new(false),
-  };
+  let state = util::SourceAppState::new(path).unwrap();
 
   Builder::default()
     .invoke_handler(specta.invoke_handler())
