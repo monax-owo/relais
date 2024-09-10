@@ -11,5 +11,5 @@ fn conf() {
   let path = current_dir.join(util::CONFIGFILE_NAME);
   let state = SourceAppState::new(path).unwrap();
 
-  println!("{:?}", *state.c());
+  println!("{:?}", *state.conf());
 }

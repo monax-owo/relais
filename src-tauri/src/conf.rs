@@ -11,6 +11,12 @@ use specta::Type;
 
 use crate::util::SourceAppState;
 
+pub mod default {
+  pub fn key() -> String {
+    String::from("teststest")
+  }
+}
+
 #[derive(Debug, Clone, Deserialize, Serialize, Type)]
 pub struct AppConfig {
   #[serde(default = "key")]
@@ -45,21 +51,11 @@ impl SourceAppState {
     })
   }
 
-  pub fn c(&self) -> MutexGuard<'_, AppConfig> {
+  pub fn conf(&self) -> MutexGuard<'_, AppConfig> {
     self.config.lock().unwrap()
   }
 
-  pub fn _write(&self) -> anyhow::Result<()> {
-    todo!()
-  }
-
-  pub fn _read(&self) -> anyhow::Result<()> {
-    todo!()
-  }
-}
-
-pub mod default {
-  pub fn key() -> String {
-    String::from("teststest")
+  pub fn conf_mut(&mut self) -> MutexGuard<'_, AppConfig> {
+    self.config.lock().unwrap()
   }
 }
