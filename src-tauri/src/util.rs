@@ -1,5 +1,5 @@
-use crate::conf::AppConfig;
 use anyhow::Context;
+use conf::AppConfig;
 use derive::ToHashMap;
 use serde::{Deserialize, Serialize};
 use specta::Type;

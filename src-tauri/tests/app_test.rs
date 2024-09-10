@@ -2,9 +2,9 @@ use std::{env, io::stdin};
 
 use app_lib::{
   self,
-  conf::Configurable,
   util::{self, SourceAppState},
 };
+use conf::Configurable;
 
 #[test]
 fn conf() {

@@ -15,7 +15,6 @@ use util::{exit_0, SourceAppState, WindowData};
 use view::util::window_focus;
 
 pub mod command;
-pub mod conf;
 pub mod util;
 pub mod view;
 
