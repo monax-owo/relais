@@ -5,6 +5,7 @@ use std::{
   sync::{atomic::AtomicBool, Mutex, MutexGuard},
 };
 
+use default::*;
 use serde::{Deserialize, Serialize};
 use specta::Type;
 
@@ -12,7 +13,7 @@ use crate::util::SourceAppState;
 
 #[derive(Debug, Clone, Deserialize, Serialize, Type)]
 pub struct AppConfig {
-  #[serde(default = "default::key")]
+  #[serde(default = "key")]
   key: String,
 }
 
