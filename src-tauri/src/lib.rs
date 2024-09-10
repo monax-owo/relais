@@ -70,7 +70,7 @@ pub fn run() {
   let path = current_dir.join(util::CONFIGFILE_NAME);
 
   let state = util::SourceAppState {
-    config: AppConfig::build(path),
+    config: Mutex::new(AppConfig::new(path).unwrap()),
     windows: Mutex::new(vec![]),
     overlay: AtomicBool::new(false),
   };

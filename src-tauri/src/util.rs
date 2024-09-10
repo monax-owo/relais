@@ -18,7 +18,7 @@ pub const CONFIGFILE_NAME: &str = "relaisrc.toml";
 // TODO: アプリ全体かウィンドウごとに半透明にするか<-ウィンドウごとにする
 #[derive(Debug)]
 pub struct SourceAppState {
-  pub(crate) config: AppConfig,
+  pub(crate) config: Mutex<AppConfig>,
   pub(crate) windows: Mutex<Vec<SourceWindowData>>,
   pub overlay: AtomicBool,
 }
