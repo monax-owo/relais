@@ -61,9 +61,13 @@ pub fn run() {
     )
     .expect("failed to generate types");
 
-  let current_exe = env::current_exe().unwrap();
-  let current_dir = current_exe.parent().unwrap();
-  let path = current_dir.join(util::CONFIGFILE_NAME);
+  let path = if cfg!(debug_assertions) {
+    env::current_dir().unwrap().parent().unwrap().join("temp")
+  } else {
+    env::current_exe().unwrap().parent().unwrap().to_path_buf()
+  }
+  .join(util::CONFIGFILE_NAME);
+  dbg!(&path);
 
   let state = util::SourceAppState::new(path).unwrap();
 

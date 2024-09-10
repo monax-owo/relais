@@ -1,15 +1,30 @@
-use std::env;
+use std::{env, io::stdin};
 
 use app_lib::{
   self,
+  conf::Configurable,
   util::{self, SourceAppState},
 };
+
 #[test]
 fn conf() {
-  let current_exe = env::current_exe().unwrap();
-  let current_dir = current_exe.parent().unwrap();
-  let path = current_dir.join(util::CONFIGFILE_NAME);
+  let path = if cfg!(debug_assertions) {
+    env::current_dir().unwrap().parent().unwrap().join("temp")
+  } else {
+    env::current_exe().unwrap().parent().unwrap().to_path_buf()
+  }
+  .join(util::CONFIGFILE_NAME);
+  dbg!(&path);
+
   let state = SourceAppState::new(path).unwrap();
 
-  println!("{:?}", *state.conf());
+  println!("{:?}", state.config);
+  wait();
+  state.config.load().unwrap();
+  println!("{:?}", state.config);
+}
+
+fn wait() {
+  println!("wait...");
+  stdin().read_line(&mut String::new()).unwrap();
 }

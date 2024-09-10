@@ -1,9 +1,11 @@
+use crate::conf::AppConfig;
 use anyhow::Context;
 use derive::ToHashMap;
 use serde::{Deserialize, Serialize};
 use specta::Type;
 use std::{
   fmt::Display,
+  path::Path,
   sync::{
     atomic::{AtomicBool, Ordering},
     Arc, Mutex,
@@ -11,14 +13,12 @@ use std::{
 };
 use tauri::{AppHandle, Emitter};
 
-use crate::conf::AppConfig;
-
 pub const CONFIGFILE_NAME: &str = "relaisrc.toml";
 
 // TODO: アプリ全体かウィンドウごとに半透明にするか<-ウィンドウごとにする
 #[derive(Debug)]
 pub struct SourceAppState {
-  pub(crate) config: Mutex<AppConfig>,
+  pub config: AppConfig,
   pub(crate) windows: Mutex<Vec<SourceWindowData>>,
   pub overlay: AtomicBool,
 }
@@ -51,6 +51,15 @@ pub struct WindowData {
 }
 
 impl SourceAppState {
+  pub fn new<P: AsRef<Path>>(config_path: P) -> anyhow::Result<Self> {
+    Ok(Self {
+      config: AppConfig::new(config_path)?,
+      windows: Mutex::new(Vec::new()),
+      // TODO:ウィンドウごとにする
+      overlay: AtomicBool::new(false),
+    })
+  }
+
   pub fn add_window(&self, window: SourceWindowData) -> anyhow::Result<()> {
     let mut lock = self.windows.lock().unwrap();
     lock.push(window);
