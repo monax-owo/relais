@@ -10,14 +10,16 @@
 > Unstable under development
 
 ## Feature
+
 > [!NOTE]
 > Under Construction
 
 ## Stack
+
 - Rust
   - Tauri
-    - tauri-plugin-dialog 
-    - Specta 
+    - tauri-plugin-dialog
+    - Specta
 - Typescript
   - Svelte kit
   - Sass(Scss)
