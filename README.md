@@ -6,16 +6,19 @@
   </a>
 </div>
 
+> [!WARNING]
+> Unstable under development
+
+## Feature
 > [!NOTE]
+> Under Construction
 
-- Tauri
+## Stack
 - Rust
+  - Tauri
+    - tauri-plugin-dialog 
+    - Specta 
 - Typescript
-- Svelte kit
-- Vite
-- Sass(Scss)
-
-|      |                            |
-| ---- | -------------------------- |
-| view | windowとctrlのセットのこと |
-|      |                            |
+  - Svelte kit
+  - Sass(Scss)
+  - Vite
