@@ -1,19 +1,23 @@
 use crate::util::{SourceAppState, SourceWindowData};
 
 use anyhow::Context;
-use std::sync::{atomic::AtomicBool, Arc, Mutex};
+use std::sync::Arc;
 use tauri::{
   AppHandle, Manager, PhysicalPosition, PhysicalSize, State, WebviewUrl, WebviewWindow,
   WebviewWindowBuilder, WindowEvent,
 };
-use windows::Win32::{
-  Foundation::{COLORREF, HWND, LPARAM, LRESULT, WPARAM},
-  UI::{
-    Shell::DefSubclassProc,
-    WindowsAndMessaging::{
-      SetLayeredWindowAttributes, SetWindowLongPtrW, SetWindowPos, GWL_EXSTYLE, HWND_NOTOPMOST,
-      HWND_TOPMOST, LWA_ALPHA, SWP_NOMOVE, SWP_NOSIZE, WM_SETFOCUS, WS_EX_LAYERED,
-      WS_EX_NOACTIVATE,
+use webview2_com::Microsoft::Web::WebView2::Win32::ICoreWebView2Settings2;
+use windows::{
+  core::{Interface, PWSTR},
+  Win32::{
+    Foundation::{COLORREF, HWND, LPARAM, LRESULT, WPARAM},
+    UI::{
+      Shell::DefSubclassProc,
+      WindowsAndMessaging::{
+        SetLayeredWindowAttributes, SetWindowLongPtrW, SetWindowPos, GWL_EXSTYLE, HWND_NOTOPMOST,
+        HWND_TOPMOST, LWA_ALPHA, SWP_NOMOVE, SWP_NOSIZE, WM_SETFOCUS, WS_EX_LAYERED,
+        WS_EX_NOACTIVATE,
+      },
     },
   },
 };
@@ -29,10 +33,11 @@ pub fn view_create(
   url: WebviewUrl,
   label: String,
 ) -> anyhow::Result<()> {
+  let app = app.clone();
   let skip_taskbar = cfg!(not(debug_assertions));
 
   let title = "".to_string();
-  let window = WebviewWindowBuilder::new(app, &label, url)
+  let window = WebviewWindowBuilder::new(&app, &label, url)
     .decorations(false)
     .initialization_script(include_str!("./init.js"))
     .maximizable(false)
@@ -43,35 +48,31 @@ pub fn view_create(
     .zoom_hotkeys_enabled(true)
     .build()?;
 
-  let ctrl_window =
-    WebviewWindowBuilder::new(app, to_ctrl_label(&*label), WebviewUrl::App("/ctrl".into()))
-      .parent(&window)?
-      .decorations(false)
-      .maximizable(false)
-      .minimizable(false)
-      .resizable(false)
-      .skip_taskbar(skip_taskbar)
-      .title("ctrl")
-      .transparent(true)
-      .build()?;
+  let ctrl_window = WebviewWindowBuilder::new(
+    &app,
+    to_ctrl_label(&*label),
+    WebviewUrl::App("/ctrl".into()),
+  )
+  .parent(&window)?
+  .decorations(false)
+  .maximizable(false)
+  .minimizable(false)
+  .resizable(false)
+  .skip_taskbar(skip_taskbar)
+  .title("ctrl")
+  .transparent(true)
+  .build()?;
 
   // TODO:SourceWindowData::new()
-  let window_data = SourceWindowData {
-    title,
-    label: label.clone(),
-    ignore: Arc::from(AtomicBool::from(false)),
-    mobile_mode: Arc::from(AtomicBool::from(false)),
-    pin: Arc::from(AtomicBool::from(false)),
-    zoom: Arc::from(Mutex::from(1.0)),
-  };
-
+  let window_data = SourceWindowData::new(title, label);
   state.add_window(window_data)?;
-  state.sync_windows(app);
+  state.sync_windows(&app);
 
   window.set_position(ctrl_pos(ctrl_window.outer_position()?))?;
 
   {
     let arc = Arc::new((window, ctrl_window));
+    let app = Arc::new(app);
     let (ref window, ref ctrl_window) = *Arc::clone(&arc);
     let window_hwnd = arc.0.hwnd()?;
     let ctrl_hwnd = arc.1.hwnd()?;
@@ -97,6 +98,10 @@ pub fn view_create(
         _ => (),
       }
     });
+
+    if state.agent.read().unwrap().is_empty() {
+      user_agent(&app, window)
+    }
 
     unsafe {
       SetWindowLongPtrW(window_hwnd, GWL_EXSTYLE, WS_EX_LAYERED.0 as isize);
@@ -192,6 +197,22 @@ pub fn set_zoom(
   dbg!(*lock);
 
   Ok(())
+}
+
+pub fn user_agent(app: &AppHandle, window: &WebviewWindow) {
+  window
+    .with_webview({
+      let app = app.clone();
+      move |webview| unsafe {
+        let controller = webview.controller();
+        let webview = controller.CoreWebView2().unwrap();
+        let settings_2: ICoreWebView2Settings2 = webview.Settings().unwrap().cast().unwrap();
+        let mut pwstr = PWSTR::null();
+        settings_2.UserAgent(&mut pwstr).unwrap();
+        *app.state::<SourceAppState>().agent.write().unwrap() = pwstr.to_string().unwrap();
+      }
+    })
+    .unwrap();
 }
 
 pub fn to_ctrl_label<'a, T: Into<&'a str>>(label: T) -> String {

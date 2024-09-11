@@ -8,7 +8,7 @@ use std::{
   path::Path,
   sync::{
     atomic::{AtomicBool, Ordering},
-    Arc, Mutex,
+    Arc, Mutex, RwLock,
   },
 };
 use tauri::{AppHandle, Emitter};
@@ -19,6 +19,7 @@ pub const CONFIGFILE_NAME: &str = "relaisrc.toml";
 #[derive(Debug)]
 pub struct SourceAppState {
   pub config: AppConfig,
+  pub(crate) agent: RwLock<String>,
   pub(crate) windows: Mutex<Vec<SourceWindowData>>,
   pub overlay: AtomicBool,
 }
@@ -26,6 +27,7 @@ pub struct SourceAppState {
 #[derive(Debug, Clone, Deserialize, Serialize, Type, ToHashMap)]
 pub struct AppState {
   pub config: String,
+  pub agent: String,
   pub windows: Vec<WindowData>,
   pub overlay: bool,
 }
@@ -54,6 +56,7 @@ impl SourceAppState {
   pub fn new<P: AsRef<Path>>(config_path: P) -> anyhow::Result<Self> {
     Ok(Self {
       config: AppConfig::new(config_path)?,
+      agent: RwLock::new(String::default()),
       windows: Mutex::new(Vec::new()),
       // TODO:ウィンドウごとにする
       overlay: AtomicBool::new(false),
@@ -95,6 +98,19 @@ impl SourceAppState {
   pub fn get_windows(&self) -> Vec<WindowData> {
     let lock = self.windows.lock().unwrap();
     lock.clone().into_iter().map(|v| v.into()).collect()
+  }
+}
+
+impl SourceWindowData {
+  pub fn new(title: String, label: String) -> Self {
+    Self {
+      title,
+      label,
+      ignore: Arc::from(AtomicBool::from(false)),
+      mobile_mode: Arc::from(AtomicBool::from(false)),
+      pin: Arc::from(AtomicBool::from(false)),
+      zoom: Arc::from(Mutex::from(1.0)),
+    }
   }
 }
 

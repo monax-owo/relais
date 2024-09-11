@@ -8,7 +8,7 @@ use crate::{
 use specta::specta;
 use tauri::{command, State, WebviewWindow};
 use webview2_com::Microsoft::Web::WebView2::Win32::ICoreWebView2Settings2;
-use windows::core::{w, Interface, PCWSTR};
+use windows::core::{w, Interface, HSTRING, PCWSTR};
 
 #[command]
 #[specta]
@@ -34,12 +34,12 @@ pub fn set_user_agent(
   value: bool,
 ) -> Result<(), String> {
   const MOBILE: PCWSTR = w!("Mozilla/5.0 (Linux; Android 13; Pixel 7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/116.0.0.0 Mobile Safari/537.36");
-  const DESKTOP: PCWSTR = w!("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36 Edg/128.0.0.0");
+  let desktop = HSTRING::from(state.agent.read().unwrap().clone());
 
   let window = to_window(&ctrl).err_to_string()?;
   let window_data = state.get_window_data(window.label()).err_to_string()?;
   let atomic = Arc::clone(&window_data.mobile_mode);
-
+  dbg!(&atomic.load(Ordering::Acquire));
   window
     .with_webview(move |webview| {
       #[cfg(windows)]
@@ -48,7 +48,11 @@ pub fn set_user_agent(
         let webview = controller.CoreWebView2().unwrap();
         let settings_2: ICoreWebView2Settings2 = webview.Settings().unwrap().cast().unwrap();
         settings_2
-          .SetUserAgent(if value { DESKTOP } else { MOBILE })
+          .SetUserAgent(if value {
+            MOBILE
+          } else {
+            PCWSTR(desktop.as_ptr())
+          })
           .unwrap();
         webview.Reload().unwrap();
       }

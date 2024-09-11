@@ -25,6 +25,10 @@ pub struct AppConfig {
 // TODO:save/loadのときのみDocumentMutを使ってset/getのときはInnerAppConfigを使いたい
 // TODO:DocumentMutとstructを変換する方法を調べる
 // 1.文字列を中継させて変換
+// 2.Index::index(str)でなんやかんやする？
+// https://github.com/toml-rs/toml/issues/691
+// 3.Item::Table()
+// 4.一旦1で作ってみる。getやget_mutで代入する方式にする<-これでいいかな
 impl AppConfig {
     pub fn new<P: AsRef<Path>>(path: P) -> anyhow::Result<Self> {
         let path = path.as_ref();
