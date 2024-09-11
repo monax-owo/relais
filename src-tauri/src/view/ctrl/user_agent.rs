@@ -8,7 +8,7 @@ use crate::{
 use specta::specta;
 use tauri::{command, State, WebviewWindow};
 use webview2_com::Microsoft::Web::WebView2::Win32::ICoreWebView2Settings2;
-use windows::core::{w, Interface, HSTRING, PCWSTR};
+use windows::core::{Interface, HSTRING};
 
 #[command]
 #[specta]
@@ -28,12 +28,13 @@ pub fn toggle_user_agent(
 
 #[command]
 #[specta]
+// todo:モバイル用サイトのドメインを切り替える
 pub fn set_user_agent(
   ctrl: WebviewWindow,
   state: State<'_, SourceAppState>,
   value: bool,
 ) -> Result<(), String> {
-  const MOBILE: PCWSTR = w!("Mozilla/5.0 (Linux; Android 13; Pixel 7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/116.0.0.0 Mobile Safari/537.36");
+  let mobile = HSTRING::from("Mozilla/5.0 (Linux; Android 13; Pixel 7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/116.0.0.0 Mobile Safari/537.36");
   let desktop = HSTRING::from(state.agent.read().unwrap().clone());
 
   let window = to_window(&ctrl).err_to_string()?;
@@ -48,11 +49,7 @@ pub fn set_user_agent(
         let webview = controller.CoreWebView2().unwrap();
         let settings_2: ICoreWebView2Settings2 = webview.Settings().unwrap().cast().unwrap();
         settings_2
-          .SetUserAgent(if value {
-            MOBILE
-          } else {
-            PCWSTR(desktop.as_ptr())
-          })
+          .SetUserAgent(&if value { mobile } else { desktop })
           .unwrap();
         webview.Reload().unwrap();
       }
