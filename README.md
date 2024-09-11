@@ -1,5 +1,5 @@
 <h1 align="center">Relais</h1>
-<div align="center">Lightweight webviewer specializing in overlay display</div>
+<div align="center">Lightweight web "viewer" specializing in overlay display</div>
 <div align="center">
   <a href="//github.com/monax-owo/relais" target="_blank">
     Relais
