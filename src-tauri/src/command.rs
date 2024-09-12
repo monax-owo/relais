@@ -1,5 +1,5 @@
 use super::util;
-use crate::util::{ErrToString, SourceAppState, WindowData};
+use crate::util::{Conf, ErrToString, SourceAppState, WindowData};
 
 use specta::specta;
 use tauri::{command, AppHandle, State};
@@ -18,6 +18,6 @@ pub fn get_windows(state: State<'_, SourceAppState>) -> Vec<WindowData> {
 
 #[command]
 #[specta]
-pub fn get_config(_state: State<'_, SourceAppState>) {
-  todo!()
+pub fn get_config(state: State<'_, SourceAppState>) -> Conf {
+  state.config.clone()
 }

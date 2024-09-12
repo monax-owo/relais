@@ -1,5 +1,5 @@
 use anyhow::Context;
-use conf::{AppConfig, EmptyConfig};
+use conf::AppConfig;
 use derive::ToHashMap;
 use serde::{Deserialize, Serialize};
 use specta::Type;
@@ -17,7 +17,7 @@ pub const CONFIGFILE_NAME: &str = "relaisrc.toml";
 
 // TODO: アプリ全体かウィンドウごとに半透明にするか<-ウィンドウごとにする
 #[derive(Debug)]
-pub struct SourceAppState<T = EmptyConfig>
+pub struct SourceAppState<T = Conf>
 where
   T: for<'de> Deserialize<'de> + Serialize,
 {
