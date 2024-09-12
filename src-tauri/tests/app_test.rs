@@ -14,8 +14,7 @@ use app_lib::{
 use conf::Configurable;
 use serde::{Deserialize, Serialize};
 
-#[derive(Debug, Clone, Deserialize, Serialize)]
-#[derive(Default)]
+#[derive(Debug, Clone, Deserialize, Serialize, Default)]
 struct TestConf {
   u8: u8,
   u16: u16,
@@ -43,7 +42,6 @@ impl TestConf {
   }
 }
 
-
 static PATH: LazyLock<PathBuf> = LazyLock::new(|| {
   env::current_dir()
     .unwrap()
@@ -59,10 +57,37 @@ static CONTENT: LazyLock<String> = LazyLock::new(|| {
 
 // TODO:set/get,save/loadのテストを分ける
 #[test]
-fn conf() {
+fn save_load() {
   dbg!(PATH.to_str());
   dbg!(CONTENT.as_str());
 
+  let mut state = setup();
+  state.config.save().expect("failed to save configfile");
+
+  println!("{:?}", state.config);
+  // wait();
+  state.config.load().unwrap();
+}
+
+#[test]
+fn set_get() {
+  // dbg!(PATH.to_str());
+  // dbg!(CONTENT.as_str());
+
+  // let mut state = setup();
+  // state.config.save().expect("failed to save configfile");
+
+  // println!("{:?}", state.config);
+  // // wait();
+  // state.config.load().unwrap();
+}
+
+fn _wait() {
+  println!("wait...");
+  stdin().read_line(&mut String::new()).unwrap();
+}
+
+fn setup() -> SourceAppState<TestConf> {
   let mut file = File::options()
     .write(true)
     .create(true)
@@ -72,17 +97,5 @@ fn conf() {
   file
     .write_all(CONTENT.as_bytes())
     .expect("failed to writing to configfile");
-
-  let mut state = SourceAppState::new(PATH.as_path(), TestConf::default()).unwrap();
-  state.config.save().expect("failed to save configfile");
-
-  println!("{:?}", state.config);
-  // wait();
-  state.config.load().unwrap();
-  // println!("{:?}", state.config);
-}
-
-fn _wait() {
-  println!("wait...");
-  stdin().read_line(&mut String::new()).unwrap();
+  SourceAppState::new(PATH.as_path(), TestConf::default()).unwrap()
 }
