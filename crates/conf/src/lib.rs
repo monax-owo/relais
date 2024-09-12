@@ -1,7 +1,7 @@
 use std::{
   fs::{create_dir, File},
   io::{BufReader, BufWriter, Read, Write},
-  ops::Deref,
+  ops::{Deref, DerefMut},
   path::{Path, PathBuf},
 };
 
@@ -62,10 +62,6 @@ pub trait Configurable {
   fn save(&self) -> anyhow::Result<()>;
   /// ファイルの内容をselfに書き込むメソッド
   fn load(&mut self) -> anyhow::Result<()>;
-  /// 値を取得する
-  fn get(&self, key: &str) -> &Item;
-  /// 値を代入する
-  fn get_mut(&self, key: &str) -> &mut Item;
 }
 
 // TODO:data指定をせずに、型のみ指定できるようにする
@@ -92,14 +88,6 @@ impl<T: Serialize + for<'de> Deserialize<'de>> Configurable for AppConfig<T> {
 
     Ok(())
   }
-
-  fn get(&self, _key: &str) -> &Item {
-    todo!();
-  }
-  // fn set<K: AsRef<str>, V: Into<Item>>(&self, key: K, val: V) -> anyhow::Result<()> {
-  fn get_mut(&self, _key: &str) -> &mut Item {
-    todo!();
-  }
 }
 
 impl<T: for<'de> Deserialize<'de> + Serialize> Deref for AppConfig<T> {
@@ -107,5 +95,11 @@ impl<T: for<'de> Deserialize<'de> + Serialize> Deref for AppConfig<T> {
 
   fn deref(&self) -> &Self::Target {
     &self.config
+  }
+}
+
+impl<T: for<'de> Deserialize<'de> + Serialize> DerefMut for AppConfig<T> {
+  fn deref_mut(&mut self) -> &mut Self::Target {
+    &mut self.config
   }
 }
