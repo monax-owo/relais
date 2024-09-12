@@ -8,7 +8,7 @@ pub mod command {
   use tauri::{command, AppHandle, State, WebviewWindow};
 
   use crate::{
-    util::{ErrToString, SourceAppState},
+    util::{ErrToString, AppState},
     view::util::{self, to_window},
   };
 
@@ -31,7 +31,7 @@ pub mod command {
 
   #[command]
   #[specta]
-  pub fn view_zoomin(ctrl: WebviewWindow, state: State<'_, SourceAppState>) -> Result<(), String> {
+  pub fn view_zoomin(ctrl: WebviewWindow, state: State<'_, AppState>) -> Result<(), String> {
     util::set_zoom(&to_window(&ctrl).err_to_string()?, state, 0.1).err_to_string()?;
 
     Ok(())
@@ -39,7 +39,7 @@ pub mod command {
 
   #[command]
   #[specta]
-  pub fn view_zoomout(ctrl: WebviewWindow, state: State<'_, SourceAppState>) -> Result<(), String> {
+  pub fn view_zoomout(ctrl: WebviewWindow, state: State<'_, AppState>) -> Result<(), String> {
     util::set_zoom(&to_window(&ctrl).err_to_string()?, state, -0.1).err_to_string()?;
 
     Ok(())
@@ -58,7 +58,7 @@ pub mod command {
   #[specta]
   pub fn get_status(
     ctrl: WebviewWindow,
-    state: State<'_, SourceAppState>,
+    state: State<'_, AppState>,
   ) -> Result<(bool, bool, bool, bool), String> {
     let window = to_window(&ctrl).err_to_string()?;
     let window_data = state.get_window_data(window.label()).err_to_string()?;

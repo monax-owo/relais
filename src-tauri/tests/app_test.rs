@@ -9,7 +9,7 @@ use std::{
 
 use app_lib::{
   self,
-  util::{SourceAppState, CONFIGFILE_NAME},
+  util::{AppState, CONFIGFILE_NAME},
 };
 use conf::Configurable;
 use serde::{Deserialize, Serialize};
@@ -87,7 +87,7 @@ fn _wait() {
   stdin().read_line(&mut String::new()).unwrap();
 }
 
-fn setup() -> SourceAppState<TestConf> {
+fn setup() -> AppState<TestConf> {
   let mut file = File::options()
     .write(true)
     .create(true)
@@ -97,5 +97,5 @@ fn setup() -> SourceAppState<TestConf> {
   file
     .write_all(CONTENT.as_bytes())
     .expect("failed to writing to configfile");
-  SourceAppState::new(PATH.as_path(), TestConf::default()).unwrap()
+  AppState::new(PATH.as_path(), TestConf::default()).unwrap()
 }

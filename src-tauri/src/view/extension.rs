@@ -2,7 +2,7 @@ pub mod util {}
 
 pub mod command {
   use crate::{
-    util::{ErrToString, SourceAppState},
+    util::{ErrToString, AppState},
     view::util::to_window,
   };
   use anyhow::Context;
@@ -17,7 +17,7 @@ pub mod command {
   pub fn test(
     app: AppHandle,
     ctrl: WebviewWindow,
-    _state: State<'_, SourceAppState>,
+    _state: State<'_, AppState>,
   ) -> Result<(), String> {
     let window = to_window(&ctrl).err_to_string()?;
     window

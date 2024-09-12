@@ -1,5 +1,5 @@
 use super::util;
-use crate::util::{ErrToString, SourceAppState};
+use crate::util::{ErrToString, AppState};
 
 use specta::specta;
 use tauri::{command, AppHandle, State, WebviewUrl, WebviewWindow};
@@ -9,7 +9,7 @@ use uuid::Uuid;
 #[specta]
 pub async fn view_create(
   app: AppHandle,
-  state: State<'_, SourceAppState>,
+  state: State<'_, AppState>,
   url: String,
   label: Option<String>,
 ) -> Result<(), String> {

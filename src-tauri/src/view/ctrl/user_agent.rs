@@ -1,7 +1,7 @@
 use std::sync::{atomic::Ordering, Arc};
 
 use crate::{
-  util::{ErrToString, SourceAppState},
+  util::{ErrToString, AppState},
   view::util::to_window,
 };
 
@@ -14,7 +14,7 @@ use windows::core::{Interface, HSTRING};
 #[specta]
 pub fn toggle_user_agent(
   ctrl: WebviewWindow,
-  state: State<'_, SourceAppState>,
+  state: State<'_, AppState>,
 ) -> Result<bool, String> {
   let window = to_window(&ctrl).err_to_string()?;
   let window_data = state.get_window_data(window.label()).err_to_string()?;
@@ -31,7 +31,7 @@ pub fn toggle_user_agent(
 // todo:モバイル用サイトのドメインを切り替える
 pub fn set_user_agent(
   ctrl: WebviewWindow,
-  state: State<'_, SourceAppState>,
+  state: State<'_, AppState>,
   value: bool,
 ) -> Result<(), String> {
   let mobile = HSTRING::from("Mozilla/5.0 (Linux; Android 13; Pixel 7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/116.0.0.0 Mobile Safari/537.36");
@@ -64,7 +64,7 @@ pub fn set_user_agent(
 #[specta]
 pub fn get_user_agent(
   ctrl: WebviewWindow,
-  state: State<'_, SourceAppState>,
+  state: State<'_, AppState>,
 ) -> Result<bool, String> {
   let window = to_window(&ctrl).err_to_string()?;
   let window_data = state.get_window_data(window.label()).err_to_string()?;

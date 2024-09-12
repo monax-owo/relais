@@ -1,4 +1,4 @@
-use crate::util::{SourceAppState, SourceWindowData};
+use crate::util::{AppState, WindowData};
 
 use anyhow::Context;
 use std::sync::Arc;
@@ -29,7 +29,7 @@ pub const CTRL_LABEL_PREFIX: &str = "ctrl_";
 
 pub fn view_create(
   app: &AppHandle,
-  state: State<'_, SourceAppState>,
+  state: State<'_, AppState>,
   url: WebviewUrl,
   label: String,
 ) -> anyhow::Result<()> {
@@ -63,7 +63,7 @@ pub fn view_create(
   .transparent(true)
   .build()?;
 
-  let window_data = SourceWindowData::new(title, label);
+  let window_data = WindowData::new(title, label);
   state.add_window(window_data)?;
   state.sync_windows(&app);
 
@@ -176,7 +176,7 @@ pub fn set_pin(window: &WebviewWindow, value: bool) -> Result<(), String> {
 // TODO: f64の代わりにパーセントを使う
 pub fn set_zoom(
   window: &WebviewWindow,
-  state: State<'_, SourceAppState>,
+  state: State<'_, AppState>,
   diff: f64,
 ) -> anyhow::Result<()> {
   let window_data = state.get_window_data(window.label())?;
@@ -208,7 +208,7 @@ pub fn user_agent(app: &AppHandle, window: &WebviewWindow) {
         let settings_2: ICoreWebView2Settings2 = webview.Settings().unwrap().cast().unwrap();
         let mut pwstr = PWSTR::null();
         settings_2.UserAgent(&mut pwstr).unwrap();
-        *app.state::<SourceAppState>().agent.write().unwrap() = pwstr.to_string().unwrap();
+        *app.state::<AppState>().agent.write().unwrap() = pwstr.to_string().unwrap();
       }
     })
     .unwrap();
@@ -253,7 +253,7 @@ pub fn view_close(app: AppHandle, label: String) -> anyhow::Result<()> {
     .get_webview_window(&label)
     .context("failed to get window")?;
   window.close()?;
-  let state = app.state::<SourceAppState>();
+  let state = app.state::<AppState>();
   state.remove_window(&label)?;
   state.sync_windows(&app);
 
@@ -261,7 +261,7 @@ pub fn view_close(app: AppHandle, label: String) -> anyhow::Result<()> {
 }
 
 pub fn _close(app: &AppHandle, arc: &Arc<(WebviewWindow, WebviewWindow)>) -> anyhow::Result<()> {
-  let state = app.state::<SourceAppState>();
+  let state = app.state::<AppState>();
   let label = arc.0.label();
   arc.1.close()?;
   arc.0.close()?;

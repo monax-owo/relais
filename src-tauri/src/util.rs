@@ -1,6 +1,5 @@
 use anyhow::Context;
 use conf::AppConfig;
-use derive::ToHashMap;
 use serde::{Deserialize, Serialize};
 use specta::Type;
 use std::{
@@ -17,26 +16,26 @@ pub const CONFIGFILE_NAME: &str = "relaisrc.toml";
 
 // TODO: アプリ全体かウィンドウごとに半透明にするか<-ウィンドウごとにする
 #[derive(Debug)]
-pub struct SourceAppState<T = Conf>
+pub struct AppState<T = Conf>
 where
   T: for<'de> Deserialize<'de> + Serialize,
 {
   pub config: AppConfig<T>,
   pub(crate) agent: RwLock<String>,
-  pub(crate) windows: Mutex<Vec<SourceWindowData>>,
+  pub(crate) windows: Mutex<Vec<WindowData>>,
   pub overlay: AtomicBool,
 }
 
-#[derive(Debug, Clone, Deserialize, Serialize, Type, ToHashMap)]
-pub struct AppState {
+#[derive(Debug, Clone, Deserialize, Serialize, Type)]
+pub struct SerdeAppState {
   pub config: String,
   pub agent: String,
-  pub windows: Vec<WindowData>,
+  pub windows: Vec<SerdeWindowData>,
   pub overlay: bool,
 }
 
 #[derive(Debug, Clone)]
-pub struct SourceWindowData {
+pub struct WindowData {
   pub title: String,
   pub label: String,
   pub(crate) ignore: Arc<AtomicBool>,
@@ -46,7 +45,7 @@ pub struct SourceWindowData {
 }
 
 #[derive(Debug, Clone, Deserialize, Serialize, Type)]
-pub struct WindowData {
+pub struct SerdeWindowData {
   title: String,
   label: String,
   ignore: bool,
@@ -58,7 +57,7 @@ pub struct WindowData {
 #[derive(Debug, Clone, Deserialize, Serialize, Type)]
 pub struct Conf {}
 
-impl<T: for<'de> Deserialize<'de> + Serialize> SourceAppState<T> {
+impl<T: for<'de> Deserialize<'de> + Serialize> AppState<T> {
   pub fn new<P: AsRef<Path>>(config_path: P, data: T) -> anyhow::Result<Self> {
     Ok(Self {
       config: AppConfig::new(config_path, data)?,
@@ -69,7 +68,7 @@ impl<T: for<'de> Deserialize<'de> + Serialize> SourceAppState<T> {
     })
   }
 
-  pub fn add_window(&self, window: SourceWindowData) -> anyhow::Result<()> {
+  pub fn add_window(&self, window: WindowData) -> anyhow::Result<()> {
     let mut lock = self.windows.lock().unwrap();
     lock.push(window);
     dbg!(&lock);
@@ -88,11 +87,11 @@ impl<T: for<'de> Deserialize<'de> + Serialize> SourceAppState<T> {
     let windows = self.windows.lock().unwrap();
     let vec = windows.clone().into_iter().map(|v| v.into()).collect();
     handle
-      .emit::<Vec<WindowData>>("update_windows", vec)
+      .emit::<Vec<SerdeWindowData>>("update_windows", vec)
       .unwrap();
   }
 
-  pub fn get_window_data(&self, label: &str) -> anyhow::Result<SourceWindowData> {
+  pub fn get_window_data(&self, label: &str) -> anyhow::Result<WindowData> {
     let lock = self.windows.lock().unwrap();
     lock
       .iter()
@@ -101,13 +100,13 @@ impl<T: for<'de> Deserialize<'de> + Serialize> SourceAppState<T> {
       .context("failed to get window data")
   }
 
-  pub fn get_windows(&self) -> Vec<WindowData> {
+  pub fn get_windows(&self) -> Vec<SerdeWindowData> {
     let lock = self.windows.lock().unwrap();
     lock.clone().into_iter().map(|v| v.into()).collect()
   }
 }
 
-impl SourceWindowData {
+impl WindowData {
   pub fn new(title: String, label: String) -> Self {
     Self {
       title,
@@ -120,8 +119,8 @@ impl SourceWindowData {
   }
 }
 
-impl From<SourceWindowData> for WindowData {
-  fn from(v: SourceWindowData) -> Self {
+impl From<WindowData> for SerdeWindowData {
+  fn from(v: WindowData) -> Self {
     Self {
       title: v.title,
       label: v.label,

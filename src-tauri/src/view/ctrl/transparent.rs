@@ -4,7 +4,7 @@ use specta::specta;
 use tauri::{command, State, WebviewWindow};
 
 use crate::{
-  util::{ErrToString, SourceAppState},
+  util::{ErrToString, AppState},
   view::util::{self, to_window},
 };
 
@@ -12,7 +12,7 @@ use crate::{
 #[specta]
 pub fn toggle_transparent(
   ctrl: WebviewWindow,
-  state: State<'_, SourceAppState>,
+  state: State<'_, AppState>,
   alpha: u8,
 ) -> Result<bool, String> {
   let condition = state.overlay.load(Ordering::Acquire);
@@ -32,7 +32,7 @@ pub fn toggle_transparent(
 #[specta]
 pub fn set_transparent(
   ctrl: WebviewWindow,
-  state: State<'_, SourceAppState>,
+  state: State<'_, AppState>,
   alpha: u8,
 ) -> Result<(), String> {
   let window = to_window(&ctrl).err_to_string()?;
@@ -44,6 +44,6 @@ pub fn set_transparent(
 
 #[command]
 #[specta]
-pub fn get_transparent(state: State<'_, SourceAppState>) -> Result<bool, String> {
+pub fn get_transparent(state: State<'_, AppState>) -> Result<bool, String> {
   Ok(state.overlay.load(Ordering::Acquire))
 }

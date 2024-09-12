@@ -11,7 +11,7 @@ use tauri::{
   App, Builder, Manager, WindowEvent,
 };
 use tauri_specta::collect_commands;
-use util::{exit_0, Conf, SourceAppState, WindowData};
+use util::{exit_0, Conf, AppState, SerdeWindowData};
 use view::util::window_focus;
 
 pub mod command;
@@ -49,7 +49,7 @@ pub fn run() {
       view::ctrl::user_agent::toggle_user_agent,
       view::extension::command::test,
     ])
-    .typ::<WindowData>()
+    .typ::<SerdeWindowData>()
     .constant("WINDOW_LABEL_PREFIX", view::util::WINDOW_LABEL_PREFIX)
     .constant("CTRL_LABEL_PREFIX", view::util::CTRL_LABEL_PREFIX);
   #[cfg(debug_assertions)]
@@ -68,13 +68,13 @@ pub fn run() {
   .join(util::CONFIGFILE_NAME);
   dbg!(&path);
 
-  let state = util::SourceAppState::new(path, Conf {}).unwrap();
+  let state = util::AppState::new(path, Conf {}).unwrap();
 
   Builder::default()
     .invoke_handler(specta.invoke_handler())
     .setup(move |app: &mut App| {
       let _handle = app.handle();
-      let state = app.state::<SourceAppState>();
+      let state = app.state::<AppState>();
       specta.mount_events(app);
 
       let main_window = Arc::new(

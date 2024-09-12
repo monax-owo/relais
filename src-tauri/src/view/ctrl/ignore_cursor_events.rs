@@ -4,7 +4,7 @@ use specta::specta;
 use tauri::{command, State, WebviewWindow};
 
 use crate::{
-  util::{ErrToString, SourceAppState},
+  util::{ErrToString, AppState},
   view::util::to_window,
 };
 
@@ -12,7 +12,7 @@ use crate::{
 #[specta]
 pub fn toggle_ignore_cursor_events(
   ctrl: WebviewWindow,
-  state: State<'_, SourceAppState>,
+  state: State<'_, AppState>,
 ) -> Result<bool, String> {
   let window = to_window(&ctrl).err_to_string()?;
   let window_data = state.get_window_data(window.label()).err_to_string()?;
@@ -28,7 +28,7 @@ pub fn toggle_ignore_cursor_events(
 #[specta]
 pub fn set_ignore_cursor_events(
   ctrl: WebviewWindow,
-  state: State<'_, SourceAppState>,
+  state: State<'_, AppState>,
   value: bool,
 ) -> Result<(), String> {
   let window = to_window(&ctrl).err_to_string()?;
@@ -46,7 +46,7 @@ pub fn set_ignore_cursor_events(
 #[specta]
 pub fn get_ignore_cursor_events(
   ctrl: WebviewWindow,
-  state: State<'_, SourceAppState>,
+  state: State<'_, AppState>,
 ) -> Result<bool, String> {
   let window = to_window(&ctrl).err_to_string()?;
   let window_data = state.get_window_data(window.label()).err_to_string()?;
