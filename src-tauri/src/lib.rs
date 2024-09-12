@@ -11,7 +11,7 @@ use tauri::{
   App, Builder, Manager, WindowEvent,
 };
 use tauri_specta::collect_commands;
-use util::{exit_0, SourceAppState, WindowData};
+use util::{exit_0, Conf, SourceAppState, WindowData};
 use view::util::window_focus;
 
 pub mod command;
@@ -68,7 +68,7 @@ pub fn run() {
   .join(util::CONFIGFILE_NAME);
   dbg!(&path);
 
-  let state = util::SourceAppState::new(path).unwrap();
+  let state = util::SourceAppState::new(path, Conf {}).unwrap();
 
   Builder::default()
     .invoke_handler(specta.invoke_handler())

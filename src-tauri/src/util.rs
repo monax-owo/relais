@@ -1,5 +1,5 @@
 use anyhow::Context;
-use conf::AppConfig;
+use conf::{AppConfig, EmptyConfig};
 use derive::ToHashMap;
 use serde::{Deserialize, Serialize};
 use specta::Type;
@@ -17,8 +17,11 @@ pub const CONFIGFILE_NAME: &str = "relaisrc.toml";
 
 // TODO: アプリ全体かウィンドウごとに半透明にするか<-ウィンドウごとにする
 #[derive(Debug)]
-pub struct SourceAppState {
-  pub config: AppConfig,
+pub struct SourceAppState<T = EmptyConfig>
+where
+  T: for<'de> Deserialize<'de> + Serialize,
+{
+  pub config: AppConfig<T>,
   pub(crate) agent: RwLock<String>,
   pub(crate) windows: Mutex<Vec<SourceWindowData>>,
   pub overlay: AtomicBool,
@@ -52,10 +55,13 @@ pub struct WindowData {
   zoom: f64,
 }
 
-impl SourceAppState {
-  pub fn new<P: AsRef<Path>>(config_path: P) -> anyhow::Result<Self> {
+#[derive(Debug, Clone, Deserialize, Serialize, Type)]
+pub struct Conf {}
+
+impl<T: for<'de> Deserialize<'de> + Serialize> SourceAppState<T> {
+  pub fn new<P: AsRef<Path>>(config_path: P, data: T) -> anyhow::Result<Self> {
     Ok(Self {
-      config: AppConfig::new(config_path)?,
+      config: AppConfig::new(config_path, data)?,
       agent: RwLock::new(String::default()),
       windows: Mutex::new(Vec::new()),
       // TODO:ウィンドウごとにする
