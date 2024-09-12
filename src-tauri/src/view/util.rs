@@ -63,7 +63,6 @@ pub fn view_create(
   .transparent(true)
   .build()?;
 
-  // TODO:SourceWindowData::new()
   let window_data = SourceWindowData::new(title, label);
   state.add_window(window_data)?;
   state.sync_windows(&app);

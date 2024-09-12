@@ -23,15 +23,7 @@ pub struct AppConfig<T> {
   config: T,
 }
 
-// todo:必要になったらBuilder patternにする(AppConfigBuilder)
-// TODO:hashmapにする？->DocumentMutを使う、ただし値のSetが面倒
-// TODO:save/loadのときのみDocumentMutを使ってset/getのときはInnerAppConfigを使いたい
-// TODO:DocumentMutとstructを変換する方法を調べる
-// 1.文字列を中継させて変換
-// 2.Index::index(str)でなんやかんやする？
-// https://github.com/toml-rs/toml/issues/691
-// 3.Item::Table()
-// 4.一旦1で作ってみる。getやget_mutで代入する方式にする<-これでいいかな
+// TODO:必要になったらBuilder patternにする(AppConfigBuilder)
 impl<T: for<'de> Deserialize<'de> + Serialize> AppConfig<T> {
   pub fn new<P: AsRef<Path>>(path: P, data: T) -> anyhow::Result<Self> {
     let path = path.as_ref();
