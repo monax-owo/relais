@@ -38,8 +38,10 @@ pub struct SerdeAppState {
 pub struct WindowData {
   pub title: String,
   pub label: String,
+  // TODO:overlay
   pub(crate) ignore: Arc<AtomicBool>,
   pub(crate) mobile_mode: Arc<AtomicBool>,
+  pub(crate) overlay: Arc<AtomicBool>,
   pub(crate) pin: Arc<AtomicBool>,
   pub(crate) zoom: Arc<Mutex<f64>>,
 }
@@ -113,6 +115,7 @@ impl WindowData {
       label,
       ignore: Arc::from(AtomicBool::from(false)),
       mobile_mode: Arc::from(AtomicBool::from(false)),
+      overlay: Arc::from(AtomicBool::from(false)),
       pin: Arc::from(AtomicBool::from(false)),
       zoom: Arc::from(Mutex::from(1.0)),
     }
