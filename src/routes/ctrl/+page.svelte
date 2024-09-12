@@ -26,13 +26,13 @@
 
   const stroke = 2;
   const ctrl = getCurrentWebviewWindow();
-  let pinned = false;
-  let transparent = false;
-  let pointerIgnored = false;
+  let pin = false;
+  let overlay = false;
+  let pointerIgnore = false;
   let mobileMode = false;
 
   onMount(async () => {
-    [transparent, pinned, pointerIgnored, mobileMode] = unwrap(await commands.getStatus());
+    [overlay, pin, pointerIgnore, mobileMode] = unwrap(await commands.getStatus());
   });
 
   const err = (err: string) => {
@@ -48,20 +48,20 @@
     }
   };
 
-  const handleMini = async () => {
+  const handleMinimize = async () => {
     unwrap(await commands.viewMinimize());
   };
   const handleClose = async () => {
     unwrap(await commands.viewClose(ctrl.label.replace(CTRL_LABEL_PREFIX, "")));
   };
   const handlePin = async () => {
-    pinned = unwrap(await commands.togglePin());
+    pin = unwrap(await commands.togglePin());
   };
-  const handleTransparent = async () => {
-    transparent = unwrap(await commands.toggleTransparent(127));
+  const handleOverlay = async () => {
+    overlay = unwrap(await commands.toggleTransparent(127));
   };
   const handlePointerIgnore = async () => {
-    pointerIgnored = unwrap(await commands.toggleIgnoreCursorEvents());
+    pointerIgnore = unwrap(await commands.toggleIgnoreCursorEvents());
   };
   const handleMobileMode = async () => {
     mobileMode = unwrap(await commands.toggleUserAgent());
@@ -81,24 +81,24 @@
 <!-- TODO: opacity level slider -->
 <!-- <button type="button" on:pointerdown={}></button> -->
 <div class="header">
-  <button type="button" on:pointerdown={handleMini}><IconMinus {stroke}></IconMinus></button>
+  <button type="button" on:pointerdown={handleMinimize}><IconMinus {stroke}></IconMinus></button>
   <button type="button" on:pointerdown={handleClose}><IconX {stroke}></IconX></button>
   <button type="button" on:pointerdown={handlePin}>
-    {#if pinned}
+    {#if pin}
       <IconPinnedOff {stroke} />
     {:else}
       <IconPin {stroke} />
     {/if}
   </button>
-  <button type="button" on:pointerdown={handleTransparent}>
-    {#if transparent}
+  <button type="button" on:pointerdown={handleOverlay}>
+    {#if overlay}
       <IconGhostOff {stroke} />
     {:else}
       <IconGhost {stroke} />
     {/if}
   </button>
   <button type="button" on:pointerdown={handlePointerIgnore}>
-    {#if pointerIgnored}
+    {#if pointerIgnore}
       <IconPointerOff {stroke} />
     {:else}
       <IconPointer {stroke} />

@@ -39,7 +39,7 @@ pub struct WindowData {
   pub title: String,
   pub label: String,
   // TODO:overlay
-  pub(crate) ignore: Arc<AtomicBool>,
+  pub(crate) pointer_ignore: Arc<AtomicBool>,
   pub(crate) mobile_mode: Arc<AtomicBool>,
   pub(crate) overlay: Arc<AtomicBool>,
   pub(crate) pin: Arc<AtomicBool>,
@@ -50,7 +50,7 @@ pub struct WindowData {
 pub struct SerdeWindowData {
   title: String,
   label: String,
-  ignore: bool,
+  pointer_ignore: bool,
   mobile_mode: bool,
   pin: bool,
   zoom: f64,
@@ -113,7 +113,7 @@ impl WindowData {
     Self {
       title,
       label,
-      ignore: Arc::from(AtomicBool::from(false)),
+      pointer_ignore: Arc::from(AtomicBool::from(false)),
       mobile_mode: Arc::from(AtomicBool::from(false)),
       overlay: Arc::from(AtomicBool::from(false)),
       pin: Arc::from(AtomicBool::from(false)),
@@ -127,7 +127,7 @@ impl From<WindowData> for SerdeWindowData {
     Self {
       title: v.title,
       label: v.label,
-      ignore: Arc::clone(&v.ignore).load(Ordering::Acquire),
+      pointer_ignore: Arc::clone(&v.pointer_ignore).load(Ordering::Acquire),
       mobile_mode: Arc::clone(&v.mobile_mode).load(Ordering::Acquire),
       pin: Arc::clone(&v.pin).load(Ordering::Acquire),
       zoom: *v.zoom.lock().unwrap(),

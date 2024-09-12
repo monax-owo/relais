@@ -16,7 +16,7 @@ pub fn toggle_ignore_cursor_events(
 ) -> Result<bool, String> {
   let window = to_window(&ctrl).err_to_string()?;
   let window_data = state.get_window_data(window.label()).err_to_string()?;
-  let atomic = Arc::clone(&window_data.ignore);
+  let atomic = Arc::clone(&window_data.pointer_ignore);
   let condition = atomic.load(Ordering::Acquire);
 
   set_ignore_cursor_events(ctrl, state, !condition)?;
@@ -33,7 +33,7 @@ pub fn set_ignore_cursor_events(
 ) -> Result<(), String> {
   let window = to_window(&ctrl).err_to_string()?;
   let window_data = state.get_window_data(window.label()).err_to_string()?;
-  let atomic = Arc::clone(&window_data.ignore);
+  let atomic = Arc::clone(&window_data.pointer_ignore);
 
   // TODO:winapiを使って判定をなくす
   window.set_ignore_cursor_events(value).err_to_string()?;
@@ -50,7 +50,7 @@ pub fn get_ignore_cursor_events(
 ) -> Result<bool, String> {
   let window = to_window(&ctrl).err_to_string()?;
   let window_data = state.get_window_data(window.label()).err_to_string()?;
-  let atomic = Arc::clone(&window_data.ignore);
+  let atomic = Arc::clone(&window_data.pointer_ignore);
 
   Ok(atomic.load(Ordering::Acquire))
 }

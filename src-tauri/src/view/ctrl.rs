@@ -67,7 +67,7 @@ pub mod command {
       state.overlay.load(std::sync::atomic::Ordering::Acquire),
       window_data.pin.load(std::sync::atomic::Ordering::Acquire),
       window_data
-        .ignore
+        .pointer_ignore
         .load(std::sync::atomic::Ordering::Acquire),
       window_data
         .mobile_mode
