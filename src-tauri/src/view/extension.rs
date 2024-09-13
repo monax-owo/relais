@@ -2,7 +2,7 @@ pub mod util {}
 
 pub mod command {
   use crate::{
-    util::{ErrToString, AppState},
+    util::{AppState, ErrToString},
     view::util::to_window,
   };
   use anyhow::Context;
@@ -19,7 +19,7 @@ pub mod command {
     ctrl: WebviewWindow,
     _state: State<'_, AppState>,
   ) -> Result<(), String> {
-    let window = to_window(&ctrl).err_to_string()?;
+    let window = to_window(&ctrl)?;
     window
       .with_webview(move |webview| {
         #[cfg(target_os = "windows")]

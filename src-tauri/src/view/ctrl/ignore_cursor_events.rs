@@ -4,8 +4,8 @@ use specta::specta;
 use tauri::{command, State, WebviewWindow};
 
 use crate::{
-  util::{ErrToString, AppState},
-  view::util::to_window,
+  util::{AppState, ErrToString},
+  view::util::ctrl_to_window_and_data,
 };
 
 #[command]
@@ -14,8 +14,7 @@ pub fn toggle_ignore_cursor_events(
   ctrl: WebviewWindow,
   state: State<'_, AppState>,
 ) -> Result<bool, String> {
-  let window = to_window(&ctrl).err_to_string()?;
-  let window_data = state.get_window_data(window.label()).err_to_string()?;
+  let (_, window_data) = ctrl_to_window_and_data(&ctrl, &state)?;
   let atomic = Arc::clone(&window_data.pointer_ignore);
   let condition = atomic.load(Ordering::Acquire);
 
@@ -31,8 +30,7 @@ pub fn set_ignore_cursor_events(
   state: State<'_, AppState>,
   value: bool,
 ) -> Result<(), String> {
-  let window = to_window(&ctrl).err_to_string()?;
-  let window_data = state.get_window_data(window.label()).err_to_string()?;
+  let (window, window_data) = ctrl_to_window_and_data(&ctrl, &state)?;
   let atomic = Arc::clone(&window_data.pointer_ignore);
 
   // TODO:winapiを使って判定をなくす
@@ -48,8 +46,7 @@ pub fn get_ignore_cursor_events(
   ctrl: WebviewWindow,
   state: State<'_, AppState>,
 ) -> Result<bool, String> {
-  let window = to_window(&ctrl).err_to_string()?;
-  let window_data = state.get_window_data(window.label()).err_to_string()?;
+  let (_, window_data) = ctrl_to_window_and_data(&ctrl, &state)?;
   let atomic = Arc::clone(&window_data.pointer_ignore);
 
   Ok(atomic.load(Ordering::Acquire))

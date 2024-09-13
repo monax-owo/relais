@@ -1,4 +1,4 @@
-use crate::util::{AppState, WindowData};
+use crate::util::{AppState, ErrToString, WindowData};
 
 use anyhow::Context;
 use std::sync::Arc;
@@ -232,20 +232,27 @@ pub fn window_pos(pos: PhysicalPosition<i32>) -> PhysicalPosition<i32> {
   PhysicalPosition::new(pos.x - OFFSET.0, pos.y - OFFSET.1)
 }
 
-pub fn _to_ctrl(window: &WebviewWindow) -> anyhow::Result<WebviewWindow> {
+pub fn _to_ctrl(window: &WebviewWindow) -> Result<WebviewWindow, String> {
   window
     .get_webview_window(&to_ctrl_label(window.label()))
     .context("window is not found")
+    .err_to_string()
 }
 
-// TODO:まとめる関数を書く<-大事
-// let window = to_window(&ctrl).err_to_string()?;
-// let window_data = state.get_window_data(window.label()).err_to_string()?;
-
-pub fn to_window(ctrl: &WebviewWindow) -> anyhow::Result<WebviewWindow> {
+pub fn to_window(ctrl: &WebviewWindow) -> Result<WebviewWindow, String> {
   ctrl
     .get_webview_window(&to_window_label(ctrl.label()))
     .context("ctrl is not found")
+    .err_to_string()
+}
+
+pub fn ctrl_to_window_and_data(
+  ctrl: &WebviewWindow,
+  state: &State<'_, AppState>,
+) -> Result<(WebviewWindow, WindowData), String> {
+  let window = to_window(ctrl)?;
+  let window_data = state.get_window_data(window.label()).err_to_string()?;
+  Ok((window, window_data))
 }
 
 pub fn view_close(app: AppHandle, label: String) -> anyhow::Result<()> {

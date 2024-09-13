@@ -8,14 +8,14 @@ pub mod command {
   use tauri::{command, AppHandle, State, WebviewWindow};
 
   use crate::{
-    util::{ErrToString, AppState},
-    view::util::{self, to_window},
+    util::{AppState, ErrToString},
+    view::util::{self, ctrl_to_window_and_data, to_window},
   };
 
   #[command]
   #[specta]
   pub fn view_minimize(ctrl: WebviewWindow) -> Result<(), String> {
-    util::window_minimize(&to_window(&ctrl).err_to_string()?).err_to_string()?;
+    util::window_minimize(&to_window(&ctrl)?).err_to_string()?;
 
     Ok(())
   }
@@ -32,7 +32,7 @@ pub mod command {
   #[command]
   #[specta]
   pub fn view_zoomin(ctrl: WebviewWindow, state: State<'_, AppState>) -> Result<(), String> {
-    util::set_zoom(&to_window(&ctrl).err_to_string()?, state, 0.1).err_to_string()?;
+    util::set_zoom(&to_window(&ctrl)?, state, 0.1).err_to_string()?;
 
     Ok(())
   }
@@ -40,7 +40,7 @@ pub mod command {
   #[command]
   #[specta]
   pub fn view_zoomout(ctrl: WebviewWindow, state: State<'_, AppState>) -> Result<(), String> {
-    util::set_zoom(&to_window(&ctrl).err_to_string()?, state, -0.1).err_to_string()?;
+    util::set_zoom(&to_window(&ctrl)?, state, -0.1).err_to_string()?;
 
     Ok(())
   }
@@ -48,7 +48,7 @@ pub mod command {
   #[command]
   #[specta]
   pub fn view_drag(ctrl: WebviewWindow) -> Result<(), String> {
-    let window = to_window(&ctrl).err_to_string()?;
+    let window = to_window(&ctrl)?;
     window.start_dragging().err_to_string()?;
 
     Ok(())
@@ -60,11 +60,12 @@ pub mod command {
     ctrl: WebviewWindow,
     state: State<'_, AppState>,
   ) -> Result<(bool, bool, bool, bool), String> {
-    let window = to_window(&ctrl).err_to_string()?;
-    let window_data = state.get_window_data(window.label()).err_to_string()?;
+    let (_, window_data) = ctrl_to_window_and_data(&ctrl, &state)?;
 
     let status = (
-      state.overlay.load(std::sync::atomic::Ordering::Acquire),
+      window_data
+        .overlay
+        .load(std::sync::atomic::Ordering::Acquire),
       window_data.pin.load(std::sync::atomic::Ordering::Acquire),
       window_data
         .pointer_ignore

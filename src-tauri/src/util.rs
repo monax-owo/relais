@@ -23,7 +23,7 @@ where
   pub config: AppConfig<T>,
   pub(crate) agent: RwLock<String>,
   pub(crate) windows: Mutex<Vec<WindowData>>,
-  pub overlay: AtomicBool,
+  // pub overlay: AtomicBool,
 }
 
 #[derive(Debug, Clone, Deserialize, Serialize, Type)]
@@ -31,7 +31,7 @@ pub struct SerdeAppState {
   pub config: String,
   pub agent: String,
   pub windows: Vec<SerdeWindowData>,
-  pub overlay: bool,
+  // pub overlay: bool,
 }
 
 #[derive(Debug, Clone)]
@@ -65,8 +65,6 @@ impl<T: for<'de> Deserialize<'de> + Serialize> AppState<T> {
       config: AppConfig::new(config_path, data)?,
       agent: RwLock::new(String::default()),
       windows: Mutex::new(Vec::new()),
-      // TODO:ウィンドウごとにする
-      overlay: AtomicBool::new(false),
     })
   }
 

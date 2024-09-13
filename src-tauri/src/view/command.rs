@@ -1,5 +1,5 @@
 use super::util;
-use crate::util::{ErrToString, AppState};
+use crate::util::{AppState, ErrToString};
 
 use specta::specta;
 use tauri::{command, AppHandle, State, WebviewUrl, WebviewWindow};

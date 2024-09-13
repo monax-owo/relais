@@ -4,15 +4,14 @@ use specta::specta;
 use tauri::{command, State, WebviewWindow};
 
 use crate::{
-  util::{ErrToString, AppState},
-  view::util::{self, to_window},
+  util::{AppState, ErrToString},
+  view::util::{self, ctrl_to_window_and_data},
 };
 
 #[command]
 #[specta]
 pub fn toggle_pin(ctrl: WebviewWindow, state: State<'_, AppState>) -> Result<bool, String> {
-  let window = to_window(&ctrl).err_to_string()?;
-  let window_data = state.get_window_data(window.label()).err_to_string()?;
+  let (_, window_data) = ctrl_to_window_and_data(&ctrl, &state)?;
   let atomic = Arc::clone(&window_data.pin);
   let condition = atomic.load(Ordering::Acquire);
 
@@ -23,13 +22,8 @@ pub fn toggle_pin(ctrl: WebviewWindow, state: State<'_, AppState>) -> Result<boo
 
 #[command]
 #[specta]
-pub fn set_pin(
-  ctrl: WebviewWindow,
-  state: State<'_, AppState>,
-  value: bool,
-) -> Result<(), String> {
-  let window = to_window(&ctrl).err_to_string()?;
-  let window_data = state.get_window_data(window.label()).err_to_string()?;
+pub fn set_pin(ctrl: WebviewWindow, state: State<'_, AppState>, value: bool) -> Result<(), String> {
+  let (window, window_data) = ctrl_to_window_and_data(&ctrl, &state)?;
   let atomic = Arc::clone(&window_data.pin);
 
   util::set_pin(&window, value).err_to_string()?;
@@ -41,8 +35,7 @@ pub fn set_pin(
 #[command]
 #[specta]
 pub fn get_pin(ctrl: WebviewWindow, state: State<'_, AppState>) -> Result<bool, String> {
-  let window = to_window(&ctrl).err_to_string()?;
-  let window_data = state.get_window_data(window.label()).err_to_string()?;
+  let (_, window_data) = ctrl_to_window_and_data(&ctrl, &state)?;
   let atomic = Arc::clone(&window_data.pin);
 
   Ok(atomic.load(Ordering::Acquire))

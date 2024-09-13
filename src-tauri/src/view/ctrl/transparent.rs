@@ -1,11 +1,11 @@
-use std::sync::atomic::Ordering;
+use std::sync::{atomic::Ordering, Arc};
 
 use specta::specta;
 use tauri::{command, State, WebviewWindow};
 
 use crate::{
-  util::{ErrToString, AppState},
-  view::util::{self, to_window},
+  util::{AppState, ErrToString},
+  view::util::{self, ctrl_to_window_and_data},
 };
 
 #[command]
@@ -15,7 +15,9 @@ pub fn toggle_transparent(
   state: State<'_, AppState>,
   alpha: u8,
 ) -> Result<bool, String> {
-  let condition = state.overlay.load(Ordering::Acquire);
+  let (_, window_data) = ctrl_to_window_and_data(&ctrl, &state)?;
+  let atomic = Arc::clone(&window_data.overlay);
+  let condition = atomic.load(Ordering::Acquire);
 
   if condition {
     // 不透明
@@ -35,15 +37,20 @@ pub fn set_transparent(
   state: State<'_, AppState>,
   alpha: u8,
 ) -> Result<(), String> {
-  let window = to_window(&ctrl).err_to_string()?;
+  let (window, window_data) = ctrl_to_window_and_data(&ctrl, &state)?;
+  let atomic = Arc::clone(&window_data.overlay);
+
   util::set_transparent(window.hwnd().err_to_string()?, alpha).err_to_string()?;
-  state.overlay.store(alpha != 255, Ordering::Release);
+  atomic.store(alpha != 255, Ordering::Release);
 
   Ok(())
 }
 
 #[command]
 #[specta]
-pub fn get_transparent(state: State<'_, AppState>) -> Result<bool, String> {
-  Ok(state.overlay.load(Ordering::Acquire))
+pub fn get_transparent(ctrl: WebviewWindow, state: State<'_, AppState>) -> Result<bool, String> {
+  let (_, window_data) = ctrl_to_window_and_data(&ctrl, &state)?;
+  let atomic = Arc::clone(&window_data.overlay);
+
+  Ok(atomic.load(Ordering::Acquire))
 }

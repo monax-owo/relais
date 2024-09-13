@@ -1,5 +1,5 @@
 use super::util;
-use crate::util::{Conf, ErrToString, AppState, SerdeWindowData};
+use crate::util::{AppState, Conf, ErrToString, SerdeWindowData};
 
 use specta::specta;
 use tauri::{command, AppHandle, State};

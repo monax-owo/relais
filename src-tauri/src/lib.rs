@@ -11,7 +11,7 @@ use tauri::{
   App, Builder, Manager, WindowEvent,
 };
 use tauri_specta::collect_commands;
-use util::{exit_0, Conf, AppState, SerdeWindowData};
+use util::{exit_0, AppState, Conf, SerdeWindowData};
 use view::util::window_focus;
 
 pub mod command;
