@@ -13,4 +13,4 @@ proc-macro2 = "1.0.86"
 quote = "1.0.37"
 serde = { workspace = true, features = ["derive"] }
 serde_json = { workspace = true }
-syn.workspace = true
+syn = { workspace = true }
