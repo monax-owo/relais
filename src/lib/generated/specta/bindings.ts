@@ -13,10 +13,10 @@ async exit() : Promise<Result<null, string>> {
     else return { status: "error", error: e  as any };
 }
 },
-async getConfig() : Promise<void> {
-    await TAURI_INVOKE("get_config");
+async getConfig() : Promise<Conf> {
+    return await TAURI_INVOKE("get_config");
 },
-async getWindows() : Promise<WindowData[]> {
+async getWindows() : Promise<SerdeWindowData[]> {
     return await TAURI_INVOKE("get_windows");
 },
 async viewCreate(url: string, label: string | null) : Promise<Result<null, string>> {
@@ -203,12 +203,13 @@ async test() : Promise<Result<null, string>> {
 
 /** user-defined constants **/
 
-export const CTRL_LABEL_PREFIX = "ctrl_" as const;
 export const WINDOW_LABEL_PREFIX = "window_" as const;
+export const CTRL_LABEL_PREFIX = "ctrl_" as const;
 
 /** user-defined types **/
 
-export type WindowData = { title: string; label: string; ignore: boolean; mobile_mode: boolean; pin: boolean; zoom: number }
+export type Conf = Record<string, never>
+export type SerdeWindowData = { title: string; label: string; pointer_ignore: boolean; mobile_mode: boolean; pin: boolean; zoom: number }
 
 /** tauri-specta globals **/
 
