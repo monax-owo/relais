@@ -1,8 +1,8 @@
 <script lang="ts">
   import { getCurrentWebviewWindow } from "@tauri-apps/api/webviewWindow";
 
-  import IconMinus from "@tabler/icons-svelte/IconMinus.svelte";
   import IconX from "@tabler/icons-svelte/IconX.svelte";
+  import IconMinus from "@tabler/icons-svelte/IconMinus.svelte";
 
   import IconPin from "@tabler/icons-svelte/IconPin.svelte";
   import IconPinnedOff from "@tabler/icons-svelte/IconPinnedOff.svelte";
@@ -48,11 +48,11 @@
     }
   };
 
-  const handleMinimize = async () => {
-    unwrap(await commands.viewMinimize());
-  };
   const handleClose = async () => {
     unwrap(await commands.viewClose(ctrl.label.replace(CTRL_LABEL_PREFIX, "")));
+  };
+  const handleMinimize = async () => {
+    unwrap(await commands.viewMinimize());
   };
   const handlePin = async () => {
     pin = unwrap(await commands.togglePin());
@@ -81,8 +81,8 @@
 <!-- TODO: opacity level slider -->
 <!-- <button type="button" on:pointerdown={}></button> -->
 <div class="header">
-  <button type="button" on:pointerdown={handleMinimize}><IconMinus {stroke}></IconMinus></button>
   <button type="button" on:pointerdown={handleClose}><IconX {stroke}></IconX></button>
+  <button type="button" on:pointerdown={handleMinimize}><IconMinus {stroke}></IconMinus></button>
   <button type="button" on:pointerdown={handlePin}>
     {#if pin}
       <IconPinnedOff {stroke} />
