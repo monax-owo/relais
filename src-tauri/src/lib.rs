@@ -8,7 +8,7 @@ use tauri::{
   image::Image,
   menu::{MenuBuilder, MenuItem},
   tray::{MouseButton, TrayIconBuilder, TrayIconEvent},
-  App, Builder, Manager, WindowEvent,
+  App, Builder, Manager, WebviewUrl, WebviewWindowBuilder, WindowEvent,
 };
 use tauri_specta::collect_commands;
 use util::{exit_0, AppState, Conf, SerdeWindowData};
@@ -17,6 +17,8 @@ use view::util::window_focus;
 pub mod command;
 pub mod util;
 pub mod view;
+
+const MAIN_LABEL: &str = "main";
 
 // TODO: specta,event "update_windows"
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
@@ -77,9 +79,12 @@ pub fn run() {
       specta.mount_events(app);
 
       let main_window = Arc::new(
-        app
-          .get_webview_window("main")
-          .expect("Failed to get main window"),
+        WebviewWindowBuilder::new(app, MAIN_LABEL, WebviewUrl::App("".into()))
+          .title("Relais")
+          .inner_size(400.0, 260.0)
+          .min_inner_size(400.0, 260.0)
+          .build()
+          .expect("failed to create main window"),
       );
 
       #[cfg(not(debug_assertions))]

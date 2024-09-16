@@ -22,8 +22,8 @@ use windows::{
   },
 };
 
+pub const WINDOW_MIN_INNER_SIZE: (f64, f64) = (360.0, 200.0);
 pub const CTRL_SIZE: (u32, u32) = (40, 360);
-pub const WINDOW_MIN_INNER_SIZE: (f64, f64) = (400.0, 400.0);
 pub const WINDOW_LABEL_PREFIX: &str = "window_";
 pub const CTRL_LABEL_PREFIX: &str = "ctrl_";
 

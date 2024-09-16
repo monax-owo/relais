@@ -24,15 +24,7 @@
       "capabilities": ["default", "view", "ctrl"],
       "csp": null
     },
-    "windows": [
-      {
-        "label": "main",
-        "title": "relais",
-        "width": 400,
-        "height": 260,
-        "url": ""
-      }
-    ],
+    "windows": [],
     "withGlobalTauri": true
   },
   "$schema": "../node_modules/@tauri-apps/cli/config.schema.json"
