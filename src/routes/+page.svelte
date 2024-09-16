@@ -1,11 +1,11 @@
 <script lang="ts">
-  import { commands, type WindowData } from "$lib/generated/specta/bindings";
+  import { commands, type SerdeWindowData } from "$lib/generated/specta/bindings";
   import { Template } from "$lib/imports";
   import { listen } from "@tauri-apps/api/event";
 
   // let stroke: number = 2;
   let url: string;
-  let windows: WindowData[] = [];
+  let windows: SerdeWindowData[] = [];
   let valid = true;
 
   const handleOpen = async () => {
