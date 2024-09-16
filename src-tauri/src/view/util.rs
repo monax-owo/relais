@@ -249,13 +249,11 @@ pub fn ctrl_to_window_and_data(
   Ok((window, window_data))
 }
 
-pub fn view_close(app: AppHandle, label: String) -> anyhow::Result<()> {
-  let window = app
-    .get_webview_window(&label)
-    .context("failed to get window")?;
-  window.close()?;
+pub fn view_close(app: AppHandle, ctrl: &WebviewWindow) -> Result<(), String> {
+  let window = to_window(ctrl)?;
+  window.close().err_to_string()?;
   let state = app.state::<AppState>();
-  state.remove_window(&label)?;
+  state.remove_window(window.label()).err_to_string()?;
   state.sync_windows(&app);
 
   Ok(())

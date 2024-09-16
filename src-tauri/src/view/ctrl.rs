@@ -22,9 +22,8 @@ pub mod command {
 
   #[command]
   #[specta]
-  pub fn view_close(app: AppHandle, label: String) -> Result<(), String> {
-    // TODO
-    util::view_close(app, label.to_string()).err_to_string()?;
+  pub fn view_close(app: AppHandle, ctrl: WebviewWindow) -> Result<(), String> {
+    util::view_close(app, &ctrl).err_to_string()?;
 
     Ok(())
   }

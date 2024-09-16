@@ -49,7 +49,7 @@
   };
 
   const handleClose = async () => {
-    unwrap(await commands.viewClose(ctrl.label.replace(CTRL_LABEL_PREFIX, "")));
+    unwrap(await commands.viewClose());
   };
   const handleMinimize = async () => {
     unwrap(await commands.viewMinimize());
