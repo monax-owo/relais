@@ -66,7 +66,6 @@ pub fn run() {
     env::current_exe().unwrap().parent().unwrap().to_path_buf()
   }
   .join(util::CONFIGFILE_NAME);
-  dbg!(&path);
 
   let state = util::AppState::new(path, Conf {}).unwrap();
 

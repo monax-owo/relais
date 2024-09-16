@@ -76,9 +76,6 @@ pub fn view_create(
     let window_hwnd = arc.0.hwnd()?;
     let ctrl_hwnd = arc.1.hwnd()?;
 
-    dbg!(&window.label());
-    dbg!(&ctrl_window.label());
-
     window.on_window_event({
       let arc = Arc::clone(&arc);
       // let app = app.clone();

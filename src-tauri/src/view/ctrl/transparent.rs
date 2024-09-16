@@ -26,7 +26,7 @@ pub fn toggle_transparent(
     // 半透明
     set_transparent(ctrl, state, alpha)?;
   };
-  dbg!(condition);
+
   Ok(!condition)
 }
 
