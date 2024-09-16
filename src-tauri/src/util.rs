@@ -14,7 +14,6 @@ use tauri::{AppHandle, Emitter};
 
 pub const CONFIGFILE_NAME: &str = "relaisrc.toml";
 
-// TODO: アプリ全体かウィンドウごとに半透明にするか<-ウィンドウごとにする
 #[derive(Debug)]
 pub struct AppState<T = Conf>
 where
@@ -23,7 +22,6 @@ where
   pub config: AppConfig<T>,
   pub(crate) agent: RwLock<String>,
   pub(crate) windows: Mutex<Vec<WindowData>>,
-  // pub overlay: AtomicBool,
 }
 
 #[derive(Debug, Clone, Deserialize, Serialize, Type)]
@@ -31,14 +29,12 @@ pub struct SerdeAppState {
   pub config: String,
   pub agent: String,
   pub windows: Vec<SerdeWindowData>,
-  // pub overlay: bool,
 }
 
 #[derive(Debug, Clone)]
 pub struct WindowData {
   pub title: String,
   pub label: String,
-  // TODO:overlay
   pub(crate) pointer_ignore: Arc<AtomicBool>,
   pub(crate) mobile_mode: Arc<AtomicBool>,
   pub(crate) transparent: Arc<(AtomicBool, AtomicU8)>,

@@ -33,8 +33,6 @@ pub fn set_ignore_cursor_events(
   let (window, window_data) = ctrl_to_window_and_data(&ctrl, &state)?;
   let atomic = Arc::clone(&window_data.pointer_ignore);
 
-  // TODO:winapiを使って判定をなくす
-  // window.set_ignore_cursor_events(value).err_to_string()?;
   util::set_ignore_cursor_events(window.hwnd().unwrap(), value).err_to_string()?;
   atomic.store(value, Ordering::Release);
 
