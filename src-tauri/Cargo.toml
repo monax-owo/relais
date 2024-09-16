@@ -22,7 +22,7 @@ derive_util.workspace = true
 
 anyhow = { workspace = true }
 serde = { workspace = true, features = ["derive"] }
-serde_json = { workspace = true }
+# serde_json = { workspace = true }
 specta = "=2.0.0-rc.20"
 specta-typescript = "0.0.7"
 tauri = { version = "=2.0.0-rc.3", features = [
@@ -32,11 +32,9 @@ tauri = { version = "=2.0.0-rc.3", features = [
   "image-png",
   "image-ico",
 ] }
-tauri-plugin-dialog = "2.0.0-rc"
 tauri-specta = { version = "=2.0.0-rc.17", features = ["derive", "typescript"] }
 tokio = { workspace = true, features = ["full"] }
 toml = { workspace = true }
-toml_edit = { workspace = true }
 url = "2.5.2"
 uuid = { version = "1.10.0", features = ["v4"] }
 webview2-com = "0.33.0"
