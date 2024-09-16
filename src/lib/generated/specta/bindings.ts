@@ -43,7 +43,7 @@ async windowHide() : Promise<Result<null, string>> {
     else return { status: "error", error: e  as any };
 }
 },
-async getStatus() : Promise<Result<[boolean, boolean, boolean, boolean], string>> {
+async getStatus() : Promise<Result<[[boolean, number], boolean, boolean, boolean], string>> {
     try {
     return { status: "ok", data: await TAURI_INVOKE("get_status") };
 } catch (e) {
@@ -139,7 +139,7 @@ async togglePin() : Promise<Result<boolean, string>> {
     else return { status: "error", error: e  as any };
 }
 },
-async getTransparent() : Promise<Result<boolean, string>> {
+async getTransparent() : Promise<Result<[boolean, number], string>> {
     try {
     return { status: "ok", data: await TAURI_INVOKE("get_transparent") };
 } catch (e) {
@@ -203,13 +203,13 @@ async test() : Promise<Result<null, string>> {
 
 /** user-defined constants **/
 
-export const WINDOW_LABEL_PREFIX = "window_" as const;
 export const CTRL_LABEL_PREFIX = "ctrl_" as const;
+export const WINDOW_LABEL_PREFIX = "window_" as const;
 
 /** user-defined types **/
 
 export type Conf = Record<string, never>
-export type SerdeWindowData = { title: string; label: string; pointer_ignore: boolean; mobile_mode: boolean; pin: boolean; zoom: number }
+export type SerdeWindowData = { title: string; label: string; pointer_ignore: boolean; mobile_mode: boolean; transparent: [boolean, number]; pin: boolean; zoom: number }
 
 /** tauri-specta globals **/
 

@@ -6,7 +6,7 @@ use std::{
   fmt::Display,
   path::Path,
   sync::{
-    atomic::{AtomicBool, Ordering},
+    atomic::{AtomicBool, AtomicU8, Ordering},
     Arc, Mutex, RwLock,
   },
 };
@@ -41,7 +41,7 @@ pub struct WindowData {
   // TODO:overlay
   pub(crate) pointer_ignore: Arc<AtomicBool>,
   pub(crate) mobile_mode: Arc<AtomicBool>,
-  pub(crate) overlay: Arc<AtomicBool>,
+  pub(crate) transparent: Arc<(AtomicBool, AtomicU8)>,
   pub(crate) pin: Arc<AtomicBool>,
   pub(crate) zoom: Arc<Mutex<f64>>,
 }
@@ -52,6 +52,7 @@ pub struct SerdeWindowData {
   label: String,
   pointer_ignore: bool,
   mobile_mode: bool,
+  transparent: (bool, u8),
   pin: bool,
   zoom: f64,
 }
@@ -111,11 +112,11 @@ impl WindowData {
     Self {
       title,
       label,
-      pointer_ignore: Arc::from(AtomicBool::from(false)),
-      mobile_mode: Arc::from(AtomicBool::from(false)),
-      overlay: Arc::from(AtomicBool::from(false)),
-      pin: Arc::from(AtomicBool::from(false)),
-      zoom: Arc::from(Mutex::from(1.0)),
+      pointer_ignore: Arc::from(AtomicBool::new(false)),
+      mobile_mode: Arc::from(AtomicBool::new(false)),
+      transparent: Arc::from((AtomicBool::new(false), AtomicU8::new(127))),
+      pin: Arc::from(AtomicBool::new(false)),
+      zoom: Arc::from(Mutex::new(1.0)),
     }
   }
 }
@@ -127,6 +128,10 @@ impl From<WindowData> for SerdeWindowData {
       label: v.label,
       pointer_ignore: Arc::clone(&v.pointer_ignore).load(Ordering::Acquire),
       mobile_mode: Arc::clone(&v.mobile_mode).load(Ordering::Acquire),
+      transparent: {
+        let arc = Arc::clone(&v.transparent);
+        (arc.0.load(Ordering::Acquire), arc.1.load(Ordering::Acquire))
+      },
       pin: Arc::clone(&v.pin).load(Ordering::Acquire),
       zoom: *v.zoom.lock().unwrap(),
     }

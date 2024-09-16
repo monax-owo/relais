@@ -25,13 +25,14 @@
 
   const stroke = 2;
   const ctrl = getCurrentWebviewWindow();
+
   let pin = false;
-  let overlay = false;
+  let transparent: [boolean, number] = [false, 255];
   let pointerIgnore = false;
   let mobileMode = false;
 
   onMount(async () => {
-    [overlay, pin, pointerIgnore, mobileMode] = unwrap(await commands.getStatus());
+    [transparent, pin, pointerIgnore, mobileMode] = unwrap(await commands.getStatus());
   });
 
   const err = (err: string) => {
@@ -56,8 +57,8 @@
   const handlePin = async () => {
     pin = unwrap(await commands.togglePin());
   };
-  const handleOverlay = async () => {
-    overlay = unwrap(await commands.toggleTransparent(127));
+  const handleTransparent = async () => {
+    transparent[0] = unwrap(await commands.toggleTransparent(127));
   };
   const handlePointerIgnore = async () => {
     pointerIgnore = unwrap(await commands.toggleIgnoreCursorEvents());
@@ -89,8 +90,8 @@
       <IconPin {stroke} />
     {/if}
   </button>
-  <button type="button" on:click={handleOverlay}>
-    {#if overlay}
+  <button type="button" on:click={handleTransparent}>
+    {#if transparent[0]}
       <IconGhostOff {stroke} />
     {:else}
       <IconGhost {stroke} />
@@ -113,7 +114,7 @@
   <button type="button" on:click={handleZoomIn}><IconZoomIn {stroke} /></button>
   <button type="button" on:click={handleZoomOut}><IconZoomOut {stroke} /></button>
 
-  <button type="button" class="drag" on:click={handleDrag}>
+  <button type="button" class="drag" on:pointerdown={handleDrag}>
     <IconArrowsMove {stroke} />
   </button>
 </div>

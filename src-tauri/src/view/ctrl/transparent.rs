@@ -16,16 +16,14 @@ pub fn toggle_transparent(
   alpha: u8,
 ) -> Result<bool, String> {
   let (_, window_data) = ctrl_to_window_and_data(&ctrl, &state)?;
-  let atomic = Arc::clone(&window_data.overlay);
-  let condition = atomic.load(Ordering::Acquire);
+  let atomic = Arc::clone(&window_data.transparent);
+  let data = (
+    atomic.0.load(Ordering::Acquire),
+    atomic.1.load(Ordering::Acquire),
+  );
+  let condition = data.0;
 
-  if condition {
-    // 不透明
-    set_transparent(ctrl, state, 255)?;
-  } else {
-    // 半透明
-    set_transparent(ctrl, state, alpha)?;
-  };
+  set_transparent(ctrl, state, if condition { 255 } else { alpha })?;
 
   Ok(!condition)
 }
@@ -38,19 +36,27 @@ pub fn set_transparent(
   alpha: u8,
 ) -> Result<(), String> {
   let (window, window_data) = ctrl_to_window_and_data(&ctrl, &state)?;
-  let atomic = Arc::clone(&window_data.overlay);
+  let atomic = Arc::clone(&window_data.transparent);
 
   util::set_transparent(window.hwnd().unwrap(), alpha).err_to_string()?;
-  atomic.store(alpha != 255, Ordering::Release);
+
+  atomic.0.store(alpha != 255, Ordering::Release);
 
   Ok(())
 }
 
 #[command]
 #[specta]
-pub fn get_transparent(ctrl: WebviewWindow, state: State<'_, AppState>) -> Result<bool, String> {
+pub fn get_transparent(
+  ctrl: WebviewWindow,
+  state: State<'_, AppState>,
+) -> Result<(bool, u8), String> {
   let (_, window_data) = ctrl_to_window_and_data(&ctrl, &state)?;
-  let atomic = Arc::clone(&window_data.overlay);
+  let atomic = Arc::clone(&window_data.transparent);
+  let data = (
+    atomic.0.load(Ordering::Acquire),
+    atomic.1.load(Ordering::Acquire),
+  );
 
-  Ok(atomic.load(Ordering::Acquire))
+  Ok(data)
 }

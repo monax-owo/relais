@@ -58,13 +58,20 @@ pub mod command {
   pub fn get_status(
     ctrl: WebviewWindow,
     state: State<'_, AppState>,
-  ) -> Result<(bool, bool, bool, bool), String> {
+  ) -> Result<((bool, u8), bool, bool, bool), String> {
     let (_, window_data) = ctrl_to_window_and_data(&ctrl, &state)?;
 
     let status = (
-      window_data
-        .overlay
-        .load(std::sync::atomic::Ordering::Acquire),
+      (
+        window_data
+          .transparent
+          .0
+          .load(std::sync::atomic::Ordering::Acquire),
+        window_data
+          .transparent
+          .1
+          .load(std::sync::atomic::Ordering::Acquire),
+      ),
       window_data.pin.load(std::sync::atomic::Ordering::Acquire),
       window_data
         .pointer_ignore
