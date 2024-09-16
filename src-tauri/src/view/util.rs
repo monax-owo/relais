@@ -1,6 +1,6 @@
 use crate::util::{AppState, ErrToString, WindowData};
 
-use anyhow::Context;
+use anyhow::{bail, Context};
 use std::sync::Arc;
 use tauri::{
   AppHandle, Manager, PhysicalPosition, PhysicalSize, State, WebviewUrl, WebviewWindow,
@@ -14,9 +14,9 @@ use windows::{
     UI::{
       Shell::DefSubclassProc,
       WindowsAndMessaging::{
-        SetLayeredWindowAttributes, SetWindowLongPtrW, SetWindowPos, GWL_EXSTYLE, HWND_NOTOPMOST,
-        HWND_TOPMOST, LWA_ALPHA, SWP_NOMOVE, SWP_NOSIZE, WM_SETFOCUS, WS_EX_LAYERED,
-        WS_EX_NOACTIVATE,
+        GetWindowLongPtrW, SetLayeredWindowAttributes, SetWindowLongPtrW, SetWindowPos,
+        GWL_EXSTYLE, HWND_NOTOPMOST, HWND_TOPMOST, LWA_ALPHA, SWP_NOMOVE, SWP_NOSIZE, WM_SETFOCUS,
+        WS_EX_LAYERED, WS_EX_NOACTIVATE, WS_EX_TRANSPARENT,
       },
     },
   },
@@ -84,8 +84,6 @@ pub fn view_create(
       // let app = app.clone();
       move |e| match e {
         WindowEvent::Moved(pos) => arc.1.set_position(window_pos(*pos)).unwrap(),
-        // WindowEvent::CloseRequested { .. } => (),
-        // WindowEvent::Destroyed => (),
         WindowEvent::Focused(state) => {
           if *state {
             arc.1.show().unwrap();
@@ -109,8 +107,6 @@ pub fn view_create(
         GWL_EXSTYLE,
         WS_EX_LAYERED.0 as isize | WS_EX_NOACTIVATE.0 as isize,
       );
-      // let res = SetWindowSubclass(ctrl_hwnd, Some(ctrl_proc), 0, 0).as_bool();
-      // dbg!(res);
     }
 
     (|| -> anyhow::Result<()> {
@@ -136,39 +132,40 @@ extern "system" fn _ctrl_proc(
   _dwrefdata: usize,
 ) -> LRESULT {
   match umsg {
-    WM_SETFOCUS => {
-      println!("WM_SETFOCUS");
-      LRESULT(0)
-    }
+    WM_SETFOCUS => LRESULT(0),
     _ => unsafe { DefSubclassProc(hwnd, umsg, wparam, lparam) },
   }
 }
 
-pub fn set_transparent(hwnd: HWND, alpha: u8) -> anyhow::Result<()> {
-  dbg!("0");
+pub fn set_ignore_cursor_events(hwnd: HWND, value: bool) -> anyhow::Result<()> {
   unsafe {
-    // bug: ignore_cursorと相性が悪い。よくわからない。
-    SetLayeredWindowAttributes(hwnd, COLORREF(0), alpha, LWA_ALPHA)?;
-  };
-  dbg!("1");
+    let prev = GetWindowLongPtrW(hwnd, GWL_EXSTYLE);
+
+    let style = if value {
+      prev | WS_EX_TRANSPARENT.0 as isize
+    } else {
+      prev & !(WS_EX_TRANSPARENT.0 as isize)
+    };
+
+    let res = SetWindowLongPtrW(hwnd, GWL_EXSTYLE, style);
+    if res == 0 {
+      bail!("")
+    }
+  }
+
   Ok(())
 }
 
-pub fn set_pin(window: &WebviewWindow, value: bool) -> Result<(), String> {
-  // window.set_always_on_top(value).map_err(|v| v.to_string())?;
-  let hwndinsertafter = if value { HWND_TOPMOST } else { HWND_NOTOPMOST };
+pub fn set_transparent(hwnd: HWND, alpha: u8) -> anyhow::Result<()> {
   unsafe {
-    SetWindowPos(
-      window.hwnd().unwrap(),
-      hwndinsertafter,
-      0,
-      0,
-      0,
-      0,
-      SWP_NOMOVE | SWP_NOSIZE,
-    )
-    .map_err(|e| e.to_string())?
-  }
+    SetLayeredWindowAttributes(hwnd, COLORREF(0), alpha, LWA_ALPHA)?;
+  };
+  Ok(())
+}
+
+pub fn set_pin(hwnd: HWND, value: bool) -> anyhow::Result<()> {
+  let hwndinsertafter = if value { HWND_TOPMOST } else { HWND_NOTOPMOST };
+  unsafe { SetWindowPos(hwnd, hwndinsertafter, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE)? }
 
   Ok(())
 }

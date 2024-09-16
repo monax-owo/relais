@@ -26,7 +26,7 @@ pub fn set_pin(ctrl: WebviewWindow, state: State<'_, AppState>, value: bool) -> 
   let (window, window_data) = ctrl_to_window_and_data(&ctrl, &state)?;
   let atomic = Arc::clone(&window_data.pin);
 
-  util::set_pin(&window, value).err_to_string()?;
+  util::set_pin(window.hwnd().unwrap(), value).err_to_string()?;
   atomic.store(value, Ordering::Release);
 
   Ok(())

@@ -5,7 +5,7 @@ use tauri::{command, State, WebviewWindow};
 
 use crate::{
   util::{AppState, ErrToString},
-  view::util::ctrl_to_window_and_data,
+  view::util::{self, ctrl_to_window_and_data},
 };
 
 #[command]
@@ -34,7 +34,8 @@ pub fn set_ignore_cursor_events(
   let atomic = Arc::clone(&window_data.pointer_ignore);
 
   // TODO:winapiを使って判定をなくす
-  window.set_ignore_cursor_events(value).err_to_string()?;
+  // window.set_ignore_cursor_events(value).err_to_string()?;
+  util::set_ignore_cursor_events(window.hwnd().unwrap(), value).err_to_string()?;
   atomic.store(value, Ordering::Release);
 
   Ok(())

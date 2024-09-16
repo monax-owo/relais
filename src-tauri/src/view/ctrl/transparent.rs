@@ -40,7 +40,7 @@ pub fn set_transparent(
   let (window, window_data) = ctrl_to_window_and_data(&ctrl, &state)?;
   let atomic = Arc::clone(&window_data.overlay);
 
-  util::set_transparent(window.hwnd().err_to_string()?, alpha).err_to_string()?;
+  util::set_transparent(window.hwnd().unwrap(), alpha).err_to_string()?;
   atomic.store(alpha != 255, Ordering::Release);
 
   Ok(())
