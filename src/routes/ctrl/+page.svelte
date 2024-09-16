@@ -22,7 +22,6 @@
   import IconArrowsMove from "@tabler/icons-svelte/IconArrowsMove.svelte";
 
   import { commands, CTRL_LABEL_PREFIX, type Result } from "$lib/generated/specta/bindings";
-  // import { window } from "@tauri-apps/api";
 
   const stroke = 2;
   const ctrl = getCurrentWebviewWindow();
@@ -79,42 +78,42 @@
 
 <!-- TODO: lock/unlock animation -->
 <!-- TODO: opacity level slider -->
-<!-- <button type="button" on:pointerdown={}></button> -->
+<!-- <button type="button" on:click={}></button> -->
 <div class="header">
-  <button type="button" on:pointerdown={handleClose}><IconX {stroke}></IconX></button>
-  <button type="button" on:pointerdown={handleMinimize}><IconMinus {stroke}></IconMinus></button>
-  <button type="button" on:pointerdown={handlePin}>
+  <button type="button" on:click={handleClose}><IconX {stroke}></IconX></button>
+  <button type="button" on:click={handleMinimize}><IconMinus {stroke}></IconMinus></button>
+  <button type="button" on:click={handlePin}>
     {#if pin}
       <IconPinnedOff {stroke} />
     {:else}
       <IconPin {stroke} />
     {/if}
   </button>
-  <button type="button" on:pointerdown={handleOverlay}>
+  <button type="button" on:click={handleOverlay}>
     {#if overlay}
       <IconGhostOff {stroke} />
     {:else}
       <IconGhost {stroke} />
     {/if}
   </button>
-  <button type="button" on:pointerdown={handlePointerIgnore}>
+  <button type="button" on:click={handlePointerIgnore}>
     {#if pointerIgnore}
       <IconPointerOff {stroke} />
     {:else}
       <IconPointer {stroke} />
     {/if}
   </button>
-  <button type="button" on:pointerdown={handleMobileMode}>
+  <button type="button" on:click={handleMobileMode}>
     {#if mobileMode}
       <IconDeviceDesktop {stroke} />
     {:else}
       <IconDeviceMobile {stroke} />
     {/if}
   </button>
-  <button type="button" on:pointerdown={handleZoomIn}><IconZoomIn {stroke} /></button>
-  <button type="button" on:pointerdown={handleZoomOut}><IconZoomOut {stroke} /></button>
+  <button type="button" on:click={handleZoomIn}><IconZoomIn {stroke} /></button>
+  <button type="button" on:click={handleZoomOut}><IconZoomOut {stroke} /></button>
 
-  <button type="button" class="drag" on:pointerdown={handleDrag}>
+  <button type="button" class="drag" on:click={handleDrag}>
     <IconArrowsMove {stroke} />
   </button>
 </div>
