@@ -89,7 +89,7 @@ pub fn run() {
       }
 
       {
-        println!("{:?}", state.config)
+        println!("{:#?}", state.config)
       }
 
       //
@@ -153,7 +153,7 @@ pub fn run() {
     })
     .on_window_event(move |_window, e| match e {
       WindowEvent::Destroyed => println!("destroy!"),
-      WindowEvent::ThemeChanged(theme) => println!("theme = {:?}", theme),
+      WindowEvent::ThemeChanged(theme) => println!("theme = {:#?}", theme),
       _ => (),
     })
     .manage(state)

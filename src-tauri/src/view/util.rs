@@ -1,7 +1,10 @@
 use crate::util::{AppState, ErrToString, WindowData};
 
-use anyhow::Context;
-use std::sync::Arc;
+use anyhow::{bail, Context};
+use std::{
+  mem::transmute,
+  sync::{Arc, OnceLock},
+};
 use tauri::{
   AppHandle, Manager, PhysicalPosition, PhysicalSize, State, WebviewUrl, WebviewWindow,
   WebviewWindowBuilder, WindowEvent,
@@ -11,13 +14,10 @@ use windows::{
   core::{Interface, PWSTR},
   Win32::{
     Foundation::{COLORREF, HWND, LPARAM, LRESULT, WPARAM},
-    UI::{
-      Shell::DefSubclassProc,
-      WindowsAndMessaging::{
-        SetLayeredWindowAttributes, SetWindowLongPtrW, SetWindowPos, GWL_EXSTYLE, HWND_NOTOPMOST,
-        HWND_TOPMOST, LWA_ALPHA, SWP_NOMOVE, SWP_NOSIZE, WM_SETFOCUS, WS_EX_LAYERED,
-        WS_EX_NOACTIVATE,
-      },
+    UI::WindowsAndMessaging::{
+      CallWindowProcW, SetLayeredWindowAttributes, SetWindowLongPtrW, SetWindowPos, GWLP_WNDPROC,
+      GWL_EXSTYLE, HWND_NOTOPMOST, HWND_TOPMOST, LWA_ALPHA, SWP_NOMOVE, SWP_NOSIZE, WM_NCACTIVATE,
+      WNDPROC, WS_EX_LAYERED,
     },
   },
 };
@@ -53,7 +53,7 @@ pub fn view_create(
     to_ctrl_label(&*label),
     WebviewUrl::App("/ctrl".into()),
   )
-  .parent(&window)?
+  // .parent(&window)?
   .decorations(false)
   .maximizable(false)
   .minimizable(false)
@@ -79,38 +79,29 @@ pub fn view_create(
     dbg!(&window.label());
     dbg!(&ctrl_window.label());
 
+    static PREV_PROC: OnceLock<WNDPROC> = OnceLock::new();
+    PREV_PROC
+      .set(unsafe {
+        let res = SetWindowLongPtrW(ctrl_hwnd, GWLP_WNDPROC, ctrl_proc as isize);
+        if res == 0 {
+          bail!("")
+        }
+        transmute(res)
+      })
+      .unwrap();
+
+    unsafe {
+      SetWindowLongPtrW(window_hwnd, GWL_EXSTYLE, WS_EX_LAYERED.0 as isize);
+    }
+
     window.on_window_event({
       let arc = Arc::clone(&arc);
       // let app = app.clone();
-      move |e| match e {
-        WindowEvent::Moved(pos) => arc.1.set_position(window_pos(*pos)).unwrap(),
-        // WindowEvent::CloseRequested { .. } => (),
-        // WindowEvent::Destroyed => (),
-        WindowEvent::Focused(state) => {
-          if *state {
-            arc.1.show().unwrap();
-            arc.0.set_focus().unwrap();
-          } else if !arc.0.is_focused().unwrap() && !arc.1.is_focused().unwrap() {
-            arc.1.hide().unwrap();
-          }
-        }
-        _ => (),
-      }
+      move |e| if let WindowEvent::Moved(pos) = e { arc.1.set_position(window_pos(*pos)).unwrap() }
     });
 
     if state.agent.read().unwrap().is_empty() {
       user_agent(&app, window)
-    }
-
-    unsafe {
-      SetWindowLongPtrW(window_hwnd, GWL_EXSTYLE, WS_EX_LAYERED.0 as isize);
-      SetWindowLongPtrW(
-        ctrl_hwnd,
-        GWL_EXSTYLE,
-        WS_EX_LAYERED.0 as isize | WS_EX_NOACTIVATE.0 as isize,
-      );
-      // let res = SetWindowSubclass(ctrl_hwnd, Some(ctrl_proc), 0, 0).as_bool();
-      // dbg!(res);
     }
 
     (|| -> anyhow::Result<()> {
@@ -122,26 +113,29 @@ pub fn view_create(
       ))?;
       Ok(())
     })()?;
+
+    unsafe extern "system" fn ctrl_proc(
+      hwnd: HWND,
+      umsg: u32,
+      wparam: WPARAM,
+      lparam: LPARAM,
+      _uidsubclass: usize,
+      _dwrefdata: usize,
+    ) -> LRESULT {
+      match umsg {
+        WM_NCACTIVATE if wparam.0 == 1 => {
+          println!("WM_SETFOCUS");
+          LRESULT(0)
+        }
+        _ => {
+          // DefWindowProcW(hwnd, umsg, wparam, lparam);
+          CallWindowProcW(*PREV_PROC.get().unwrap(), hwnd, umsg, wparam, lparam)
+        }
+      }
+    }
   }
 
   Ok(())
-}
-
-extern "system" fn _ctrl_proc(
-  hwnd: HWND,
-  umsg: u32,
-  wparam: WPARAM,
-  lparam: LPARAM,
-  _uidsubclass: usize,
-  _dwrefdata: usize,
-) -> LRESULT {
-  match umsg {
-    WM_SETFOCUS => {
-      println!("WM_SETFOCUS");
-      LRESULT(0)
-    }
-    _ => unsafe { DefSubclassProc(hwnd, umsg, wparam, lparam) },
-  }
 }
 
 pub fn set_transparent(hwnd: HWND, alpha: u8) -> anyhow::Result<()> {
