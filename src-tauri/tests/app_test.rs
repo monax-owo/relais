@@ -64,7 +64,7 @@ fn save_load() {
   let mut state = setup();
   state.config.save().expect("failed to save configfile");
 
-  println!("{:?}", state.config);
+  println!("{:#?}", state.config);
   // wait();
   state.config.load().unwrap();
 }
@@ -77,7 +77,7 @@ fn set_get() {
   // let mut state = setup();
   // state.config.save().expect("failed to save configfile");
 
-  // println!("{:?}", state.config);
+  // println!("{:#?}", state.config);
   // // wait();
   // state.config.load().unwrap();
 }

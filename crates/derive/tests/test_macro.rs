@@ -20,5 +20,5 @@ fn test_1() {
     five: "test text",
   };
   dbg!(&val);
-  println!("{:?}", val.try_to_hashmap());
+  println!("{:#?}", val.try_to_hashmap());
 }
