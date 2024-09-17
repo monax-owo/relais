@@ -65,7 +65,7 @@ pub fn view_create(
 
   let window_data = WindowData::new(title, label);
   state.add_window(window_data)?;
-  state.sync_windows(&app);
+  state.emit_windows(&app);
 
   window.set_position(ctrl_pos(ctrl_window.outer_position()?))?;
 
@@ -254,7 +254,7 @@ pub fn view_close(app: AppHandle, ctrl: &WebviewWindow) -> Result<(), String> {
   window.close().err_to_string()?;
   let state = app.state::<AppState>();
   state.remove_window(window.label()).err_to_string()?;
-  state.sync_windows(&app);
+  state.emit_windows(&app);
 
   Ok(())
 }
@@ -265,7 +265,7 @@ pub fn _close(app: &AppHandle, arc: &Arc<(WebviewWindow, WebviewWindow)>) -> any
   arc.1.close()?;
   arc.0.close()?;
   state.remove_window(label)?;
-  state.sync_windows(app);
+  state.emit_windows(app);
 
   Ok(())
 }

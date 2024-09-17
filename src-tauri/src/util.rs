@@ -65,6 +65,7 @@ impl<T: for<'de> Deserialize<'de> + Serialize> AppState<T> {
     })
   }
 
+  // window
   pub fn add_window(&self, window: WindowData) -> anyhow::Result<()> {
     let mut lock = self.windows.lock().unwrap();
     lock.push(window);
@@ -80,7 +81,7 @@ impl<T: for<'de> Deserialize<'de> + Serialize> AppState<T> {
     Ok(())
   }
 
-  pub fn sync_windows(&self, handle: &AppHandle) {
+  pub fn emit_windows(&self, handle: &AppHandle) {
     let windows = self.windows.lock().unwrap();
     let vec = windows.clone().into_iter().map(|v| v.into()).collect();
     handle
@@ -100,6 +101,13 @@ impl<T: for<'de> Deserialize<'de> + Serialize> AppState<T> {
   pub fn get_windows(&self) -> Vec<SerdeWindowData> {
     let lock = self.windows.lock().unwrap();
     lock.clone().into_iter().map(|v| v.into()).collect()
+  }
+  // window
+
+  // config
+
+  pub fn sync_conf(&mut self) -> anyhow::Result<()> {
+    Ok(())
   }
 }
 
