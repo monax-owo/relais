@@ -54,7 +54,25 @@ pub struct SerdeWindowData {
 }
 
 #[derive(Debug, Clone, Deserialize, Serialize, Type)]
-pub struct Conf {}
+pub struct Conf {
+  pub agent: String,
+  pub windows: Vec<SerdeWindowData>,
+}
+
+impl Default for Conf {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
+impl Conf {
+  pub fn new() -> Self {
+    Self {
+      agent: Default::default(),
+      windows: Default::default(),
+    }
+  }
+}
 
 impl<T: for<'de> Deserialize<'de> + Serialize> AppState<T> {
   pub fn new<P: AsRef<Path>>(config_path: P, data: T) -> anyhow::Result<Self> {
@@ -70,6 +88,7 @@ impl<T: for<'de> Deserialize<'de> + Serialize> AppState<T> {
     let mut lock = self.windows.lock().unwrap();
     lock.push(window);
     dbg!(&lock);
+
     Ok(())
   }
 
@@ -78,6 +97,7 @@ impl<T: for<'de> Deserialize<'de> + Serialize> AppState<T> {
     let mut lock = self.windows.lock().unwrap();
     lock.retain(|v| v.label.as_str() != label);
     dbg!(&lock);
+
     Ok(())
   }
 
@@ -103,11 +123,12 @@ impl<T: for<'de> Deserialize<'de> + Serialize> AppState<T> {
     lock.clone().into_iter().map(|v| v.into()).collect()
   }
   // window
+}
 
+impl AppState<Conf> {
   // config
-
-  pub fn sync_conf(&mut self) -> anyhow::Result<()> {
-    Ok(())
+  pub fn write_conf(&mut self) {
+    self.config.windows = self.get_windows();
   }
 }
 

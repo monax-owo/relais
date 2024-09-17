@@ -69,7 +69,7 @@ pub fn run() {
   }
   .join(util::CONFIGFILE_NAME);
 
-  let state = util::AppState::new(path, Conf {}).unwrap();
+  let state = util::AppState::new(path, Conf::new()).unwrap();
 
   Builder::default()
     .invoke_handler(specta.invoke_handler())
