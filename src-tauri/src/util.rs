@@ -59,17 +59,11 @@ pub struct Conf {
   pub windows: Vec<SerdeWindowData>,
 }
 
-impl Default for Conf {
-    fn default() -> Self {
-        Self::new()
-    }
-}
-
 impl Conf {
   pub fn new() -> Self {
     Self {
-      agent: Default::default(),
-      windows: Default::default(),
+      agent: String::new(),
+      windows: Vec::new(),
     }
   }
 }
