@@ -1,7 +1,7 @@
 use std::{
   collections::HashMap,
   env,
-  fs::File,
+  fs::{remove_file, File},
   io::{stdin, Write},
   path::PathBuf,
   sync::LazyLock,
@@ -67,6 +67,8 @@ fn save_load() {
   println!("{:#?}", state.config);
   // wait();
   state.config.load().unwrap();
+
+  clean(state);
 }
 
 #[test]
@@ -80,6 +82,8 @@ fn set_get() {
   // println!("{:#?}", state.config);
   // // wait();
   // state.config.load().unwrap();
+
+  // clean(state);
 }
 
 fn _wait() {
@@ -98,4 +102,8 @@ fn setup() -> AppState<TestConf> {
     .write_all(CONTENT.as_bytes())
     .expect("failed to writing to configfile");
   AppState::new(PATH.as_path(), TestConf::default()).unwrap()
+}
+
+fn clean(state: AppState<TestConf>) {
+  remove_file(state.config.file_path).unwrap();
 }

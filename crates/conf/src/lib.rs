@@ -19,7 +19,7 @@ pub struct EmptyConfig {}
 
 #[derive(Debug)]
 pub struct AppConfig<T> {
-  file_path: PathBuf,
+  pub file_path: PathBuf,
   config: T,
 }
 
