@@ -99,7 +99,7 @@ pub fn view_create(
     });
 
     if state.agent.read().unwrap().is_empty() {
-      user_agent(&app, window)
+      user_agent(app, window)
     }
 
     unsafe {

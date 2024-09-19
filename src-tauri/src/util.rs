@@ -25,10 +25,10 @@ where
 }
 
 #[derive(Debug, Clone, Deserialize, Serialize, Type)]
-pub struct SerdeAppState {
+pub struct SAppState {
   pub config: String,
   pub agent: String,
-  pub windows: Vec<SerdeWindowData>,
+  pub windows: Vec<SWindowData>,
 }
 
 #[derive(Debug, Clone)]
@@ -43,7 +43,7 @@ pub struct WindowData {
 }
 
 #[derive(Debug, Clone, Deserialize, Serialize, Type)]
-pub struct SerdeWindowData {
+pub struct SWindowData {
   title: String,
   label: String,
   pointer_ignore: bool,
@@ -56,7 +56,7 @@ pub struct SerdeWindowData {
 #[derive(Debug, Clone, Deserialize, Serialize, Type)]
 pub struct Conf {
   pub agent: String,
-  pub windows: Vec<SerdeWindowData>,
+  pub windows: Vec<SWindowData>,
 }
 
 impl Default for Conf {
@@ -105,7 +105,7 @@ impl<T: for<'de> Deserialize<'de> + Serialize> AppState<T> {
     let windows = self.windows.lock().unwrap();
     let vec = windows.clone().into_iter().map(|v| v.into()).collect();
     handle
-      .emit::<Vec<SerdeWindowData>>("update_windows", vec)
+      .emit::<Vec<SWindowData>>("update_windows", vec)
       .unwrap();
   }
 
@@ -118,7 +118,7 @@ impl<T: for<'de> Deserialize<'de> + Serialize> AppState<T> {
       .context("failed to get window data")
   }
 
-  pub fn get_windows(&self) -> Vec<SerdeWindowData> {
+  pub fn get_windows(&self) -> Vec<SWindowData> {
     let lock = self.windows.lock().unwrap();
     lock.clone().into_iter().map(|v| v.into()).collect()
   }
@@ -146,7 +146,7 @@ impl WindowData {
   }
 }
 
-impl From<WindowData> for SerdeWindowData {
+impl From<WindowData> for SWindowData {
   fn from(v: WindowData) -> Self {
     Self {
       title: v.title,
