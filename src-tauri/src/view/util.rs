@@ -70,15 +70,14 @@ pub fn view_create(
   window.set_position(ctrl_pos(ctrl_window.outer_position()?))?;
 
   {
-    let arc = Arc::new((window, ctrl_window));
-    let app = Arc::new(app);
-    let (ref window, ref ctrl_window) = *Arc::clone(&arc);
+    let arc = Arc::new((window, ctrl_window, app));
+    let (ref window, ref ctrl_window, ref app) = *Arc::clone(&arc);
     let window_hwnd = arc.0.hwnd()?;
     let ctrl_hwnd = arc.1.hwnd()?;
 
+    // TODO:タスクバーからウィンドウを閉じてもemitされない。(あたりまえ)
     window.on_window_event({
       let arc = Arc::clone(&arc);
-      // let app = app.clone();
       move |e| match e {
         WindowEvent::Moved(pos) => arc.1.set_position(window_pos(*pos)).unwrap(),
         WindowEvent::Focused(state) => {
@@ -88,6 +87,12 @@ pub fn view_create(
           } else if !arc.0.is_focused().unwrap() && !arc.1.is_focused().unwrap() {
             arc.1.hide().unwrap();
           }
+        }
+        WindowEvent::CloseRequested { .. } => {
+          println!("close");
+          let state = arc.2.state::<AppState>();
+          state.remove_window(arc.0.label()).unwrap();
+          state.emit_windows(&arc.2);
         }
         _ => (),
       }
@@ -242,12 +247,9 @@ pub fn ctrl_to_window_and_data(
   Ok((window, window_data))
 }
 
-pub fn view_close(app: AppHandle, ctrl: &WebviewWindow) -> Result<(), String> {
+pub fn view_close(_app: AppHandle, ctrl: &WebviewWindow) -> Result<(), String> {
   let window = to_window(ctrl)?;
   window.close().err_to_string()?;
-  let state = app.state::<AppState>();
-  state.remove_window(window.label()).err_to_string()?;
-  state.emit_windows(&app);
 
   Ok(())
 }
