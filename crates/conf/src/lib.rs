@@ -27,12 +27,12 @@ pub struct AppConfig<T> {
 impl<T: for<'de> Deserialize<'de> + Serialize> AppConfig<T> {
   pub fn new<P: AsRef<Path>>(path: P, data: T) -> anyhow::Result<Self> {
     let path = path.as_ref();
-    if !path.exists() {
-      File::create(path)?;
-    }
     let parent = path.parent().context("no parent")?;
     if !parent.exists() {
       create_dir(parent)?;
+    }
+    if !path.exists() {
+      File::create(path)?;
     }
     if !path.is_file() {
       bail!("path is not file")
@@ -67,13 +67,19 @@ impl<T: Serialize + for<'de> Deserialize<'de>> Configurable for AppConfig<T> {
   }
 
   fn load(&mut self) -> anyhow::Result<()> {
-    let mut reader = BufReader::new(File::open(&self.file_path)?);
+    let file = File::open(&self.file_path)?;
+    let mut reader = BufReader::new(file);
 
     let content = {
       let mut buf = String::new();
       reader.read_to_string(&mut buf)?;
       buf
     };
+
+    if content.is_empty() {
+      self.save()?
+    }
+
     let deserialized = toml::from_str::<T>(&content)?;
     self.config = deserialized;
 
