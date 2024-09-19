@@ -68,7 +68,7 @@ pub fn run() {
     env::current_exe().unwrap().parent().unwrap().to_path_buf()
   }
   .join(util::CONFIGFILE_NAME);
-
+  dbg!(&path);
   let state = util::AppState::new(path, Conf::new()).unwrap();
 
   Builder::default()
@@ -156,7 +156,6 @@ pub fn run() {
       Ok(())
     })
     .on_window_event(move |_window, e| match e {
-      WindowEvent::Destroyed => println!("destroy!"),
       WindowEvent::ThemeChanged(theme) => println!("theme = {:#?}", theme),
       _ => (),
     })
