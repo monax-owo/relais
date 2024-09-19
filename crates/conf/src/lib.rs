@@ -1,5 +1,5 @@
 use std::{
-  fs::{create_dir, File},
+  fs::{create_dir, read_to_string, File},
   io::{BufReader, BufWriter, Read, Write},
   ops::{Deref, DerefMut},
   path::{Path, PathBuf},
@@ -70,15 +70,15 @@ impl<T: Serialize + for<'de> Deserialize<'de>> Configurable for AppConfig<T> {
     let file = File::open(&self.file_path)?;
     let mut reader = BufReader::new(file);
 
+    if read_to_string(&self.file_path)?.is_empty() {
+      self.save()?;
+    }
+
     let content = {
       let mut buf = String::new();
       reader.read_to_string(&mut buf)?;
       buf
     };
-
-    if content.is_empty() {
-      self.save()?
-    }
 
     let deserialized = toml::from_str::<T>(&content)?;
     self.config = deserialized;
