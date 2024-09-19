@@ -1,8 +1,8 @@
 use std::{
   collections::HashMap,
   env,
-  fs::{remove_file, File},
-  io::{stdin, Write},
+  fs::File,
+  io::Write,
   path::PathBuf,
   sync::LazyLock,
 };
@@ -48,6 +48,7 @@ static PATH: LazyLock<PathBuf> = LazyLock::new(|| {
     .parent()
     .unwrap()
     .join("temp")
+    .join("test")
     .join(CONFIGFILE_NAME)
 });
 
@@ -65,10 +66,7 @@ fn save_load() {
   state.config.save().expect("failed to save configfile");
 
   println!("{:#?}", state.config);
-  // wait();
   state.config.load().unwrap();
-
-  clean(state);
 }
 
 #[test]
@@ -80,15 +78,7 @@ fn set_get() {
   // state.config.save().expect("failed to save configfile");
 
   // println!("{:#?}", state.config);
-  // // wait();
   // state.config.load().unwrap();
-
-  // clean(state);
-}
-
-fn _wait() {
-  println!("wait...");
-  stdin().read_line(&mut String::new()).unwrap();
 }
 
 fn setup() -> AppState<TestConf> {
@@ -102,8 +92,4 @@ fn setup() -> AppState<TestConf> {
     .write_all(CONTENT.as_bytes())
     .expect("failed to writing to configfile");
   AppState::new(PATH.as_path(), TestConf::default()).unwrap()
-}
-
-fn clean(state: AppState<TestConf>) {
-  remove_file(state.config.file_path).unwrap();
 }
