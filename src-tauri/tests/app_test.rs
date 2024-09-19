@@ -49,7 +49,6 @@ static CONTENT: LazyLock<String> = LazyLock::new(|| {
   toml::to_string_pretty(&TestConf::default()).expect("failed to initialize CONTENT")
 });
 
-// TODO:set/get,save/loadのテストを分ける
 #[test]
 fn save_load() {
   dbg!(PATH.to_str());

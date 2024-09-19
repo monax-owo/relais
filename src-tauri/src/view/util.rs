@@ -167,7 +167,6 @@ pub fn set_pin(hwnd: HWND, value: bool) -> anyhow::Result<()> {
   Ok(())
 }
 
-// TODO: f64の代わりにパーセントを使う
 pub fn set_zoom(
   window: &WebviewWindow,
   state: State<'_, AppState>,

@@ -27,7 +27,6 @@
   //     unregisterAll();
   //   };
   // });
-  // TODO:configファイルを作る
   onMount(() => {
     // TODO:commandでsvelteのstoreとconfigを同期する
   });

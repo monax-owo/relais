@@ -59,8 +59,6 @@ pub struct Conf {
   pub windows: Vec<SerdeWindowData>,
 }
 
-// TODO:何故か勝手にDefaultトレイトが実装される。rust 1.80の影響？
-
 impl Default for Conf {
   fn default() -> Self {
     Self::new()
