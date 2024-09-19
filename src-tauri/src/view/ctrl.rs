@@ -30,16 +30,12 @@ pub mod command {
 
   #[command]
   #[specta]
-  pub fn view_zoomin(ctrl: WebviewWindow, state: State<'_, AppState>) -> Result<(), String> {
-    util::set_zoom(&to_window(&ctrl)?, state, 10).err_to_string()?;
-
-    Ok(())
-  }
-
-  #[command]
-  #[specta]
-  pub fn view_zoomout(ctrl: WebviewWindow, state: State<'_, AppState>) -> Result<(), String> {
-    util::set_zoom(&to_window(&ctrl)?, state, -10).err_to_string()?;
+  pub fn view_zoom(
+    ctrl: WebviewWindow,
+    state: State<'_, AppState>,
+    diff: i32,
+  ) -> Result<(), String> {
+    util::set_zoom(&to_window(&ctrl)?, state, diff).err_to_string()?;
 
     Ok(())
   }

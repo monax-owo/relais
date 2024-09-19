@@ -75,17 +75,9 @@ async viewMinimize() : Promise<Result<null, string>> {
     else return { status: "error", error: e  as any };
 }
 },
-async viewZoomin() : Promise<Result<null, string>> {
+async viewZoom(diff: number) : Promise<Result<null, string>> {
     try {
-    return { status: "ok", data: await TAURI_INVOKE("view_zoomin") };
-} catch (e) {
-    if(e instanceof Error) throw e;
-    else return { status: "error", error: e  as any };
-}
-},
-async viewZoomout() : Promise<Result<null, string>> {
-    try {
-    return { status: "ok", data: await TAURI_INVOKE("view_zoomout") };
+    return { status: "ok", data: await TAURI_INVOKE("view_zoom", { diff }) };
 } catch (e) {
     if(e instanceof Error) throw e;
     else return { status: "error", error: e  as any };

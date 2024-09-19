@@ -67,10 +67,10 @@
     mobileMode = unwrap(await commands.toggleUserAgent());
   };
   const handleZoomIn = async () => {
-    unwrap(await commands.viewZoomin());
+    unwrap(await commands.viewZoom(10));
   };
   const handleZoomOut = async () => {
-    unwrap(await commands.viewZoomout());
+    unwrap(await commands.viewZoom(-10));
   };
   const handleDrag = async () => {
     unwrap(await commands.viewDrag());
