@@ -1,11 +1,4 @@
-use std::{
-  collections::HashMap,
-  env,
-  fs::File,
-  io::Write,
-  path::PathBuf,
-  sync::LazyLock,
-};
+use std::{collections::HashMap, env, fs::File, io::Write, path::PathBuf, sync::LazyLock};
 
 use app_lib::{
   self,
@@ -67,18 +60,6 @@ fn save_load() {
 
   println!("{:#?}", state.config);
   state.config.load().unwrap();
-}
-
-#[test]
-fn set_get() {
-  // dbg!(PATH.to_str());
-  // dbg!(CONTENT.as_str());
-
-  // let mut state = setup();
-  // state.config.save().expect("failed to save configfile");
-
-  // println!("{:#?}", state.config);
-  // state.config.load().unwrap();
 }
 
 fn setup() -> AppState<TestConf> {
