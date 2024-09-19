@@ -203,12 +203,12 @@ async test() : Promise<Result<null, string>> {
 
 /** user-defined constants **/
 
-export const CTRL_LABEL_PREFIX = "ctrl_" as const;
 export const WINDOW_LABEL_PREFIX = "window_" as const;
+export const CTRL_LABEL_PREFIX = "ctrl_" as const;
 
 /** user-defined types **/
 
-export type Conf = Record<string, never>
+export type Conf = { agent: string; windows: SerdeWindowData[] }
 export type SerdeWindowData = { title: string; label: string; pointer_ignore: boolean; mobile_mode: boolean; transparent: [boolean, number]; pin: boolean; zoom: number }
 
 /** tauri-specta globals **/

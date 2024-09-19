@@ -156,6 +156,7 @@ pub fn run() {
       Ok(())
     })
     .on_window_event(move |_window, e| match e {
+      WindowEvent::ScaleFactorChanged { .. } => println!("scale changed"),
       WindowEvent::ThemeChanged(theme) => println!("theme = {:#?}", theme),
       _ => (),
     })
