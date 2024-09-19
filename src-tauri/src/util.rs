@@ -39,7 +39,7 @@ pub struct WindowData {
   pub(crate) mobile_mode: Arc<AtomicBool>,
   pub(crate) transparent: Arc<(AtomicBool, AtomicU8)>,
   pub(crate) pin: Arc<AtomicBool>,
-  pub(crate) zoom: Arc<Mutex<f64>>,
+  pub(crate) zoom: Arc<Mutex<u32>>,
 }
 
 #[derive(Debug, Clone, Deserialize, Serialize, Type)]
@@ -50,7 +50,7 @@ pub struct SerdeWindowData {
   mobile_mode: bool,
   transparent: (bool, u8),
   pin: bool,
-  zoom: f64,
+  zoom: u32,
 }
 
 #[derive(Debug, Clone, Deserialize, Serialize, Type)]
@@ -143,7 +143,7 @@ impl WindowData {
       mobile_mode: Arc::from(AtomicBool::new(false)),
       transparent: Arc::from((AtomicBool::new(false), AtomicU8::new(127))),
       pin: Arc::from(AtomicBool::new(false)),
-      zoom: Arc::from(Mutex::new(1.0)),
+      zoom: Arc::from(Mutex::new(100)),
     }
   }
 }

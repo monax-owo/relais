@@ -171,23 +171,17 @@ pub fn set_pin(hwnd: HWND, value: bool) -> anyhow::Result<()> {
 pub fn set_zoom(
   window: &WebviewWindow,
   state: State<'_, AppState>,
-  diff: f64,
+  diff: i32,
 ) -> anyhow::Result<()> {
   let window_data = state.get_window_data(window.label())?;
   let zoom = window_data.zoom.clone();
   let mut lock = zoom.lock().unwrap();
 
-  let scale = *lock + diff;
-  // TODO: 20%~500%
-  if scale > 0.2 {
-    window.set_zoom(scale)?;
+  *lock = lock.saturating_add_signed(diff).clamp(20, 500);
 
-    *lock += diff;
-  } else {
-    *lock = 1.0;
-  }
-
-  dbg!(*lock);
+  let val = *lock as f64 / 100.0;
+  dbg!(val);
+  window.set_zoom(val)?;
 
   Ok(())
 }
