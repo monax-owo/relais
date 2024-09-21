@@ -28,7 +28,7 @@ where
 pub struct SAppState {
   pub config: String,
   pub agent: String,
-  pub windows: Vec<SWindowData>,
+  pub windows: SWindowDatas,
 }
 
 #[derive(Debug, Clone)]
@@ -53,8 +53,8 @@ pub struct SWindowData {
   zoom: u32,
 }
 
-type WindowDatas = Vec<WindowData>;
-type SWindowDatas = Vec<SWindowData>;
+pub type WindowDatas = Vec<WindowData>;
+pub type SWindowDatas = Vec<SWindowData>;
 
 #[derive(Debug, Clone, Deserialize, Serialize, Type)]
 pub struct Conf {
@@ -121,7 +121,7 @@ impl<T: for<'de> Deserialize<'de> + Serialize> AppState<T> {
       .context("failed to get window data")
   }
 
-  pub fn get_windows(&self) -> Vec<SWindowData> {
+  pub fn get_windows(&self) -> SWindowDatas {
     let lock = self.windows.lock().unwrap();
     lock.clone().iter().map(|v| v.into()).collect()
   }
