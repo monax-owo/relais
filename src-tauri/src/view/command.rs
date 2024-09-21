@@ -14,7 +14,7 @@ pub async fn view_create(
   label: Option<String>,
 ) -> Result<(), String> {
   let url = if !url.starts_with("http") {
-    format!("https://{}", url)
+    String::from("https://") + &url
   } else {
     url
   };

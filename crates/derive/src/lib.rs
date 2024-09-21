@@ -22,7 +22,7 @@ fn impl_try_to_hashmap(input: &DeriveInput) -> Result<TokenStream, syn::Error> {
 
   for field in &struct_data.fields {
     let ident = field.ident.as_ref().unwrap();
-    let key = format!("{}", ident);
+    let key = ident.to_string();
     vec.push(quote! {
       hashmap.insert(#key,&self.#ident);
     });
@@ -39,6 +39,5 @@ fn impl_try_to_hashmap(input: &DeriveInput) -> Result<TokenStream, syn::Error> {
       }
     }
   };
-  // println!("{}", format!("{}", quote));
   Ok(quote.into())
 }
