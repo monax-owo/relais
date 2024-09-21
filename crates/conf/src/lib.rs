@@ -1,5 +1,5 @@
 use std::{
-  fs::{create_dir, read_to_string, File},
+  fs::{create_dir_all, read_to_string, File},
   io::{BufReader, BufWriter, Read, Write},
   ops::{Deref, DerefMut},
   path::{Path, PathBuf},
@@ -29,7 +29,7 @@ impl<T: for<'de> Deserialize<'de> + Serialize> AppConfig<T> {
     let path = path.as_ref();
     let parent = path.parent().context("no parent")?;
     if !parent.exists() {
-      create_dir(parent)?;
+      create_dir_all(parent)?;
     }
     if !path.exists() {
       File::create(path)?;

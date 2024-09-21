@@ -62,6 +62,7 @@ fn save_load() {
 }
 
 fn setup() -> AppState<TestConf> {
+  let state = AppState::new(PATH.as_path(), TestConf::default()).unwrap();
   let mut file = File::options()
     .write(true)
     .create(true)
@@ -71,5 +72,5 @@ fn setup() -> AppState<TestConf> {
   file
     .write_all(CONTENT.as_bytes())
     .expect("failed to writing to configfile");
-  AppState::new(PATH.as_path(), TestConf::default()).unwrap()
+  state
 }
