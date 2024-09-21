@@ -124,7 +124,7 @@ impl<T: for<'de> Deserialize<'de> + Serialize> AppState<T> {
 
   pub fn get_windows(&self) -> SWindowDatas {
     let lock = self.windows.lock().unwrap();
-    lock.clone().iter().map(|v| v.into()).collect()
+    lock.iter().map(|v| v.into()).collect()
   }
   // window
 }

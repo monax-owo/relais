@@ -178,7 +178,7 @@ pub fn set_zoom(
   diff: i32,
 ) -> anyhow::Result<()> {
   let window_data = state.get_window_data(window.label())?;
-  let zoom = window_data.zoom.clone();
+  let zoom = Arc::clone(&window_data.zoom);
   let mut lock = zoom.lock().unwrap();
 
   *lock = lock.saturating_add_signed(diff).clamp(20, 500);

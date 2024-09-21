@@ -31,7 +31,7 @@ pub fn set_user_agent(
   value: bool,
 ) -> Result<(), String> {
   let mobile = "Mozilla/5.0 (Linux; Android 13; Pixel 7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/116.0.0.0 Mobile Safari/537.36".into();
-  let desktop = HSTRING::from(state.agent.read().unwrap().clone());
+  let desktop = HSTRING::from(state.agent.read().unwrap().as_str());
 
   let (window, window_data) = ctrl_to_window_and_data(&ctrl, &state)?;
   let atomic = Arc::clone(&window_data.mobile_mode);

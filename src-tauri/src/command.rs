@@ -25,5 +25,5 @@ pub fn get_config(state: State<'_, AppState>) -> Conf {
 #[command]
 #[specta]
 pub fn get_state(state: State<'_, AppState>) -> Result<SAppState, String> {
-  SAppState::try_from(state.clone().inner()).err_to_string()
+  SAppState::try_from(state.inner()).err_to_string()
 }
