@@ -10,7 +10,7 @@ use serde::{Deserialize, Serialize};
 
 pub mod default {
   pub fn key() -> String {
-    String::from("teststest")
+    "teststest".into()
   }
 }
 

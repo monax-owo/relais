@@ -109,7 +109,7 @@ impl<T: for<'de> Deserialize<'de> + Serialize> AppState<T> {
 
   pub fn emit_windows(&self, handle: &AppHandle) {
     let windows = self.windows.lock().unwrap();
-    let vec = windows.clone().iter().map(|v| v.into()).collect();
+    let vec = windows.iter().map(|v| v.into()).collect();
     UpdateState(vec).emit(handle).unwrap();
   }
 
@@ -143,14 +143,7 @@ impl TryFrom<&AppState> for SAppState {
     Ok(Self {
       config: "".into(),
       agent: v.agent.read().unwrap().to_string(),
-      windows: v
-        .windows
-        .lock()
-        .unwrap()
-        .clone()
-        .iter()
-        .map(|v| v.into())
-        .collect(),
+      windows: v.windows.lock().unwrap().iter().map(|v| v.into()).collect(),
     })
   }
 }
@@ -160,11 +153,11 @@ impl WindowData {
     Self {
       title,
       label,
-      pointer_ignore: Arc::from(AtomicBool::new(false)),
-      mobile_mode: Arc::from(AtomicBool::new(false)),
-      transparent: Arc::from((AtomicBool::new(false), AtomicU8::new(127))),
-      pin: Arc::from(AtomicBool::new(false)),
-      zoom: Arc::from(Mutex::new(100)),
+      pointer_ignore: Arc::new(AtomicBool::new(false)),
+      mobile_mode: Arc::new(AtomicBool::new(false)),
+      transparent: Arc::new((AtomicBool::new(false), AtomicU8::new(127))),
+      pin: Arc::new(AtomicBool::new(false)),
+      zoom: Arc::new(Mutex::new(100)),
     }
   }
 }
