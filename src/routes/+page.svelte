@@ -46,14 +46,16 @@
   <ul>
     {#each windows as window}
       <li>
-        <div>
+        <div class="list">
           <!-- <span>{window.label}</span> -->
           <span>{window.title}</span>
           <span>{window.zoom}</span>
+          <a href="/config?label={window.label}" class="btn">config</a>
         </div>
       </li>
     {/each}
   </ul>
+  <div class="container"></div>
 </Template>
 
 <style lang="scss">
@@ -62,13 +64,19 @@
     display: flex;
     flex-flow: row nowrap;
     align-content: center;
-    justify-content: center;
+    justify-content: space-between;
     gap: 0.2rem;
     height: 1.6rem;
     & input {
       margin: 0 0.2rem;
       width: 12rem;
     }
+  }
+  .list {
+    display: flex;
+    flex-flow: row wrap;
+    align-content: center;
+    justify-content: center;
   }
   button {
     margin: 0 0.2rem;

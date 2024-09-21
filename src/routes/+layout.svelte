@@ -16,6 +16,9 @@
   // Fira Code
   // Supports weights 300-700
   import "@fontsource-variable/fira-code";
+  import { state } from "$lib/stores/state";
+  import { commands } from "$lib/generated/specta/bindings";
+  import { unwrap } from "$lib/util/wrap";
   //
   // import { register, unregisterAll } from "@tauri-apps/plugin-global-shortcut";
   // import { mainWindowFocus } from "$lib/util/wrap";
@@ -27,12 +30,13 @@
   //     unregisterAll();
   //   };
   // });
-  onMount(() => {
+  onMount(async () => {
     // TODO:commandでsvelteのstoreとconfigを同期する
+    state.set(unwrap(await commands.getState()));
   });
 </script>
 
-<svelte:window on:contextmenu|preventDefault={() => console.log("contextmenu")} />
+<!-- <svelte:window on:contextmenu|preventDefault={() => console.log("contextmenu")} /> -->
 
 <div id="app">
   <slot></slot>

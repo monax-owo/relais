@@ -1,6 +1,4 @@
 <script lang="ts">
-  import { getCurrentWebviewWindow } from "@tauri-apps/api/webviewWindow";
-
   import IconX from "@tabler/icons-svelte/IconX.svelte";
   import IconMinus from "@tabler/icons-svelte/IconMinus.svelte";
 
@@ -21,10 +19,10 @@
 
   import IconArrowsMove from "@tabler/icons-svelte/IconArrowsMove.svelte";
 
-  import { commands, CTRL_LABEL_PREFIX, type Result } from "$lib/generated/specta/bindings";
+  import { unwrap } from "$lib/util/wrap";
+  import { commands } from "$lib/generated/specta/bindings";
 
   const stroke = 2;
-  const ctrl = getCurrentWebviewWindow();
 
   let pin = false;
   let transparent: [boolean, number] = [false, 255];
@@ -34,19 +32,6 @@
   onMount(async () => {
     [transparent, pin, pointerIgnore, mobileMode] = unwrap(await commands.getStatus());
   });
-
-  const err = (err: string) => {
-    ctrl.emitTo(ctrl.label.replace(CTRL_LABEL_PREFIX, ""), "err", { err });
-  };
-
-  const unwrap = <T,>(v: Result<T, string>): T => {
-    switch (v.status) {
-      case "ok":
-        return v.data;
-      case "error":
-        throw err(v.error);
-    }
-  };
 
   const handleClose = async () => {
     unwrap(await commands.viewClose());

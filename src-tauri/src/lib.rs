@@ -11,7 +11,7 @@ use tauri::{
   App, Builder, Manager, WebviewUrl, WebviewWindowBuilder, WindowEvent,
 };
 use tauri_specta::collect_commands;
-use util::{exit_0, AppState, Conf, SWindowData};
+use util::{exit_0, AppState, Conf, SAppState, SWindowData};
 use view::util::window_focus;
 
 pub mod command;
@@ -27,6 +27,7 @@ pub fn run() {
     .commands(collect_commands![
       command::exit,
       command::get_config,
+      command::get_state,
       command::get_windows,
       view::command::view_create,
       view::command::window_focus,
@@ -50,6 +51,7 @@ pub fn run() {
       view::ctrl::user_agent::toggle_user_agent,
       view::extension::command::test,
     ])
+    .typ::<SAppState>()
     .typ::<SWindowData>()
     .constant("WINDOW_LABEL_PREFIX", view::util::WINDOW_LABEL_PREFIX)
     .constant("CTRL_LABEL_PREFIX", view::util::CTRL_LABEL_PREFIX);

@@ -1,5 +1,5 @@
 use super::util;
-use crate::util::{AppState, Conf, ErrToString, SWindowData};
+use crate::util::{AppState, Conf, ErrToString, SAppState, SWindowData};
 
 use specta::specta;
 use tauri::{command, AppHandle, State};
@@ -20,4 +20,10 @@ pub fn get_windows(state: State<'_, AppState>) -> Vec<SWindowData> {
 #[specta]
 pub fn get_config(state: State<'_, AppState>) -> Conf {
   state.config.clone()
+}
+
+#[command]
+#[specta]
+pub fn get_state(state: State<'_, AppState>) -> Result<SAppState, String> {
+  SAppState::try_from(state.clone().inner()).err_to_string()
 }

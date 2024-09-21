@@ -16,6 +16,14 @@ async exit() : Promise<Result<null, string>> {
 async getConfig() : Promise<Conf> {
     return await TAURI_INVOKE("get_config");
 },
+async getState() : Promise<Result<SAppState, string>> {
+    try {
+    return { status: "ok", data: await TAURI_INVOKE("get_state") };
+} catch (e) {
+    if(e instanceof Error) throw e;
+    else return { status: "error", error: e  as any };
+}
+},
 async getWindows() : Promise<SWindowData[]> {
     return await TAURI_INVOKE("get_windows");
 },
@@ -201,6 +209,7 @@ export const CTRL_LABEL_PREFIX = "ctrl_" as const;
 /** user-defined types **/
 
 export type Conf = { agent: string; windows: SWindowData[] }
+export type SAppState = { config: string; agent: string; windows: SWindowData[] }
 export type SWindowData = { title: string; label: string; pointer_ignore: boolean; mobile_mode: boolean; transparent: [boolean, number]; pin: boolean; zoom: number }
 
 /** tauri-specta globals **/

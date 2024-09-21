@@ -21,7 +21,7 @@ where
 {
   pub config: AppConfig<T>,
   pub(crate) agent: RwLock<String>,
-  pub(crate) windows: Mutex<Vec<WindowData>>,
+  pub(crate) windows: Mutex<WindowDatas>,
 }
 
 #[derive(Debug, Clone, Deserialize, Serialize, Type)]
@@ -53,10 +53,13 @@ pub struct SWindowData {
   zoom: u32,
 }
 
+type WindowDatas = Vec<WindowData>;
+type SWindowDatas = Vec<SWindowData>;
+
 #[derive(Debug, Clone, Deserialize, Serialize, Type)]
 pub struct Conf {
   pub agent: String,
-  pub windows: Vec<SWindowData>,
+  pub windows: SWindowDatas,
 }
 
 impl Default for Conf {
@@ -103,7 +106,7 @@ impl<T: for<'de> Deserialize<'de> + Serialize> AppState<T> {
 
   pub fn emit_windows(&self, handle: &AppHandle) {
     let windows = self.windows.lock().unwrap();
-    let vec = windows.clone().into_iter().map(|v| v.into()).collect();
+    let vec = windows.clone().iter().map(|v| v.into()).collect();
     handle
       .emit::<Vec<SWindowData>>("update_windows", vec)
       .unwrap();
@@ -120,7 +123,7 @@ impl<T: for<'de> Deserialize<'de> + Serialize> AppState<T> {
 
   pub fn get_windows(&self) -> Vec<SWindowData> {
     let lock = self.windows.lock().unwrap();
-    lock.clone().into_iter().map(|v| v.into()).collect()
+    lock.clone().iter().map(|v| v.into()).collect()
   }
   // window
 }
@@ -129,6 +132,25 @@ impl AppState<Conf> {
   // config
   pub fn write_conf(&mut self) {
     self.config.windows = self.get_windows();
+  }
+}
+
+impl TryFrom<&AppState> for SAppState {
+  type Error = anyhow::Error;
+
+  fn try_from(v: &AppState) -> Result<Self, Self::Error> {
+    Ok(Self {
+      config: "".into(),
+      agent: v.agent.read().unwrap().to_string(),
+      windows: v
+        .windows
+        .lock()
+        .unwrap()
+        .clone()
+        .iter()
+        .map(|v| v.into())
+        .collect(),
+    })
   }
 }
 
@@ -146,11 +168,11 @@ impl WindowData {
   }
 }
 
-impl From<WindowData> for SWindowData {
-  fn from(v: WindowData) -> Self {
+impl From<&WindowData> for SWindowData {
+  fn from(v: &WindowData) -> Self {
     Self {
-      title: v.title,
-      label: v.label,
+      title: v.title.clone(),
+      label: v.label.clone(),
       pointer_ignore: Arc::clone(&v.pointer_ignore).load(Ordering::Acquire),
       mobile_mode: Arc::clone(&v.mobile_mode).load(Ordering::Acquire),
       transparent: {
