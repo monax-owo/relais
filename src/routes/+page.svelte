@@ -1,7 +1,7 @@
 <script lang="ts">
-  import { commands, type SWindowData } from "$lib/generated/specta/bindings";
+  import { commands, events, type SWindowData } from "$lib/generated/specta/bindings";
   import { Template } from "$lib/imports";
-  import { listen } from "@tauri-apps/api/event";
+  import { getCurrentWebviewWindow } from "@tauri-apps/api/webviewWindow";
 
   // let stroke: number = 2;
   let url: string;
@@ -23,8 +23,7 @@
     const f = async () => (windows = await commands.getWindows());
     await f();
 
-    listen("update_windows", async () => await f());
-
+    await events.updateWindows(getCurrentWebviewWindow()).listen(async () => await f());
     ifDev(() => {
       ifThen(windows.length < 1, () => {
         console.log(windows.length);

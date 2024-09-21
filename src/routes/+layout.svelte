@@ -17,11 +17,9 @@
   // Supports weights 300-700
   import "@fontsource-variable/fira-code";
   import { state } from "$lib/stores/state";
-  import { commands } from "$lib/generated/specta/bindings";
+  import { commands, events } from "$lib/generated/specta/bindings";
   import { unwrap } from "$lib/util/wrap";
-  //
-  // import { register, unregisterAll } from "@tauri-apps/plugin-global-shortcut";
-  // import { mainWindowFocus } from "$lib/util/wrap";
+  import { getCurrentWebviewWindow } from "@tauri-apps/api/webviewWindow";
   //
   // TODO:ショートカットキーを割り当てる
   // register("Ctrl+Alt+E", () => mainWindowFocus());
@@ -31,8 +29,12 @@
   //   };
   // });
   onMount(async () => {
-    // TODO:commandでsvelteのstoreとconfigを同期する
-    state.set(unwrap(await commands.getState()));
+    const f = async () => {
+      state.set(unwrap(await commands.getState()));
+      console.log(JSON.stringify($state, null, 2));
+    };
+    await events.updateState(getCurrentWebviewWindow()).listen(() => f());
+    f();
   });
 </script>
 

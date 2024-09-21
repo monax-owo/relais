@@ -10,7 +10,10 @@ use std::{
     Arc, Mutex, RwLock,
   },
 };
-use tauri::{AppHandle, Emitter};
+use tauri::AppHandle;
+use tauri_specta::Event;
+
+use crate::view::event::UpdateState;
 
 pub const CONFIGFILE_NAME: &str = "relaisrc.toml";
 
@@ -107,9 +110,7 @@ impl<T: for<'de> Deserialize<'de> + Serialize> AppState<T> {
   pub fn emit_windows(&self, handle: &AppHandle) {
     let windows = self.windows.lock().unwrap();
     let vec = windows.clone().iter().map(|v| v.into()).collect();
-    handle
-      .emit::<Vec<SWindowData>>("update_windows", vec)
-      .unwrap();
+    UpdateState(vec).emit(handle).unwrap();
   }
 
   pub fn get_window_data(&self, label: &str) -> anyhow::Result<WindowData> {

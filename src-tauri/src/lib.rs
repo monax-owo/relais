@@ -10,9 +10,12 @@ use tauri::{
   tray::{MouseButton, TrayIconBuilder, TrayIconEvent},
   App, Builder, Manager, WebviewUrl, WebviewWindowBuilder, WindowEvent,
 };
-use tauri_specta::collect_commands;
+use tauri_specta::{collect_commands, collect_events};
 use util::{exit_0, AppState, Conf, SAppState, SWindowData};
-use view::util::window_focus;
+use view::{
+  event::{UpdateState, UpdateWindows},
+  util::window_focus,
+};
 
 pub mod command;
 pub mod util;
@@ -20,7 +23,6 @@ pub mod view;
 
 const MAIN_LABEL: &str = "main";
 
-// TODO: specta,event "update_windows"
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
   let specta = tauri_specta::Builder::new()
@@ -51,10 +53,11 @@ pub fn run() {
       view::ctrl::user_agent::toggle_user_agent,
       view::extension::command::test,
     ])
-    .typ::<SAppState>()
-    .typ::<SWindowData>()
+    .constant("CTRL_LABEL_PREFIX", view::util::CTRL_LABEL_PREFIX)
     .constant("WINDOW_LABEL_PREFIX", view::util::WINDOW_LABEL_PREFIX)
-    .constant("CTRL_LABEL_PREFIX", view::util::CTRL_LABEL_PREFIX);
+    .events(collect_events![UpdateState, UpdateWindows])
+    .typ::<SAppState>()
+    .typ::<SWindowData>();
   #[cfg(debug_assertions)]
   specta
     .export(
@@ -107,7 +110,6 @@ pub fn run() {
           }
         }
       });
-      // main_window.listen("", |_| {});
       //
 
       //

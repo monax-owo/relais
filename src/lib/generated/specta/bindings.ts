@@ -200,17 +200,26 @@ async test() : Promise<Result<null, string>> {
 /** user-defined events **/
 
 
+export const events = __makeEvents__<{
+updateState: UpdateState,
+updateWindows: UpdateWindows
+}>({
+updateState: "update-state",
+updateWindows: "update-windows"
+})
 
 /** user-defined constants **/
 
-export const WINDOW_LABEL_PREFIX = "window_" as const;
 export const CTRL_LABEL_PREFIX = "ctrl_" as const;
+export const WINDOW_LABEL_PREFIX = "window_" as const;
 
 /** user-defined types **/
 
 export type Conf = { agent: string; windows: SWindowData[] }
 export type SAppState = { config: string; agent: string; windows: SWindowData[] }
 export type SWindowData = { title: string; label: string; pointer_ignore: boolean; mobile_mode: boolean; transparent: [boolean, number]; pin: boolean; zoom: number }
+export type UpdateState = SWindowData[]
+export type UpdateWindows = null
 
 /** tauri-specta globals **/
 
