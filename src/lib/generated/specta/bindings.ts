@@ -215,7 +215,7 @@ export const WINDOW_LABEL_PREFIX = "window_" as const;
 
 /** user-defined types **/
 
-export type Conf = { agent: string; windows: SWindowData[] }
+export type Conf = { agent: string; shortcut_key: string; windows: SWindowData[] }
 export type SAppState = { config: string; agent: string; windows: SWindowData[] }
 export type SWindowData = { title: string; label: string; pointer_ignore: boolean; mobile_mode: boolean; transparent: [boolean, number]; pin: boolean; zoom: number }
 export type UpdateState = SWindowData[]

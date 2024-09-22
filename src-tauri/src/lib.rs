@@ -10,6 +10,7 @@ use tauri::{
   tray::{MouseButton, TrayIconBuilder, TrayIconEvent},
   App, Builder, Manager, WebviewUrl, WebviewWindowBuilder, WindowEvent,
 };
+use tauri_plugin_global_shortcut::ShortcutState;
 use tauri_specta::{collect_commands, collect_events};
 use util::{exit_0, AppState, Conf, SAppState, SWindowData};
 use view::{
@@ -78,7 +79,7 @@ pub fn run() {
   Builder::default()
     .invoke_handler(specta.invoke_handler())
     .setup(move |app: &mut App| {
-      let _handle = app.handle();
+      let handle = app.handle();
       let state = app.state::<AppState>();
       specta.mount_events(app);
 
@@ -154,6 +155,22 @@ pub fn run() {
           }
         })
         .build(app)?;
+      //
+
+      //
+      handle
+        .plugin(
+          tauri_plugin_global_shortcut::Builder::new()
+            .with_shortcuts([state.config.shortcut_key.as_str()])
+            .unwrap()
+            .with_handler(move |_app, shortcut, e| {
+              if e.state == ShortcutState::Pressed {
+                println!("press:{}", shortcut.into_string());
+              }
+            })
+            .build(),
+        )
+        .expect("failed to set global shortcut");
       //
 
       Ok(())

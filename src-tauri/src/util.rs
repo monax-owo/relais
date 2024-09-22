@@ -1,3 +1,5 @@
+pub mod panic;
+
 use anyhow::Context;
 use conf::{AppConfig, AppConfigBuilder};
 use serde::{Deserialize, Serialize};
@@ -62,6 +64,7 @@ pub type SWindowDatas = Vec<SWindowData>;
 #[derive(Debug, Clone, Deserialize, Serialize, Type)]
 pub struct Conf {
   pub agent: String,
+  pub shortcut_key: String,
   pub windows: SWindowDatas,
 }
 
@@ -75,6 +78,7 @@ impl Conf {
   pub fn new() -> Self {
     Self {
       agent: String::new(),
+      shortcut_key: "ctrl+alt+r".into(),
       windows: Vec::new(),
     }
   }
