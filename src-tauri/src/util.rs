@@ -1,11 +1,11 @@
-pub mod panic;
+mod panic;
+pub use panic::*;
 
 use anyhow::Context;
 use conf::{AppConfig, AppConfigBuilder};
 use serde::{Deserialize, Serialize};
 use specta::Type;
 use std::{
-  fmt::Display,
   path::Path,
   sync::{
     atomic::{AtomicBool, AtomicU8, Ordering},
@@ -190,22 +190,4 @@ impl From<&WindowData> for SWindowData {
       zoom: *v.zoom.lock().unwrap(),
     }
   }
-}
-
-pub trait ErrToString<T, E: Display> {
-  fn err_to_string(self) -> Result<T, String>;
-}
-
-impl<T, E: Display> ErrToString<T, E> for Result<T, E> {
-  fn err_to_string(self) -> Result<T, String> {
-    self.map_err(|e| e.to_string())
-  }
-}
-
-pub fn exit_0(handle: &AppHandle) -> anyhow::Result<()> {
-  handle
-    .remove_tray_by_id("tray")
-    .context("tray is not found")?;
-  handle.exit(0);
-  Ok(())
 }
