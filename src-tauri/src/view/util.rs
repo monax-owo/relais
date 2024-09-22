@@ -75,7 +75,6 @@ pub fn view_create(
     let window_hwnd = arc.0.hwnd()?;
     let ctrl_hwnd = arc.1.hwnd()?;
 
-    // TODO:タスクバーからウィンドウを閉じてもemitされない。(あたりまえ)
     window.on_window_event({
       let arc = Arc::clone(&arc);
       move |e| match e {
