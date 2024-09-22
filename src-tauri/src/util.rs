@@ -1,5 +1,5 @@
 use anyhow::Context;
-use conf::AppConfig;
+use conf::{AppConfig, AppConfigBuilder};
 use serde::{Deserialize, Serialize};
 use specta::Type;
 use std::{
@@ -82,9 +82,13 @@ impl Conf {
 
 // TODO:綺麗な実装にする
 impl<T: for<'de> Deserialize<'de> + Serialize> AppState<T> {
-  pub fn new<P: AsRef<Path>>(config_path: P, config: AppConfig<T>) -> anyhow::Result<Self> {
+  pub fn new<P, F>(config_path: P, f: F) -> anyhow::Result<Self>
+  where
+    P: AsRef<Path>,
+    F: Fn(AppConfigBuilder) -> AppConfigBuilder<T>,
+  {
     Ok(Self {
-      config,
+      config: f(AppConfigBuilder::new(config_path)).build()?,
       agent: RwLock::new(String::default()),
       windows: Mutex::new(Vec::new()),
     })

@@ -24,7 +24,10 @@ impl<T> AppConfig<T>
 where
   T: for<'de> Deserialize<'de> + Serialize,
 {
-  pub fn new<P: AsRef<Path>>(path: P) -> AppConfigBuilder<EmptyConfig> {
+  pub fn new<P>(path: P) -> AppConfigBuilder<EmptyConfig>
+  where
+    P: AsRef<Path>,
+  {
     AppConfigBuilder::new(path)
     // let path = path.as_ref();
     // let parent = path.parent().context("no parent")?;
