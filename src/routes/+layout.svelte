@@ -21,13 +21,6 @@
   import { unwrap } from "$lib/util/wrap";
   import { getCurrentWebviewWindow } from "@tauri-apps/api/webviewWindow";
   //
-  // TODO:ショートカットキーを割り当てる
-  // register("Ctrl+Alt+E", () => mainWindowFocus());
-  // onMount(() => {
-  //   return () => {
-  //     unregisterAll();
-  //   };
-  // });
   onMount(async () => {
     const f = async () => {
       state.set(unwrap(await commands.getState()));
