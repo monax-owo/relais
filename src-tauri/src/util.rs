@@ -81,7 +81,10 @@ impl Conf {
 }
 
 // TODO:綺麗な実装にする
-impl<T: for<'de> Deserialize<'de> + Serialize> AppState<T> {
+impl<T> AppState<T>
+where
+  T: for<'de> Deserialize<'de> + Serialize,
+{
   pub fn new<P, F>(config_path: P, f: F) -> anyhow::Result<Self>
   where
     P: AsRef<Path>,
@@ -93,16 +96,7 @@ impl<T: for<'de> Deserialize<'de> + Serialize> AppState<T> {
       windows: Mutex::new(Vec::new()),
     })
   }
-  // pub fn new<P: AsRef<Path>, F>(config_path: P, f: F) -> anyhow::Result<Self>
-  // where
-  //   F: Fn(AppConfigBuilder) -> AppConfigBuilder<T>,
-  // {
-  //   Ok(Self {
-  //     config: f(AppConfig::<T>::new(config_path)).build()?,
-  //     agent: RwLock::new(String::default()),
-  //     windows: Mutex::new(Vec::new()),
-  //   })
-  // }
+
   // window
   pub fn add_window(&self, window: WindowData) -> anyhow::Result<()> {
     let mut lock = self.windows.lock().unwrap();

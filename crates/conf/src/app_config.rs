@@ -29,29 +29,13 @@ where
     P: AsRef<Path>,
   {
     AppConfigBuilder::new(path)
-    // let path = path.as_ref();
-    // let parent = path.parent().context("no parent")?;
-    // if !parent.exists() {
-    //   create_dir_all(parent)?;
-    // }
-    // if !path.exists() {
-    //   File::create(path)?;
-    // }
-    // if !path.is_file() {
-    //   bail!("path is not file")
-    // }
-
-    // let mut conf = Self {
-    //   file_path: path.to_path_buf(),
-    //   config: data,
-    // };
-    // Self::load(&mut conf)?;
-
-    // Ok(conf)
   }
 }
 
-impl<T: Serialize + for<'de> Deserialize<'de>> Configurable for AppConfig<T> {
+impl<T> Configurable for AppConfig<T>
+where
+  T: Serialize + for<'de> Deserialize<'de>,
+{
   fn save(&self) -> anyhow::Result<()> {
     let mut writer = BufWriter::new(File::create(&self.file_path)?);
 
@@ -82,7 +66,10 @@ impl<T: Serialize + for<'de> Deserialize<'de>> Configurable for AppConfig<T> {
   }
 }
 
-impl<T: for<'de> Deserialize<'de> + Serialize> Deref for AppConfig<T> {
+impl<T> Deref for AppConfig<T>
+where
+  T: for<'de> Deserialize<'de> + Serialize,
+{
   type Target = T;
 
   fn deref(&self) -> &Self::Target {
@@ -90,7 +77,10 @@ impl<T: for<'de> Deserialize<'de> + Serialize> Deref for AppConfig<T> {
   }
 }
 
-impl<T: for<'de> Deserialize<'de> + Serialize> DerefMut for AppConfig<T> {
+impl<T> DerefMut for AppConfig<T>
+where
+  T: for<'de> Deserialize<'de> + Serialize,
+{
   fn deref_mut(&mut self) -> &mut Self::Target {
     &mut self.config
   }
