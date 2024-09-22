@@ -4,7 +4,7 @@ use app_lib::{
   self,
   util::{AppState, CONFIGFILE_NAME},
 };
-use conf::Configurable;
+use conf::{AppConfig, Configurable};
 use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Clone, Deserialize, Serialize, Default)]
@@ -62,7 +62,14 @@ fn save_load() {
 }
 
 fn setup() -> AppState<TestConf> {
-  let state = AppState::new(PATH.as_path(), TestConf::default()).unwrap();
+  let state = AppState::new(
+    PATH.as_path(),
+    AppConfig::<TestConf>::new(PATH.as_path())
+      .data(TestConf::default())
+      .build()
+      .unwrap(),
+  )
+  .unwrap();
   let mut file = File::options()
     .write(true)
     .create(true)

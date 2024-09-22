@@ -1,6 +1,7 @@
 // Prevents additional console window on Windows in release, DO NOT REMOVE!!
 #![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
 
+use conf::{AppConfig, EmptyConfig};
 use specta_typescript::Typescript;
 use std::{env, sync::Arc};
 use tauri::{
@@ -73,7 +74,14 @@ pub fn run() {
   }
   .join(util::CONFIGFILE_NAME);
   dbg!(&path);
-  let state = util::AppState::new(path, Conf::new()).unwrap();
+  let state = util::AppState::new(
+    &path,
+    AppConfig::<EmptyConfig>::new(&path)
+      .data(Conf::new())
+      .build()
+      .unwrap(),
+  )
+  .unwrap();
 
   Builder::default()
     .invoke_handler(specta.invoke_handler())

@@ -1,4 +1,5 @@
-pub mod app_config;
+mod app_config;
+pub use self::app_config::builder::*;
 pub use self::app_config::*;
 
 pub trait Configurable {
