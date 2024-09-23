@@ -24,7 +24,7 @@ impl<T> AppConfig<T>
 where
   T: for<'de> Deserialize<'de> + Serialize,
 {
-  pub fn new<P>(path: P) -> AppConfigBuilder<EmptyConfig>
+  pub fn open<P>(path: P) -> AppConfigBuilder<EmptyConfig>
   where
     P: AsRef<Path>,
   {
@@ -45,6 +45,7 @@ where
     Ok(())
   }
 
+  // TODO:パースに失敗したらファイル名をoldにして新しいconfigfileを作る
   fn load(&mut self) -> anyhow::Result<()> {
     let file = File::open(&self.file_path)?;
     let mut reader = BufReader::new(file);

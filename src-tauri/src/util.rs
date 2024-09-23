@@ -95,7 +95,7 @@ where
     F: Fn(AppConfigBuilder) -> AppConfigBuilder<T>,
   {
     Ok(Self {
-      config: f(AppConfigBuilder::new(config_path)).build()?,
+      config: f(AppConfig::<T>::open(config_path)).build()?,
       agent: RwLock::new(String::default()),
       windows: Mutex::new(Vec::new()),
     })
