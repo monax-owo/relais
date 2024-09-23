@@ -1,9 +1,9 @@
 <script lang="ts">
   import { draggable, type HandleElements } from "$lib/util/drag/drag";
-  import IconMinus from "@tabler/icons-svelte/IconMinus.svelte";
-  // import IconMaximize from "@tabler/icons-svelte/IconMaximize.svelte";
-  import IconRectangle from "@tabler/icons-svelte/IconRectangle.svelte";
-  import IconX from "@tabler/icons-svelte/IconX.svelte";
+  import IconMinus from "@tabler/icons-svelte/icons/minus";
+  // import IconMaximize from "@tabler/icons-svelte/icons/minimize";
+  import IconRectangle from "@tabler/icons-svelte/icons/rectangle";
+  import IconX from "@tabler/icons-svelte/icons/x";
 
   export let borderSize: number = 1;
   export let handleSize: number = 12;

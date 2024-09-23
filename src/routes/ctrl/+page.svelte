@@ -1,23 +1,23 @@
 <script lang="ts">
-  import IconX from "@tabler/icons-svelte/IconX.svelte";
-  import IconMinus from "@tabler/icons-svelte/IconMinus.svelte";
+  import IconX from "@tabler/icons-svelte/icons/x";
+  import IconMinus from "@tabler/icons-svelte/icons/minus";
 
-  import IconPin from "@tabler/icons-svelte/IconPin.svelte";
-  import IconPinnedOff from "@tabler/icons-svelte/IconPinnedOff.svelte";
+  import IconPin from "@tabler/icons-svelte/icons/pinned";
+  import IconPinnedOff from "@tabler/icons-svelte/icons/pinned-off";
 
-  import IconGhost from "@tabler/icons-svelte/IconGhost.svelte";
-  import IconGhostOff from "@tabler/icons-svelte/IconGhostOff.svelte";
+  import IconGhost from "@tabler/icons-svelte/icons/ghost";
+  import IconGhostOff from "@tabler/icons-svelte/icons/ghost-off";
 
-  import IconPointer from "@tabler/icons-svelte/IconPointer.svelte";
-  import IconPointerOff from "@tabler/icons-svelte/IconPointerOff.svelte";
+  import IconPointer from "@tabler/icons-svelte/icons/pointer";
+  import IconPointerOff from "@tabler/icons-svelte/icons/pointer-off";
 
-  import IconDeviceMobile from "@tabler/icons-svelte/IconDeviceMobile.svelte";
-  import IconDeviceDesktop from "@tabler/icons-svelte/IconDeviceDesktop.svelte";
+  import IconDeviceMobile from "@tabler/icons-svelte/icons/device-mobile";
+  import IconDeviceDesktop from "@tabler/icons-svelte/icons/device-desktop";
 
-  import IconZoomIn from "@tabler/icons-svelte/IconZoomIn.svelte";
-  import IconZoomOut from "@tabler/icons-svelte/IconZoomOut.svelte";
+  import IconZoomIn from "@tabler/icons-svelte/icons/zoom-in";
+  import IconZoomOut from "@tabler/icons-svelte/icons/zoom-out";
 
-  import IconArrowsMove from "@tabler/icons-svelte/IconArrowsMove.svelte";
+  import IconArrowsMove from "@tabler/icons-svelte/icons/arrows-move";
 
   import { unwrap } from "$lib/util/wrap";
   import { commands } from "$lib/generated/specta/bindings";
