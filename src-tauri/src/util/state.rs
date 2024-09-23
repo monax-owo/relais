@@ -5,7 +5,7 @@ use specta::Type;
 use std::{
   path::Path,
   sync::{
-    atomic::{AtomicBool, AtomicU8, Ordering},
+    atomic::{AtomicBool, AtomicU32, AtomicU8, Ordering},
     Arc, Mutex, RwLock,
   },
 };
@@ -41,7 +41,7 @@ pub struct WindowData {
   pub(crate) mobile_mode: Arc<AtomicBool>,
   pub(crate) transparent: Arc<(AtomicBool, AtomicU8)>,
   pub(crate) pin: Arc<AtomicBool>,
-  pub(crate) zoom: Arc<Mutex<u32>>,
+  pub(crate) zoom: Arc<AtomicU32>,
 }
 
 #[derive(Debug, Clone, Deserialize, Serialize, Type)]
@@ -167,7 +167,7 @@ impl WindowData {
       mobile_mode: Arc::new(AtomicBool::new(false)),
       transparent: Arc::new((AtomicBool::new(false), AtomicU8::new(127))),
       pin: Arc::new(AtomicBool::new(false)),
-      zoom: Arc::new(Mutex::new(100)),
+      zoom: Arc::new(AtomicU32::new(100)),
     }
   }
 }
@@ -184,7 +184,7 @@ impl From<&WindowData> for SWindowData {
         (arc.0.load(Ordering::Acquire), arc.1.load(Ordering::Acquire))
       },
       pin: Arc::clone(&v.pin).load(Ordering::Acquire),
-      zoom: *v.zoom.lock().unwrap(),
+      zoom: v.zoom.load(Ordering::Acquire),
     }
   }
 }

@@ -1,7 +1,7 @@
 use crate::util::{AppState, ErrToString, WindowData};
 
 use anyhow::{bail, Context};
-use std::sync::Arc;
+use std::sync::{atomic::Ordering, Arc};
 use tauri::{
   AppHandle, Manager, PhysicalPosition, PhysicalSize, State, WebviewUrl, WebviewWindow,
   WebviewWindowBuilder, WindowEvent,
@@ -178,13 +178,16 @@ pub fn set_zoom(
 ) -> anyhow::Result<()> {
   let window_data = state.get_window_data(window.label())?;
   let zoom = Arc::clone(&window_data.zoom);
-  let mut lock = zoom.lock().unwrap();
+  let val = zoom
+    .load(Ordering::Acquire)
+    .saturating_add_signed(diff)
+    .clamp(20, 500);
 
-  *lock = lock.saturating_add_signed(diff).clamp(20, 500);
+  let scale = val as f64 / 100.0;
+  dbg!(scale);
 
-  let val = *lock as f64 / 100.0;
-  dbg!(val);
-  window.set_zoom(val)?;
+  window.set_zoom(scale)?;
+  zoom.store(val, Ordering::Release);
 
   Ok(())
 }
