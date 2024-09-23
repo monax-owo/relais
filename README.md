@@ -19,8 +19,15 @@
 - Rust
   - Tauri
     - tauri-plugin-dialog
+    - tauri-plugin-global-shortcut
     - Specta
 - Typescript
-  - Svelte kit
-  - Sass(Scss)
+  - Sveltekit
+  - Sass
   - Vite
+- Other
+  - Autoprefixer
+  - ESlint
+  - Prettier
+  - Husky
+  - lint-staged
