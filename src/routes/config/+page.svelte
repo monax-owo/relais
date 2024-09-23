@@ -10,4 +10,5 @@
 </Template>
 
 <style lang="scss">
+  @import "$lib/style/global.scss";
 </style>
