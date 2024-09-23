@@ -2,7 +2,7 @@
   import IconX from "@tabler/icons-svelte/icons/x";
   import IconMinus from "@tabler/icons-svelte/icons/minus";
 
-  import IconPin from "@tabler/icons-svelte/icons/pinned";
+  import IconPin from "@tabler/icons-svelte/icons/pin";
   import IconPinnedOff from "@tabler/icons-svelte/icons/pinned-off";
 
   import IconGhost from "@tabler/icons-svelte/icons/ghost";
