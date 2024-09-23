@@ -105,7 +105,8 @@
 </div>
 
 <style lang="scss">
-  @use "$lib/style/global.scss" as *;
+  @import "$lib/style/global.scss";
+
   .header {
     display: flex;
     flex-wrap: wrap;

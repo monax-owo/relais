@@ -38,7 +38,8 @@
 </div>
 
 <style lang="scss">
-  @use "$lib/style/global.scss" as *;
+  @import "$lib/style/global.scss";
+
   :root {
     font-size: 20px;
   }
