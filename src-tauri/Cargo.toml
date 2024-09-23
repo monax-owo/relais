@@ -13,7 +13,7 @@ version.workspace = true
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [build-dependencies]
-tauri-build = { version = "2.0.0-rc", features = [] }
+tauri-build = { version = "^2.0.0-rc.12", features = [] }
 
 [dependencies]
 conf.workspace = true
@@ -25,8 +25,8 @@ anyhow = { workspace = true }
 serde = { workspace = true, features = ["derive"] }
 serial_test = { workspace = true }
 specta = "=2.0.0-rc.20"
-specta-typescript = "0.0.7"
-tauri = { version = "=2.0.0-rc.3", features = [
+specta-typescript = "^0.0.7"
+tauri = { version = "^2.0.0-rc.15", features = [
   "image-ico",
   "image-png",
   "image",
@@ -34,9 +34,9 @@ tauri = { version = "=2.0.0-rc.3", features = [
   "test",
   "tray-icon",
 ] }
-tauri-plugin-dialog = "2.0.0-rc"
-tauri-plugin-global-shortcut = "2.0.0-rc"
-tauri-specta = { version = "=2.0.0-rc.17", features = ["derive", "typescript"] }
+tauri-plugin-dialog = "^2.0.0-rc.7"
+tauri-plugin-global-shortcut = "^2.0.0-rc.2"
+tauri-specta = { version = "=2.0.0-rc.20", features = ["derive", "typescript"] }
 tokio = { workspace = true, features = ["full"] }
 toml = { workspace = true }
 url = "2.5.2"
