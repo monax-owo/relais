@@ -21,16 +21,18 @@ derive.workspace = true
 derive_util.workspace = true
 
 anyhow = { workspace = true }
-serde = { workspace = true, features = ["derive"] }
 # serde_json = { workspace = true }
+serde = { workspace = true, features = ["derive"] }
+serial_test = { workspace = true }
 specta = "=2.0.0-rc.20"
 specta-typescript = "0.0.7"
 tauri = { version = "=2.0.0-rc.3", features = [
-  "tray-icon",
-  "specta",
-  "image",
-  "image-png",
   "image-ico",
+  "image-png",
+  "image",
+  "specta",
+  "test",
+  "tray-icon",
 ] }
 tauri-plugin-dialog = "2.0.0-rc"
 tauri-plugin-global-shortcut = "2.0.0-rc"
