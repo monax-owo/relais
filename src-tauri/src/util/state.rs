@@ -22,14 +22,16 @@ where
   T: for<'de> Deserialize<'de> + Serialize,
 {
   pub config: AppConfig<T>,
-  pub(crate) agent: RwLock<String>,
+  pub agent_desktop: RwLock<String>,
+  pub agent_mobile: RwLock<String>,
   pub(crate) windows: Mutex<WindowDatas>,
 }
 
 #[derive(Debug, Clone, Deserialize, Serialize, Type)]
 pub struct SAppState {
   pub config: String,
-  pub agent: String,
+  pub agent_desktop: String,
+  pub agent_mobile: String,
   pub windows: SWindowDatas,
 }
 
@@ -60,7 +62,8 @@ pub type SWindowDatas = Vec<SWindowData>;
 
 #[derive(Debug, Clone, Deserialize, Serialize, Type)]
 pub struct Conf {
-  pub agent: String,
+  pub agent_desktop: String,
+  pub agent_mobile: String,
   pub shortcut_key: String,
   pub windows: SWindowDatas,
 }
@@ -74,7 +77,8 @@ impl Default for Conf {
 impl Conf {
   pub fn new() -> Self {
     Self {
-      agent: String::new(),
+      agent_desktop: String::new(),
+      agent_mobile: String::new(),
       shortcut_key: "ctrl+alt+r".into(),
       windows: Vec::new(),
     }
@@ -93,7 +97,8 @@ where
   {
     Ok(Self {
       config: f(AppConfig::<T>::open(config_path)).build()?,
-      agent: RwLock::new(String::default()),
+      agent_desktop: RwLock::new(String::default()),
+      agent_mobile: RwLock::new(String::default()),
       windows: Mutex::new(Vec::new()),
     })
   }
@@ -152,7 +157,8 @@ impl TryFrom<&AppState> for SAppState {
   fn try_from(v: &AppState) -> Result<Self, Self::Error> {
     Ok(Self {
       config: "".into(),
-      agent: v.agent.read().unwrap().to_string(),
+      agent_desktop: v.agent_desktop.read().unwrap().to_string(),
+      agent_mobile: v.agent_mobile.read().unwrap().to_string(),
       windows: v.windows.lock().unwrap().iter().map(|v| v.into()).collect(),
     })
   }

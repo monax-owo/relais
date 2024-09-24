@@ -46,6 +46,7 @@ where
   }
 
   // TODO:パースに失敗したらファイル名をoldにして新しいconfigfileを作る
+  // ConfigurableHookみたいなトレイトがTに実装されていたらそれを先に呼び出すみたいなことしたい
   fn load(&mut self) -> anyhow::Result<()> {
     let file = File::open(&self.file_path)?;
     let mut reader = BufReader::new(file);

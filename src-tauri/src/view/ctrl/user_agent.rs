@@ -5,6 +5,7 @@ use crate::{
   view::util::ctrl_to_window_and_data,
 };
 
+use conf::Configurable;
 use specta::specta;
 use tauri::{command, State, WebviewWindow};
 use webview2_com::Microsoft::Web::WebView2::Win32::ICoreWebView2Settings2;
@@ -30,8 +31,23 @@ pub fn set_user_agent(
   state: State<'_, AppState>,
   value: bool,
 ) -> Result<(), String> {
-  let mobile = "Mozilla/5.0 (Linux; Android 13; Pixel 7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/116.0.0.0 Mobile Safari/537.36".into();
-  let desktop = HSTRING::from(state.agent.read().unwrap().as_str());
+  let read_desktop = state.agent_desktop.read().unwrap();
+  let mut read_desktop_trim = read_desktop.trim();
+
+  if read_desktop_trim.is_empty() {
+    read_desktop_trim = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36 Edg/128.0.0.0";
+    state.config.save().err_to_string()?;
+  }
+
+  let read_mobile = state.agent_mobile.read().unwrap();
+  let mut read_mobile_trim = read_mobile.trim();
+  if read_mobile_trim.is_empty() {
+    read_mobile_trim = "Mozilla/5.0 (Linux; Android 13; Pixel 7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/116.0.0.0 Mobile Safari/537.36";
+    state.config.save().err_to_string()?;
+  }
+
+  let desktop = HSTRING::from(&*read_desktop_trim);
+  let mobile = HSTRING::from(&*read_mobile_trim);
 
   let (window, window_data) = ctrl_to_window_and_data(&ctrl, &state)?;
   let atomic = Arc::clone(&window_data.mobile_mode);
