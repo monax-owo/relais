@@ -31,7 +31,6 @@ tauri = { version = "^2.0.0-rc.15", features = [
   "image-png",
   "image",
   "specta",
-  "test",
   "tray-icon",
 ] }
 tauri-plugin-dialog = "^2.0.0-rc.7"
