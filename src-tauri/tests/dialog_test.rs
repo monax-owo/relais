@@ -1,8 +1,7 @@
-use tauri::{test::mock_app, WebviewUrl, WebviewWindowBuilder};
+use tauri::test::{mock_builder, mock_context, noop_assets};
 
+#[serial_test::serial]
 #[test]
-fn dialog() -> anyhow::Result<()> {
-  let app = mock_app();
-  WebviewWindowBuilder::new(&app, "test", WebviewUrl::default()).build()?;
-  Ok(())
+fn dialog() {
+  mock_builder().build(mock_context(noop_assets())).unwrap();
 }
