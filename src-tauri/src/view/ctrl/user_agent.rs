@@ -46,8 +46,8 @@ pub fn set_user_agent(
     state.config.save().err_to_string()?;
   }
 
-  let desktop = HSTRING::from(&*read_desktop_trim);
-  let mobile = HSTRING::from(&*read_mobile_trim);
+  let desktop = HSTRING::from(read_desktop_trim);
+  let mobile = HSTRING::from(read_mobile_trim);
 
   let (window, window_data) = ctrl_to_window_and_data(&ctrl, &state)?;
   let atomic = Arc::clone(&window_data.mobile_mode);
