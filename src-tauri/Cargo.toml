@@ -17,8 +17,8 @@ tauri-build = { version = "^2.0.0-rc.12", features = [] }
 
 [dependencies]
 conf.workspace = true
-derive.workspace = true
-derive_util.workspace = true
+# derive.workspace = true
+# derive_util.workspace = true
 
 anyhow = { workspace = true }
 # serde_json = { workspace = true }
@@ -37,7 +37,7 @@ tauri = { version = "^2.0.0-rc.15", features = [
 tauri-plugin-dialog = "^2.0.0-rc.7"
 tauri-plugin-global-shortcut = "^2.0.0-rc.2"
 tauri-specta = { version = "=2.0.0-rc.20", features = ["derive", "typescript"] }
-tokio = { workspace = true, features = ["full"] }
+# tokio = { workspace = true, features = ["full"] }
 toml = { workspace = true }
 url = "2.5.2"
 uuid = { version = "1.10.0", features = ["v4"] }
