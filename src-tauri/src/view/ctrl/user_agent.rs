@@ -34,8 +34,11 @@ pub fn set_user_agent(
   let read_desktop = state.agent_desktop.read().unwrap();
   let mut read_desktop_trim = read_desktop.trim();
 
+  // TODO:state.configにエージェントを保存する
+
   if read_desktop_trim.is_empty() {
     read_desktop_trim = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36 Edg/128.0.0.0";
+    // state.config.agent_desktop = read_desktop_trim.to_string();
     state.config.save().err_to_string()?;
   }
 
