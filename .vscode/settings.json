@@ -1,3 +1,20 @@
 {
-  "cSpell.words": ["CONFIGFILE", "HSTRING", "KHTML", "relaisrc", "specta", "tauri"]
+  "cSpell.words": [
+    "clippy",
+    "CONFIGFILE",
+    "fontsource",
+    "HSTRING",
+    "icns",
+    "KHTML",
+    "monax",
+    "nsis",
+    "Parens",
+    "relais",
+    "relaisrc",
+    "specta",
+    "superforms",
+    "tabler",
+    "tauri",
+    "unplugin"
+  ]
 }
