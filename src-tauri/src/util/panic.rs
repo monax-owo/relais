@@ -3,11 +3,17 @@ use std::fmt::{Debug, Display};
 use anyhow::Context;
 use tauri::{AppHandle, Manager};
 
-pub trait ErrToString<T, E: Display> {
+pub trait ErrToString<T, E>
+where
+  E: Display,
+{
   fn err_to_string(self) -> Result<T, String>;
 }
 
-impl<T, E: Display> ErrToString<T, E> for Result<T, E> {
+impl<T, E> ErrToString<T, E> for Result<T, E>
+where
+  E: Display,
+{
   fn err_to_string(self) -> Result<T, String> {
     self.map_err(|e| e.to_string())
   }

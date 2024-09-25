@@ -17,7 +17,10 @@ pub struct AppConfigBuilder<T = EmptyConfig> {
 }
 
 impl AppConfigBuilder<EmptyConfig> {
-  pub(crate) fn new<P: AsRef<Path>>(path: P) -> Self {
+  pub(crate) fn new<P>(path: P) -> Self
+  where
+    P: AsRef<Path>,
+  {
     Self {
       file_path: path.as_ref().to_path_buf(),
       data: EmptyConfig {},
