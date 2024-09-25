@@ -28,7 +28,7 @@
       ifThen(windows.length < 1, () => {
         console.log(windows.length);
 
-        url = "www.twitch.tv/stylishnoob4";
+        url = "google.com";
         handleOpen();
       });
     });

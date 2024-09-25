@@ -7,7 +7,7 @@ interface DraggableParam {
   grabbingCursor?: string;
   handles?: HandleElements;
   padding?: number;
-  resizeble?: boolean;
+  resizable?: boolean;
   size?: [number, number];
   target?: HTMLElement;
   zindex?: number;

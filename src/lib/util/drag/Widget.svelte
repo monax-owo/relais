@@ -9,7 +9,7 @@
   export let handleSize: number = 12;
   export let initPos: [number, number] = [12, 12];
   export let padding: number = 0;
-  export let resizeble: boolean = true;
+  export let resizable: boolean = true;
   export let size: [number, number] = [400, 280];
   export let title: string = "no title";
 
@@ -51,7 +51,7 @@
         <slot></slot>
       </div>
     </div>
-    {#if resizeble}
+    {#if resizable}
       <div class="y t" bind:this={handles.top} />
       <div class="x r" bind:this={handles.right} />
       <div class="y b" bind:this={handles.bottom} />
