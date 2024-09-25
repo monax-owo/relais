@@ -24,7 +24,7 @@ where
   pub config: AppConfig<T>,
   pub agent_desktop: RwLock<String>,
   pub agent_mobile: RwLock<String>,
-  pub(crate) windows: Mutex<WindowDatas>,
+  pub(crate) windows: Mutex<WindowDataList>,
 }
 
 #[derive(Debug, Clone, Deserialize, Serialize, Type)]
@@ -32,7 +32,7 @@ pub struct SAppState {
   pub config: String,
   pub agent_desktop: String,
   pub agent_mobile: String,
-  pub windows: SWindowDatas,
+  pub windows: SWindowList,
 }
 
 #[derive(Debug, Clone)]
@@ -57,15 +57,15 @@ pub struct SWindowData {
   zoom: u32,
 }
 
-pub type WindowDatas = Vec<WindowData>;
-pub type SWindowDatas = Vec<SWindowData>;
+pub type WindowDataList = Vec<WindowData>;
+pub type SWindowList = Vec<SWindowData>;
 
 #[derive(Debug, Clone, Deserialize, Serialize, Type)]
 pub struct Conf {
   pub agent_desktop: String,
   pub agent_mobile: String,
   pub shortcut_key: String,
-  pub windows: SWindowDatas,
+  pub windows: SWindowList,
 }
 
 impl Default for Conf {
@@ -136,7 +136,7 @@ where
       .context("failed to get window data")
   }
 
-  pub fn get_windows(&self) -> SWindowDatas {
+  pub fn get_windows(&self) -> SWindowList {
     let lock = self.windows.lock().unwrap();
     lock.iter().map(|v| v.into()).collect()
   }

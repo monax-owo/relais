@@ -33,6 +33,7 @@ where
   T: for<'de> Deserialize<'de> + Serialize,
 {
   // TODO:トレイト境界を2回書かないといけないのか？
+  /// set data to builder and return builder.
   pub fn data<U>(self, data: U) -> AppConfigBuilder<U>
   where
     U: for<'de> Deserialize<'de> + Serialize,
@@ -42,6 +43,10 @@ where
       data,
     }
   }
+
+  /// Building Self.
+  /// # Errors
+  /// This function will return an error if build failed.
   pub fn build(self) -> anyhow::Result<AppConfig<T>> {
     let path = self.file_path;
     let parent = path.parent().context("no parent")?;
