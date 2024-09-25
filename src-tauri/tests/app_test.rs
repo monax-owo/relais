@@ -29,9 +29,11 @@ struct TestConf {
   hash_map: HashMap<Box<str>, i32>,
 }
 
+// TODO:HashMapにも最小値/最大値を決める
 impl TestConf {
   /// return maximum value of Self.
   pub fn _min() -> Self {
+    const ARR: [i32; 4] = [i32::MIN, i32::MIN, i32::MIN, i32::MIN];
     Self {
       u8: u8::MIN,
       u16: u16::MIN,
@@ -43,12 +45,12 @@ impl TestConf {
       i64: i64::MIN,
       f32: f32::MIN,
       f64: f64::MIN,
-      arr: [i32::MIN, i32::MIN, i32::MIN, i32::MIN],
+      arr: ARR,
       bool: false,
       char: 'a',
       str: "min".into(),
       string: String::from("minimum value"),
-      vec: vec![i32::MIN, i32::MIN, i32::MIN, i32::MIN],
+      vec: Vec::from(ARR),
       hash_map: HashMap::new(),
     }
   }
@@ -95,20 +97,25 @@ static CONTENT: LazyLock<String> = LazyLock::new(|| {
   toml::to_string_pretty(&TestConf::default()).expect("failed to initialize CONTENT")
 });
 
+/// # Panics
+/// Panics if failure to get/set state.
 #[serial_test::serial]
 #[test]
-fn save_load() {
+fn save_and_load() {
   dbg!(PATH.to_str());
   dbg!(CONTENT.as_str());
 
-  let mut state = setup();
+  let mut state = initialize_state();
   state.config.save().expect("failed to save configfile");
 
   println!("{:#?}", state.config);
   state.config.load().unwrap();
 }
 
-fn setup() -> AppState<TestConf> {
+/// Helper for initialize state.
+/// # Panics
+/// Panics if .
+fn initialize_state() -> AppState<TestConf> {
   let state = AppState::new(PATH.as_path(), |b| b.data(TestConf::default())).unwrap();
   let mut file = File::options()
     .write(true)
