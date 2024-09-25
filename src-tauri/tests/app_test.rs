@@ -7,6 +7,7 @@ use app_lib::{
 use conf::Configurable;
 use serde::{Deserialize, Serialize};
 
+// TODO:add tuple
 #[derive(Debug, Clone, Deserialize, Serialize, Default)]
 struct TestConf {
   u8: u8,
@@ -29,8 +30,53 @@ struct TestConf {
 }
 
 impl TestConf {
+  /// return maximum value of Self.
+  pub fn _min() -> Self {
+    Self {
+      u8: u8::MIN,
+      u16: u16::MIN,
+      u32: u32::MIN,
+      u64: u64::MIN,
+      i8: i8::MIN,
+      i16: i16::MIN,
+      i32: i32::MIN,
+      i64: i64::MIN,
+      f32: f32::MIN,
+      f64: f64::MIN,
+      arr: [i32::MIN, i32::MIN, i32::MIN, i32::MIN],
+      bool: false,
+      char: 'a',
+      str: "min".into(),
+      string: String::from("minimum value"),
+      vec: vec![i32::MIN, i32::MIN, i32::MIN, i32::MIN],
+      hash_map: HashMap::new(),
+    }
+  }
+  /// return maximum value of Self.
+  pub fn _max() -> Self {
+    const ARR: [i32; 4] = [i32::MAX, i32::MAX, i32::MAX, i32::MAX];
+    Self {
+      u8: u8::MAX,
+      u16: u16::MAX,
+      u32: u32::MAX,
+      u64: u64::MAX,
+      i8: i8::MAX,
+      i16: i16::MAX,
+      i32: i32::MAX,
+      i64: i64::MAX,
+      f32: f32::MAX,
+      f64: f64::MAX,
+      arr: ARR,
+      bool: false,
+      char: 'z',
+      str: "max".into(),
+      string: String::from("maximum value"),
+      vec: Vec::from(ARR),
+      hash_map: HashMap::new(),
+    }
+  }
   fn _random() -> Self {
-    // TODO:設定をランダムに変える
+    // todo:設定をランダムに変える
     todo!()
   }
 }
