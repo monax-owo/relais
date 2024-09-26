@@ -587,6 +587,17 @@ dependencies = [
 ]
 
 [[package]]
+name = "conf-derive"
+version = "0.1.0"
+dependencies = [
+ "derive_util",
+ "proc-macro2",
+ "quote",
+ "serde",
+ "syn 2.0.77",
+]
+
+[[package]]
 name = "convert_case"
 version = "0.4.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
