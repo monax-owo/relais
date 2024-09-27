@@ -10,5 +10,5 @@
 </Template>
 
 <style lang="scss">
-  @import "$lib/style/global.scss";
+  @import "@monax-owo/style/global.scss";
 </style>

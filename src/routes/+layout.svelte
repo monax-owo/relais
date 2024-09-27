@@ -1,7 +1,7 @@
 <script async script lang="ts">
   // scss
-  import "$lib/style/global.scss";
-  import "$lib/style/util.scss";
+  import "@monax-owo/style/global.scss";
+  import "@monax-owo/style/util.scss";
   //
   // rest css
   import "sanitize.css/assets.css";
@@ -38,8 +38,6 @@
 </div>
 
 <style lang="scss">
-  @import "$lib/style/global.scss";
-
   :root {
     font-size: 20px;
   }

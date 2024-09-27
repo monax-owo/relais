@@ -18,6 +18,6 @@
   },
   "util_scss": {
     "prefix": "!mixin",
-    "body": ["@import \"\\$lib/style/global.scss\";"],
+    "body": ["@import \"\\@monax-owo/style/global.scss\";"],
   },
 }

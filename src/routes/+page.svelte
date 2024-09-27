@@ -58,8 +58,6 @@
 </Template>
 
 <style lang="scss">
-  @import "$lib/style/global.scss";
-
   // :global(:root) {}
   .container {
     display: flex;

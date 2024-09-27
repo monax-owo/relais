@@ -66,8 +66,6 @@
 </div>
 
 <style lang="scss">
-  @import "$lib/style/global.scss";
-
   .root {
     position: fixed;
     top: 0;
