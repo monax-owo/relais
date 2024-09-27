@@ -16,8 +16,20 @@
       "</style>",
     ],
   },
-  "util_scss": {
+  "global": {
     "prefix": "!mixin",
-    "body": ["@import \"\\@monax-owo/style/global.scss\";"],
+    "body": ["import \"@monax-owo/style/global.scss\";"],
+  },
+  "global_scss": {
+    "prefix": "!util",
+    "body": ["@import \"@monax-owo/style/global\";"],
+  },
+  "util": {
+    "prefix": "!mixin",
+    "body": ["import \"@monax-owo/style/util.scss\";"],
+  },
+  "util_scss": {
+    "prefix": "!util",
+    "body": ["@import \"@monax-owo/style/util\";"],
   },
 }
