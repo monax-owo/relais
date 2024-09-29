@@ -216,7 +216,7 @@ export const CTRL_LABEL_PREFIX = "ctrl_" as const;
 /** user-defined types **/
 
 export type Conf = { agent_desktop: string; agent_mobile: string; shortcut_key: string; windows: SWindowData[] }
-export type SAppState = { config: string; agent_desktop: string; agent_mobile: string; windows: SWindowData[] }
+export type SAppState = { config: string; windows: SWindowData[] }
 export type SWindowData = { title: string; label: string; pointer_ignore: boolean; mobile_mode: boolean; transparent: [boolean, number]; pin: boolean; zoom: number }
 export type UpdateState = SWindowData[]
 export type UpdateWindows = null

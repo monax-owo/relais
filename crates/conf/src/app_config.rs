@@ -5,6 +5,7 @@ use std::{
   io::{BufReader, BufWriter, Read, Write},
   ops::{Deref, DerefMut},
   path::{Path, PathBuf},
+  sync::Mutex,
 };
 
 use serde::{Deserialize, Serialize};
@@ -17,7 +18,7 @@ pub struct EmptyConfig {}
 #[derive(Debug)]
 pub struct AppConfig<T = EmptyConfig> {
   pub file_path: PathBuf,
-  config: T,
+  config: Mutex<T>,
 }
 
 impl<T> AppConfig<T>
@@ -62,7 +63,7 @@ where
     };
 
     let deserialized = toml::from_str::<T>(&content)?;
-    self.config = deserialized;
+    *self.config.lock().unwrap() = deserialized;
 
     Ok(())
   }
@@ -72,7 +73,7 @@ impl<T> Deref for AppConfig<T>
 where
   T: for<'de> Deserialize<'de> + Serialize,
 {
-  type Target = T;
+  type Target = Mutex<T>;
 
   fn deref(&self) -> &Self::Target {
     &self.config

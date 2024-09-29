@@ -161,7 +161,7 @@ pub fn run() {
       handle
         .plugin(
           tauri_plugin_global_shortcut::Builder::new()
-            .with_shortcuts([state.config.shortcut_key.as_str()])
+            .with_shortcuts([state.config.lock().unwrap().shortcut_key.as_str()])
             .unwrap()
             .with_handler(move |_app, shortcut, e| {
               if e.state == ShortcutState::Pressed {

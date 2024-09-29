@@ -1,6 +1,7 @@
 use std::{
   fs::{create_dir_all, File},
   path::{Path, PathBuf},
+  sync::Mutex,
 };
 
 use anyhow::{bail, Context};
@@ -62,7 +63,7 @@ where
 
     let mut conf = AppConfig {
       file_path: path,
-      config: self.data,
+      config: Mutex::new(self.data),
     };
     AppConfig::load(&mut conf)?;
 

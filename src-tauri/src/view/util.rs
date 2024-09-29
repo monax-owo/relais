@@ -97,7 +97,7 @@ pub fn view_create(
       }
     });
 
-    if state.agent_mobile.read().unwrap().is_empty() {
+    if state.config.lock().unwrap().agent_mobile.is_empty() {
       user_agent(app, window)
     }
 
@@ -202,7 +202,8 @@ pub fn user_agent(app: &AppHandle, window: &WebviewWindow) {
         let settings_2: ICoreWebView2Settings2 = webview.Settings().unwrap().cast().unwrap();
         let mut pwstr = PWSTR::null();
         settings_2.UserAgent(&mut pwstr).unwrap();
-        *app.state::<AppState>().agent_mobile.write().unwrap() = pwstr.to_string().unwrap();
+        let state = app.state::<AppState>();
+        state.config.lock().unwrap().agent_mobile = pwstr.to_string().unwrap();
       }
     })
     .unwrap();

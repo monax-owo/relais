@@ -6,7 +6,7 @@ use std::{
   path::Path,
   sync::{
     atomic::{AtomicBool, AtomicU32, AtomicU8, Ordering},
-    Arc, Mutex, RwLock,
+    Arc, Mutex,
   },
 };
 use tauri::AppHandle;
@@ -22,16 +22,12 @@ where
   T: for<'de> Deserialize<'de> + Serialize,
 {
   pub config: AppConfig<T>,
-  pub agent_desktop: RwLock<String>,
-  pub agent_mobile: RwLock<String>,
   pub(crate) windows: Mutex<WindowDataList>,
 }
 
 #[derive(Debug, Clone, Deserialize, Serialize, Type)]
 pub struct SAppState {
   pub config: String,
-  pub agent_desktop: String,
-  pub agent_mobile: String,
   pub windows: SWindowList,
 }
 
@@ -97,8 +93,6 @@ where
   {
     Ok(Self {
       config: f(AppConfig::<T>::open(config_path)).build()?,
-      agent_desktop: RwLock::new(String::default()),
-      agent_mobile: RwLock::new(String::default()),
       windows: Mutex::new(Vec::new()),
     })
   }
@@ -147,7 +141,7 @@ impl AppState<Conf> {
   // config
 
   pub fn write_conf(&mut self) {
-    self.config.windows = self.get_windows();
+    self.config.lock().unwrap().windows = self.get_windows();
   }
 }
 
@@ -157,8 +151,6 @@ impl TryFrom<&AppState> for SAppState {
   fn try_from(v: &AppState) -> Result<Self, Self::Error> {
     Ok(Self {
       config: "".into(),
-      agent_desktop: v.agent_desktop.read().unwrap().to_string(),
-      agent_mobile: v.agent_mobile.read().unwrap().to_string(),
       windows: v.windows.lock().unwrap().iter().map(|v| v.into()).collect(),
     })
   }
