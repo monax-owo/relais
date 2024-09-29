@@ -75,7 +75,9 @@ pub fn run() {
       "../src/lib/generated/specta/bindings.ts",
     )
     .expect("failed to generate types");
+  //
 
+  // state
   let path = if cfg!(debug_assertions) {
     env::current_dir().unwrap().parent().unwrap().join("temp")
   } else {
@@ -83,7 +85,9 @@ pub fn run() {
   }
   .join(util::CONFIGFILE_NAME);
   let state = util::AppState::new(&path, |b| b.data(Conf::new())).unwrap();
+  //
 
+  //
   Builder::default()
     .invoke_handler(specta.invoke_handler())
     .setup(move |app: &mut App| {
@@ -104,10 +108,7 @@ pub fn run() {
       {
         view::util::window_focus(&main_window)?;
       }
-
-      {
-        println!("{:#?}", state.config)
-      }
+      println!("{:#?}", state.config);
 
       //
       main_window.on_window_event({
@@ -121,7 +122,7 @@ pub fn run() {
       });
       //
 
-      //
+      // tray menu
       const MENU_SHOW: &str = "show";
       const MENU_TOGGLE: &str = "toggle";
       const MENU_QUIT: &str = "quit";
@@ -165,7 +166,7 @@ pub fn run() {
         .build(app)?;
       //
 
-      //
+      // shortcut
       handle
         .plugin(
           tauri_plugin_global_shortcut::Builder::new()
