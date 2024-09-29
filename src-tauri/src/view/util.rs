@@ -184,8 +184,6 @@ pub fn set_zoom(
     .clamp(20, 500);
 
   let scale = val as f64 / 100.0;
-  dbg!(scale);
-
   window.set_zoom(scale)?;
   zoom.store(val, Ordering::Release);
 

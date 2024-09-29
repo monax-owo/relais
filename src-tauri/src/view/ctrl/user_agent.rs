@@ -34,7 +34,7 @@ pub fn set_user_agent(
   let config = state.config.lock().unwrap();
   let mut desktop = config.agent_desktop.clone();
   let mut mobile = config.agent_mobile.clone();
-  drop(config);
+
   if desktop.trim().is_empty() {
     desktop = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36 Edg/128.0.0.0".into();
 
@@ -54,7 +54,7 @@ pub fn set_user_agent(
 
   let (window, window_data) = ctrl_to_window_and_data(&ctrl, &state)?;
   let atomic = Arc::clone(&window_data.mobile_mode);
-  dbg!(&atomic.load(Ordering::Acquire));
+
   window
     .with_webview(move |webview| {
       #[cfg(windows)]
