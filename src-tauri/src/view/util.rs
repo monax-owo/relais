@@ -39,7 +39,6 @@ pub fn view_create(
   let title = "".to_string();
   let window = WebviewWindowBuilder::new(&app, &label, url)
     .decorations(false)
-    .initialization_script(include_str!("./init.js"))
     .maximizable(false)
     .min_inner_size(WINDOW_MIN_INNER_SIZE.0, WINDOW_MIN_INNER_SIZE.1)
     .minimizable(true)
