@@ -1,4 +1,4 @@
-use super::util;
+use super::{ctrl, util};
 use crate::util::{AppState, ErrToString};
 
 use specta::specta;
@@ -22,7 +22,7 @@ pub async fn view_create(
   let label =
     label.unwrap_or(util::WINDOW_LABEL_PREFIX.to_string() + Uuid::new_v4().to_string().as_str());
 
-  util::view_create(&app, state, WebviewUrl::External(parse_url), label).unwrap();
+  ctrl::view_create(&app, state, WebviewUrl::External(parse_url), label).unwrap();
 
   Ok(())
 }
