@@ -203,7 +203,7 @@ pub fn user_agent(app: &AppHandle, window: &WebviewWindow) {
         let mut pwstr = PWSTR::null();
         settings_2.UserAgent(&mut pwstr).unwrap();
         let state = app.state::<AppState>();
-        state.config.lock().unwrap().agent_mobile = pwstr.to_string().unwrap();
+        state.config.lock().unwrap().agent_desktop = pwstr.to_string().unwrap();
       }
     })
     .unwrap();

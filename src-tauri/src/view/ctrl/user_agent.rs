@@ -5,6 +5,7 @@ use crate::{
   view::util::ctrl_to_window_and_data,
 };
 
+use conf::Configurable;
 use specta::specta;
 use tauri::{command, State, WebviewWindow};
 use webview2_com::Microsoft::Web::WebView2::Win32::ICoreWebView2Settings2;
@@ -31,27 +32,25 @@ pub fn set_user_agent(
   value: bool,
 ) -> Result<(), String> {
   let config = state.config.lock().unwrap();
+  let mut desktop = config.agent_desktop.clone();
+  let mut mobile = config.agent_mobile.clone();
+  drop(config);
+  if desktop.trim().is_empty() {
+    desktop = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36 Edg/128.0.0.0".into();
 
-  let mut read_desktop_trim = config.agent_desktop.trim();
-
-  if read_desktop_trim.is_empty() {
-    read_desktop_trim = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36 Edg/128.0.0.0";
-
-    // state.config.lock().unwrap().agent_desktop = read_desktop_trim.to_string();
-    // state.config.save().err_to_string()?;
+    state.config.lock().unwrap().agent_desktop = desktop.to_string();
+    state.config.save().err_to_string()?;
   }
 
-  let mut read_mobile_trim = config.agent_mobile.trim();
+  if mobile.trim().is_empty() {
+    mobile = "Mozilla/5.0 (Linux; Android 13; Pixel 7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/116.0.0.0 Mobile Safari/537.36".into();
 
-  if read_mobile_trim.is_empty() {
-    read_mobile_trim = "Mozilla/5.0 (Linux; Android 13; Pixel 7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/116.0.0.0 Mobile Safari/537.36";
-
-    // state.config.lock().unwrap().agent_mobile = read_mobile_trim.to_string();
-    // state.config.save().err_to_string()?;
+    state.config.lock().unwrap().agent_mobile = mobile.to_string();
+    state.config.save().err_to_string()?;
   }
 
-  let desktop = HSTRING::from(read_desktop_trim);
-  let mobile = HSTRING::from(read_mobile_trim);
+  let desktop = HSTRING::from(desktop);
+  let mobile = HSTRING::from(mobile);
 
   let (window, window_data) = ctrl_to_window_and_data(&ctrl, &state)?;
   let atomic = Arc::clone(&window_data.mobile_mode);
