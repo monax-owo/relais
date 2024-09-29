@@ -31,9 +31,10 @@ pub fn set_user_agent(
   state: State<'_, AppState>,
   value: bool,
 ) -> Result<(), String> {
-  let config = state.config.lock().unwrap();
-  let mut desktop = config.agent_desktop.clone();
-  let mut mobile = config.agent_mobile.clone();
+  let (mut desktop, mut mobile) = {
+    let config = state.config.lock().unwrap();
+    (config.agent_desktop.clone(), config.agent_mobile.clone())
+  };
 
   if desktop.trim().is_empty() {
     desktop = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36 Edg/128.0.0.0".into();
