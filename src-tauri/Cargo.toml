@@ -17,8 +17,6 @@ tauri-build = { version = "^2.0.0-rc.12", features = [] }
 
 [dependencies]
 conf.workspace = true
-# derive.workspace = true
-# derive_util.workspace = true
 
 anyhow = { workspace = true }
 # serde_json = { workspace = true }

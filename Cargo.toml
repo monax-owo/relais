@@ -12,9 +12,6 @@ version = "0.1.0"
 
 [workspace.dependencies]
 conf = { path = "crates/conf" }
-conf_drive = { path = "crates/conf-derive" }
-derive = { path = "crates/derive" }
-derive_util = { path = "crates/derive_util" }
 
 anyhow = "1.0.86"
 serde = "1.0"
