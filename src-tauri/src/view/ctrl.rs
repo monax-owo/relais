@@ -4,6 +4,7 @@ pub mod transparent;
 pub mod user_agent;
 
 use anyhow::bail;
+use conf::Configurable;
 use std::sync::{atomic::Ordering, Arc};
 use tauri::{
   AppHandle, Manager, PhysicalSize, State, WebviewUrl, WebviewWindow, WebviewWindowBuilder,
@@ -70,6 +71,7 @@ pub fn view_create(
   let window_data = WindowData::new(title, label);
   state.add_window(window_data)?;
   state.emit_windows(&app);
+  sync_windows(&state)?;
 
   window.set_position(ctrl_pos(ctrl_window.outer_position()?))?;
 
@@ -211,7 +213,15 @@ pub fn user_agent(app: &AppHandle, window: &WebviewWindow) {
     .unwrap();
 }
 
+pub fn sync_windows(state: &State<'_, AppState>) -> anyhow::Result<()> {
+  state.config.lock().unwrap().windows = state.get_windows();
+  state.config.save()?;
+
+  Ok(())
+}
+
 pub mod command {
+  use conf::Configurable;
   use specta::specta;
   use tauri::{command, AppHandle, State, WebviewWindow};
 
@@ -232,8 +242,13 @@ pub mod command {
 
   #[command]
   #[specta]
-  pub fn view_close(app: AppHandle, ctrl: WebviewWindow) -> Result<(), String> {
+  pub fn view_close(
+    app: AppHandle,
+    state: State<'_, AppState>,
+    ctrl: WebviewWindow,
+  ) -> Result<(), String> {
     util::view_close(app, &ctrl).err_to_string()?;
+    super::sync_windows(&state).err_to_string()?;
 
     Ok(())
   }
@@ -288,5 +303,14 @@ pub mod command {
     );
 
     Ok(status)
+  }
+
+  #[command]
+  #[specta]
+  pub fn sync_windows(state: State<'_, AppState>) -> Result<(), String> {
+    super::sync_windows(&state).err_to_string()?;
+    state.config.save().err_to_string()?;
+
+    Ok(())
   }
 }

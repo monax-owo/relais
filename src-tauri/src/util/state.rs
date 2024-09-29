@@ -137,14 +137,6 @@ where
   // window
 }
 
-impl AppState<Conf> {
-  // config
-
-  pub fn write_conf(&mut self) {
-    self.config.lock().unwrap().windows = self.get_windows();
-  }
-}
-
 impl TryFrom<&AppState> for SAppState {
   type Error = anyhow::Error;
 

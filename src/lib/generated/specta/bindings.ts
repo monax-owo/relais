@@ -59,6 +59,14 @@ async getStatus() : Promise<Result<[[boolean, number], boolean, boolean, boolean
     else return { status: "error", error: e  as any };
 }
 },
+async syncWindows() : Promise<Result<null, string>> {
+    try {
+    return { status: "ok", data: await TAURI_INVOKE("sync_windows") };
+} catch (e) {
+    if(e instanceof Error) throw e;
+    else return { status: "error", error: e  as any };
+}
+},
 async viewClose() : Promise<Result<null, string>> {
     try {
     return { status: "ok", data: await TAURI_INVOKE("view_close") };

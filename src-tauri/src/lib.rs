@@ -45,6 +45,7 @@ pub fn run() {
       view::command::window_focus,
       view::command::window_hide,
       view::ctrl::command::get_status,
+      view::ctrl::command::sync_windows,
       view::ctrl::command::view_close,
       view::ctrl::command::view_drag,
       view::ctrl::command::view_minimize,
@@ -182,6 +183,10 @@ pub fn run() {
         .expect("failed to set global shortcut");
       //
 
+      // restore views from config
+      // TODO:configを読んでウィンドウを復元する+ラベルを再割り当てする
+      // TODO:SWindowDataからlabelを消す
+      //
       Ok(())
     })
     .on_window_event(move |_window, e| match e {
