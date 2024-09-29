@@ -2,7 +2,7 @@
 #![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
 
 use specta_typescript::Typescript;
-use std::{env, sync::Arc};
+use std::{env, panic, sync::Arc};
 use tauri::{
   generate_context,
   image::Image,
@@ -26,6 +26,15 @@ const MAIN_LABEL: &str = "main";
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
+  // custom panic hook
+  let hook = panic::take_hook();
+  panic::set_hook(Box::new(move |panic_hook_info| {
+    println!("hook! : {}", panic_hook_info);
+    hook(panic_hook_info);
+  }));
+  //
+
+  // specta
   let specta = tauri_specta::Builder::new()
     .commands(collect_commands![
       command::exit,
