@@ -43,7 +43,7 @@ pub fn view_create(
   let skip_taskbar = cfg!(not(debug_assertions));
 
   let title = "".to_string();
-  let window = WebviewWindowBuilder::new(&app, &label, url)
+  let window = WebviewWindowBuilder::new(&app, &label, url.clone())
     .decorations(false)
     .maximizable(false)
     .min_inner_size(WINDOW_MIN_INNER_SIZE.0, WINDOW_MIN_INNER_SIZE.1)
@@ -68,7 +68,7 @@ pub fn view_create(
   .transparent(true)
   .build()?;
 
-  let window_data = WindowData::new(title, label);
+  let window_data = WindowData::new(title, label, url);
   state.add_window(window_data)?;
   state.emit_windows(&app);
   sync_windows(&state)?;

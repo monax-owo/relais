@@ -9,7 +9,7 @@ use std::{
     Arc, Mutex,
   },
 };
-use tauri::AppHandle;
+use tauri::{AppHandle, WebviewUrl};
 use tauri_specta::Event;
 
 use crate::view::event::UpdateState;
@@ -35,6 +35,7 @@ pub struct SAppState {
 pub struct WindowData {
   pub title: String,
   pub label: String,
+  pub url: WebviewUrl,
   pub(crate) pointer_ignore: Arc<AtomicBool>,
   pub(crate) mobile_mode: Arc<AtomicBool>,
   pub(crate) transparent: Arc<(AtomicBool, AtomicU8)>,
@@ -45,7 +46,7 @@ pub struct WindowData {
 #[derive(Debug, Clone, Deserialize, Serialize, Type)]
 pub struct SWindowData {
   title: Box<str>,
-  label: Box<str>,
+  url: Box<str>,
   pointer_ignore: bool,
   mobile_mode: bool,
   transparent: (bool, u8),
@@ -149,10 +150,11 @@ impl TryFrom<&AppState> for SAppState {
 }
 
 impl WindowData {
-  pub fn new(title: String, label: String) -> Self {
+  pub fn new(title: String, label: String, url: WebviewUrl) -> Self {
     Self {
       title,
       label,
+      url,
       pointer_ignore: Arc::new(AtomicBool::new(false)),
       mobile_mode: Arc::new(AtomicBool::new(false)),
       transparent: Arc::new((AtomicBool::new(false), AtomicU8::new(127))),
@@ -166,7 +168,7 @@ impl From<&WindowData> for SWindowData {
   fn from(v: &WindowData) -> Self {
     Self {
       title: v.title.as_str().into(),
-      label: v.label.as_str().into(),
+      url: v.url.to_string().as_str().into(),
       pointer_ignore: Arc::clone(&v.pointer_ignore).load(Ordering::Acquire),
       mobile_mode: Arc::clone(&v.mobile_mode).load(Ordering::Acquire),
       transparent: {

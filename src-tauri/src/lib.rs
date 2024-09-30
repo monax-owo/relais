@@ -185,7 +185,6 @@ pub fn run() {
 
       // restore views from config
       // TODO:configを読んでウィンドウを復元する+ラベルを再割り当てする
-      // TODO:SWindowDataからlabelを消す
       //
       Ok(())
     })
