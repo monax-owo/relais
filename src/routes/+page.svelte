@@ -35,28 +35,25 @@
 </script>
 
 <Template>
-  <form class="container" on:submit={handleOpen}>
+  <form class="form" on:submit={handleOpen}>
     <span>{valid}</span>
     <input type="text" bind:value={url} />
     <button type="submit">OPEN</button>
   </form>
-  <ul>
+  <ul class="windows">
     {#each windows ?? [] as window}
       <li>
-        <div class="list">
-          <span>{window.title}</span>
-          <span>{window.label}</span>
-          <span>{window.url}</span>
-          <a href="/config?label={window.label}" class="btn">config</a>
-        </div>
+        <div>{window.title}</div>
+        <div>{window.url}</div>
+        <a href="/config?label={window.label}" class="btn">config</a>
       </li>
     {/each}
   </ul>
-  <div class="container"></div>
 </Template>
 
 <style lang="scss">
-  .container {
+  @import "@monax-owo/style/global";
+  .form {
     display: flex;
     flex-flow: row nowrap;
     align-content: center;
@@ -64,15 +61,21 @@
     gap: 0.2rem;
     height: 1.6rem;
     & input {
+      display: inline-block;
+      flex-grow: 1;
       margin: 0 0.2rem;
-      width: 12rem;
     }
   }
-  .list {
-    display: flex;
-    flex-flow: row wrap;
-    align-content: center;
-    justify-content: center;
+  .windows {
+    li {
+      display: flex;
+      flex-flow: row nowrap;
+      justify-content: space-between;
+      list-style-type: none;
+      & div {
+        font-size: 0.6rem;
+      }
+    }
   }
   button {
     margin: 0 0.2rem;

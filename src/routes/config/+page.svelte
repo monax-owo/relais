@@ -25,4 +25,9 @@
 </Template>
 
 <style lang="scss">
+  .list {
+    & span {
+      font-size: 0.8rem;
+    }
+  }
 </style>

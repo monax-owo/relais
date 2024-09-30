@@ -66,6 +66,7 @@
     flex-wrap: wrap;
     align-content: center;
     justify-content: center;
+    padding: 0 2rem;
     width: 100vw;
     height: 100vh;
     // pointer-events: none;

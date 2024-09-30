@@ -42,7 +42,7 @@ pub fn view_create(
   let app = app.clone();
   let skip_taskbar = cfg!(not(debug_assertions));
 
-  let title = "".to_string();
+  let title = "test title".to_string();
   let window = WebviewWindowBuilder::new(&app, &label, url.clone())
     .decorations(false)
     .maximizable(false)
