@@ -5,9 +5,9 @@
 
   // let stroke: number = 2;
   let url: string;
-  let windows: SWindowData[] | null;
+  let windows: SWindowData[] | undefined = $state?.windows;
   let valid = true;
-  $: windows = $state ? $state?.windows : null;
+
   const handleOpen = async () => {
     // try {
     //   new URL((url.startsWith("http") ? "" : "https://") + url);
@@ -21,14 +21,19 @@
 
   onMount(async () => {
     ifDev(() => {
-      if (windows) {
-        if (windows.length < 1) {
-          console.log(windows.length);
+      let un = state.subscribe((v) => {
+        if (v) {
+          if (v.windows.length < 1) {
+            console.log(v.windows.length);
 
-          url = "google.com";
-          handleOpen();
+            url = "google.com";
+            handleOpen();
+            un();
+          } else {
+            un();
+          }
         }
-      }
+      });
     });
   });
 </script>
