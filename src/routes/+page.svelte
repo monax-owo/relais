@@ -5,8 +5,10 @@
 
   // let stroke: number = 2;
   let url: string;
-  let windows: SWindowData[] | undefined = $state?.windows;
+  let windows: SWindowData[] | undefined;
   let valid = true;
+
+  $: windows = $state?.windows;
 
   const handleOpen = async () => {
     // try {
@@ -18,20 +20,14 @@
     // }
     await commands.viewCreate(url, null);
   };
-
   onMount(async () => {
     ifDev(() => {
       let un = state.subscribe((v) => {
-        if (v) {
-          if (v.windows.length < 1) {
-            console.log(v.windows.length);
-
-            url = "google.com";
-            handleOpen();
-            un();
-          } else {
-            un();
-          }
+        if (v && v.windows.length < 1) {
+          console.log(v.windows.length);
+          url = "google.com";
+          handleOpen();
+          un();
         }
       });
     });
@@ -60,7 +56,6 @@
 </Template>
 
 <style lang="scss">
-  // :global(:root) {}
   .container {
     display: flex;
     flex-flow: row nowrap;
