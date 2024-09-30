@@ -21,6 +21,9 @@
     - tauri-plugin-dialog
     - tauri-plugin-global-shortcut
     - Specta
+  - Serde
+    - toml
+  - Windows
 - Typescript
   - Sveltekit
   - Sass
@@ -28,6 +31,7 @@
 - Other
   - Autoprefixer
   - ESlint
+    - typescript-eslint
   - Prettier
   - Husky
   - lint-staged
