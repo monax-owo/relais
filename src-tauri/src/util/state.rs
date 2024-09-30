@@ -46,6 +46,7 @@ pub struct WindowData {
 #[derive(Debug, Clone, Deserialize, Serialize, Type)]
 pub struct SWindowData {
   title: Box<str>,
+  label: Box<str>,
   url: Box<str>,
   pointer_ignore: bool,
   mobile_mode: bool,
@@ -168,7 +169,8 @@ impl From<&WindowData> for SWindowData {
   fn from(v: &WindowData) -> Self {
     Self {
       title: v.title.as_str().into(),
-      url: v.url.to_string().as_str().into(),
+      label: v.label.as_str().into(),
+      url: v.url.to_string().into(),
       pointer_ignore: Arc::clone(&v.pointer_ignore).load(Ordering::Acquire),
       mobile_mode: Arc::clone(&v.mobile_mode).load(Ordering::Acquire),
       transparent: {

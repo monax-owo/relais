@@ -1,13 +1,13 @@
 <script lang="ts">
-  import { commands, events, type SWindowData } from "$lib/generated/specta/bindings";
+  import { commands, type SWindowData } from "$lib/generated/specta/bindings";
   import { Template } from "$lib/imports";
-  import { getCurrentWebviewWindow } from "@tauri-apps/api/webviewWindow";
+  import { state } from "$lib/stores/state";
 
   // let stroke: number = 2;
   let url: string;
-  let windows: SWindowData[] = [];
+  let windows: SWindowData[] | null;
   let valid = true;
-
+  $: windows = $state ? $state?.windows : null;
   const handleOpen = async () => {
     // try {
     //   new URL((url.startsWith("http") ? "" : "https://") + url);
@@ -20,22 +20,19 @@
   };
 
   onMount(async () => {
-    const f = async () => (windows = await commands.getWindows());
-    await f();
-
-    await events.updateWindows(getCurrentWebviewWindow()).listen(async () => await f());
     ifDev(() => {
-      ifThen(windows.length < 1, () => {
-        console.log(windows.length);
+      if (windows) {
+        if (windows.length < 1) {
+          console.log(windows.length);
 
-        url = "google.com";
-        handleOpen();
-      });
+          url = "google.com";
+          handleOpen();
+        }
+      }
     });
   });
 </script>
 
-<!--  -->
 <Template>
   <form class="container" on:submit={handleOpen}>
     <span>{valid}</span>
@@ -43,12 +40,12 @@
     <button type="submit">OPEN</button>
   </form>
   <ul>
-    {#each windows as window}
+    {#each windows ?? [] as window}
       <li>
         <div class="list">
-          <!-- <span>{window.label}</span> -->
           <span>{window.title}</span>
-          <span>{window.zoom}</span>
+          <span>{window.label}</span>
+          <span>{window.url}</span>
           <a href="/config?label={window.label}" class="btn">config</a>
         </div>
       </li>

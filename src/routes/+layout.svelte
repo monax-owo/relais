@@ -26,8 +26,8 @@
       state.set(unwrap(await commands.getState()));
       console.log(JSON.stringify($state, null, 2));
     };
-    await events.updateState(getCurrentWebviewWindow()).listen(() => f());
     f();
+    await events.updateState(getCurrentWebviewWindow()).listen(() => f());
   });
 </script>
 
