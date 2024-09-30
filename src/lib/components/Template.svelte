@@ -8,8 +8,7 @@
 </div>
 
 <style lang="scss">
-  // @use "$lib/global.scss" as *;
-  // .Template {
-  //   display: block;
-  // }
+  .template {
+    padding: 0 2rem;
+  }
 </style>
