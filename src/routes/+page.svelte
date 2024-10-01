@@ -42,7 +42,7 @@
   </form>
   <ul class="windows">
     {#each windows ?? [] as window}
-      <li>
+      <li class="hover-1">
         <div>{window.title}</div>
         <div>{window.url}</div>
         <a href="/config?label={window.label}" class="btn">config</a>

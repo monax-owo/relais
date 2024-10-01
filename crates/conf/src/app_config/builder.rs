@@ -33,7 +33,6 @@ impl<T> AppConfigBuilder<T>
 where
   T: for<'de> Deserialize<'de> + Serialize,
 {
-  // TODO:トレイト境界を2回書かないといけないのか？
   /// set data to builder and return builder.
   pub fn data<U>(self, data: U) -> AppConfigBuilder<U>
   where
