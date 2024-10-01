@@ -1,0 +1,6 @@
+.hover-11 {
+  transition-duration: var(--t-duration);
+  &:hover {
+    background-color: var(--hover-bg);
+  }
+}

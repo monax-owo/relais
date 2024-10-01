@@ -35,24 +35,32 @@
 </script>
 
 <Template>
-  <form class="form" on:submit={handleOpen}>
-    <span>{valid}</span>
-    <input type="text" bind:value={url} />
-    <button type="submit">OPEN</button>
-  </form>
-  <ul class="windows">
-    {#each windows ?? [] as window}
-      <li class="hover-1">
-        <div>{window.title}</div>
-        <div>{window.url}</div>
-        <a href="/config?label={window.label}" class="btn">config</a>
-      </li>
-    {/each}
-  </ul>
+  <div class="root">
+    <form class="form" on:submit={handleOpen}>
+      <span>{valid}</span>
+      <input type="text" bind:value={url} />
+      <button type="submit">OPEN</button>
+    </form>
+    <ul class="windows">
+      {#each windows ?? [] as window}
+        <li class="hover-11">
+          <div>{window.title}</div>
+          <div>{window.url}</div>
+          <a href="/config?label={window.label}" class="btn">config</a>
+        </li>
+      {/each}
+    </ul>
+  </div>
 </Template>
 
 <style lang="scss">
   @import "@monax-owo/style/global";
+  .root {
+    display: flex;
+    flex-flow: column nowrap;
+    padding: 2rem 0;
+    height: auto;
+  }
   .form {
     display: flex;
     flex-flow: row nowrap;
@@ -67,10 +75,14 @@
     }
   }
   .windows {
+    padding: 0;
+    height: 200px;
+    overflow-y: scroll;
     li {
       display: flex;
       flex-flow: row nowrap;
       justify-content: space-between;
+      height: 2rem;
       list-style-type: none;
       & div {
         font-size: 0.6rem;

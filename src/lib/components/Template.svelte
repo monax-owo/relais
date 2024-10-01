@@ -10,5 +10,10 @@
 <style lang="scss">
   .template {
     padding: 0 2rem;
+    :global(*) {
+      scroll-behavior: smooth;
+      scrollbar-gutter: auto;
+      scrollbar-width: thin;
+    }
   }
 </style>

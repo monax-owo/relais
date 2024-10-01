@@ -2,7 +2,8 @@
   // scss
   import "@monax-owo/style/global.scss";
   import "@monax-owo/style/util.scss";
-  //
+  // style
+  import "$lib/style.scss";
   // rest css
   import "sanitize.css/assets.css";
   import "sanitize.css/sanitize.css";
@@ -33,6 +34,7 @@
 
 <!-- <svelte:window on:contextmenu|preventDefault={() => console.log("contextmenu")} /> -->
 
+<!-- TODO:ctrlとその他のlayoutを分ける -->
 <div id="app">
   <slot></slot>
 </div>
@@ -44,9 +46,6 @@
   :global(body) {
     background-color: var(--bg);
     overflow: hidden;
-    scroll-behavior: smooth;
-    scrollbar-gutter: auto;
-    scrollbar-width: thin;
     color: var(--text);
     user-select: none;
   }
@@ -63,8 +62,6 @@
   }
   #app {
     display: flex;
-    flex-wrap: wrap;
-    align-content: center;
     justify-content: center;
     width: 100vw;
     height: 100vh;
