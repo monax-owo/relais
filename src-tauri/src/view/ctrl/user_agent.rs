@@ -32,21 +32,21 @@ pub fn set_user_agent(
   value: bool,
 ) -> Result<(), String> {
   let (mut desktop, mut mobile) = {
-    let config = state.config.lock().unwrap();
+    let config = state.config.read().unwrap();
     (config.agent_desktop.clone(), config.agent_mobile.clone())
   };
 
   if desktop.trim().is_empty() {
     desktop = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36 Edg/128.0.0.0".into();
 
-    state.config.lock().unwrap().agent_desktop = desktop.to_string();
+    state.config.write().unwrap().agent_desktop = desktop.to_string();
     state.config.save().err_to_string()?;
   }
 
   if mobile.trim().is_empty() {
     mobile = "Mozilla/5.0 (Linux; Android 13; Pixel 7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/116.0.0.0 Mobile Safari/537.36".into();
 
-    state.config.lock().unwrap().agent_mobile = mobile.to_string();
+    state.config.write().unwrap().agent_mobile = mobile.to_string();
     state.config.save().err_to_string()?;
   }
 

@@ -171,7 +171,7 @@ pub fn run() {
       handle
         .plugin(
           tauri_plugin_global_shortcut::Builder::new()
-            .with_shortcuts([state.config.lock().unwrap().shortcut_key.as_str()])
+            .with_shortcuts([state.config.read().unwrap().shortcut_key.as_str()])
             .unwrap()
             .with_handler(move |_app, shortcut, e| {
               if e.state == ShortcutState::Pressed {
@@ -184,7 +184,7 @@ pub fn run() {
       //
 
       // restore views from config
-      view::ctrl::view_restore(handle,&state).expect("failed to restore views");
+      view::ctrl::view_restore(handle, &state).expect("failed to restore views");
       //
       Ok(())
     })

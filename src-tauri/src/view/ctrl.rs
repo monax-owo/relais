@@ -105,7 +105,7 @@ pub fn view_create(
       }
     });
 
-    if state.config.lock().unwrap().agent_mobile.is_empty() {
+    if state.config.read().unwrap().agent_mobile.is_empty() {
       user_agent(app, window)
     }
 
@@ -223,14 +223,14 @@ pub fn user_agent(app: &AppHandle, window: &WebviewWindow) {
         let mut pwstr = PWSTR::null();
         settings_2.UserAgent(&mut pwstr).unwrap();
         let state = app.state::<AppState>();
-        state.config.lock().unwrap().agent_desktop = pwstr.to_string().unwrap();
+        state.config.write().unwrap().agent_desktop = pwstr.to_string().unwrap();
       }
     })
     .unwrap();
 }
 
 pub fn sync_windows(state: &State<'_, AppState>) -> anyhow::Result<()> {
-  state.config.lock().unwrap().windows = state.get_windows();
+  state.config.write().unwrap().windows = state.get_windows();
   state.config.save()?;
 
   Ok(())

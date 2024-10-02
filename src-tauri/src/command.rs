@@ -19,7 +19,7 @@ pub fn get_windows(state: State<'_, AppState>) -> SWindowList {
 #[command]
 #[specta]
 pub fn get_config(state: State<'_, AppState>) -> Conf {
-  state.config.lock().unwrap().clone()
+  state.config.read().unwrap().clone()
 }
 
 #[command]
