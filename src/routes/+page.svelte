@@ -6,7 +6,7 @@
   // let stroke: number = 2;
   let url: string;
   let windows: SWindowData[] | undefined;
-  let valid = true;
+  let _valid = true;
 
   $: windows = $state?.windows;
 
@@ -37,18 +37,23 @@
 <Template>
   <div class="root">
     <form class="form" on:submit={handleOpen}>
-      <span>{valid}</span>
+      <!-- TODO:superformsでvalidationする -->
+      <!-- <span>{valid}</span> -->
       <input type="text" bind:value={url} />
       <button type="submit">OPEN</button>
     </form>
     <ul class="windows">
-      {#each windows ?? [] as window}
-        <li class="hover-11">
-          <div>{window.title}</div>
-          <div>{window.url}</div>
-          <a href="/config?label={window.label}" class="btn">config</a>
-        </li>
-      {/each}
+      {#if windows}
+        {#each windows as window}
+          <li class="hover-11">
+            <div>{window.title}</div>
+            <div>{window.url}</div>
+            <a href="/config?label={window.label}" class="btn">config</a>
+          </li>
+        {/each}
+      {:else}
+        <li>window not found...</li>
+      {/if}
     </ul>
   </div>
 </Template>

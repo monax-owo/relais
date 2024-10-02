@@ -1,4 +1,4 @@
-<script async script lang="ts">
+<script lang="ts">
   // scss
   import "@monax-owo/style/global.scss";
   import "@monax-owo/style/util.scss";

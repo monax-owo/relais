@@ -5,8 +5,28 @@
   import { state } from "$lib/stores/state";
   let label = $page.url.searchParams.get("label") ?? "null";
   let window: SWindowData | undefined;
+  let datalist: Map<string, unknown>;
   onMount(() => {
-    window = $state?.windows.find((v) => v.label == label);
+    console.log(window);
+
+    let un = state.subscribe((v) => {
+      if (v) {
+        window = v.windows.find((v) => v.label == label);
+        if (window) {
+          datalist = new Map<string, unknown>([
+            ["title", window.title],
+            ["label", window.label],
+            ["url", window.url],
+            ["pointer_ignore", window.pointer_ignore],
+            ["mobile_mode", window.mobile_mode],
+            ["transparent", window.transparent],
+            ["pin", window.pin],
+            ["zoom", window.zoom],
+          ]);
+        }
+        un();
+      }
+    });
   });
 </script>
 
@@ -14,20 +34,22 @@
   <nav><a href="/" class="btn">{"←"}</a></nav>
   {#if window}
     <div class="list">
-      <span>{window.title}</span>
-      <span>{window.label}</span>
-      <span>{window.url}</span>
-      <a href="/config?label={window.label}" class="btn">config</a>
+      {#each datalist as data}
+        <div><span class="key">{data[0]}: </span><span class="value">{data[1]}</span></div>
+      {/each}
     </div>
-  {:else}
-    <div class="container">ERR</div>
   {/if}
 </Template>
 
 <style lang="scss">
   .list {
-    & span {
+    display: flex;
+    flex-flow: column nowrap;
+    & div {
       font-size: 0.8rem;
+      & .key {
+        opacity: 0.6;
+      }
     }
   }
 </style>
