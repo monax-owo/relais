@@ -45,14 +45,14 @@ pub struct WindowData {
 
 #[derive(Debug, Clone, Deserialize, Serialize, Type)]
 pub struct SWindowData {
-  title: Box<str>,
-  label: Box<str>,
-  url: Box<str>,
-  pointer_ignore: bool,
-  mobile_mode: bool,
-  transparent: (bool, u8),
-  pin: bool,
-  zoom: u32,
+  pub title: Box<str>,
+  pub label: Box<str>,
+  pub url: Box<str>,
+  pub pointer_ignore: bool,
+  pub mobile_mode: bool,
+  pub transparent: (bool, u8),
+  pub pin: bool,
+  pub zoom: u32,
 }
 
 pub type WindowDataList = Vec<WindowData>;

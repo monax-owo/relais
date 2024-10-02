@@ -27,9 +27,9 @@ async getState() : Promise<Result<SAppState, string>> {
 async getWindows() : Promise<SWindowData[]> {
     return await TAURI_INVOKE("get_windows");
 },
-async viewCreate(url: string, label: string | null) : Promise<Result<null, string>> {
+async viewCreate(url: string) : Promise<Result<null, string>> {
     try {
-    return { status: "ok", data: await TAURI_INVOKE("view_create", { url, label }) };
+    return { status: "ok", data: await TAURI_INVOKE("view_create", { url }) };
 } catch (e) {
     if(e instanceof Error) throw e;
     else return { status: "error", error: e  as any };
@@ -218,8 +218,8 @@ updateWindows: "update-windows"
 
 /** user-defined constants **/
 
-export const CTRL_LABEL_PREFIX = "ctrl_" as const;
 export const WINDOW_LABEL_PREFIX = "window_" as const;
+export const CTRL_LABEL_PREFIX = "ctrl_" as const;
 
 /** user-defined types **/
 

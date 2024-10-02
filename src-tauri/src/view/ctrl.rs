@@ -10,6 +10,7 @@ use tauri::{
   AppHandle, Manager, PhysicalSize, State, WebviewUrl, WebviewWindow, WebviewWindowBuilder,
   WindowEvent,
 };
+use uuid::Uuid;
 use webview2_com::Microsoft::Web::WebView2::Win32::ICoreWebView2Settings2;
 use windows::{
   core::{Interface, PWSTR},
@@ -28,21 +29,22 @@ use windows::{
 
 use crate::util::{AppState, WindowData};
 
-use super::util::{ctrl_pos, to_ctrl_label, window_pos};
+use super::util::{ctrl_pos, to_ctrl_label, window_pos, WINDOW_LABEL_PREFIX};
 
 pub const WINDOW_MIN_INNER_SIZE: (f64, f64) = (360.0, 200.0);
 pub const CTRL_SIZE: (u32, u32) = (40, 360);
 
 pub fn view_create(
   app: &AppHandle,
-  state: State<'_, AppState>,
+  state: &State<'_, AppState>,
   url: WebviewUrl,
-  label: String,
 ) -> anyhow::Result<()> {
   let app = app.clone();
   let skip_taskbar = cfg!(not(debug_assertions));
 
   let title = "no title".to_string();
+  let label = WINDOW_LABEL_PREFIX.to_string() + Uuid::new_v4().to_string().as_str();
+
   let window = WebviewWindowBuilder::new(&app, &label, url.clone())
     .decorations(false)
     .maximizable(false)
@@ -142,6 +144,20 @@ extern "system" fn _ctrl_proc(
     WM_SETFOCUS => LRESULT(0),
     _ => unsafe { DefSubclassProc(hwnd, umsg, wparam, lparam) },
   }
+}
+
+// TODO:configを読んでウィンドウを復元する+ラベルを再割り当てする
+pub fn view_restore(_app: &AppHandle, _state: &State<'_, AppState>) -> anyhow::Result<()> {
+  // dbg!("1");
+  // let windows = &state.config.lock().unwrap().windows;
+  // dbg!("2");
+  // for window in windows {
+  //   dbg!("3");
+  //   view_create(&app, state, WebviewUrl::External(window.url.parse()?))?;
+  // }
+  // dbg!("4");
+
+  Ok(())
 }
 
 pub fn set_ignore_cursor_events(hwnd: HWND, value: bool) -> anyhow::Result<()> {

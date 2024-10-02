@@ -184,7 +184,7 @@ pub fn run() {
       //
 
       // restore views from config
-      // TODO:configを読んでウィンドウを復元する+ラベルを再割り当てする
+      view::ctrl::view_restore(&handle,&state).expect("failed to restore views");
       //
       Ok(())
     })
