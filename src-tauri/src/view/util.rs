@@ -55,6 +55,7 @@ pub fn view_close(_app: AppHandle, ctrl: &WebviewWindow) -> Result<(), String> {
   Ok(())
 }
 
+// TODO:CloseRequestedが発火したらこの関数を使う
 pub fn _close(app: &AppHandle, arc: &Arc<(WebviewWindow, WebviewWindow)>) -> anyhow::Result<()> {
   let state = app.state::<AppState>();
   let label = arc.0.label();
