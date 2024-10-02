@@ -1,3 +1,6 @@
+<p align="center">
+	<a href="//github.com/monax-owo/relais"><img src="/src-tauri/icons/icon.png" width="150" /></a>
+</p>
 <h1 align="center">Relais</h1>
 <div align="center">Lightweight web "viewer" specializing in overlay display</div>
 <div align="center">
