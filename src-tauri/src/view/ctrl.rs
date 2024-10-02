@@ -73,7 +73,7 @@ pub fn view_create(
   let window_data = WindowData::new(title, label, url);
   state.add_window(window_data)?;
   state.emit_windows(&app);
-  sync_windows(&state)?;
+  sync_windows(state)?;
 
   window.set_position(ctrl_pos(ctrl_window.outer_position()?))?;
 

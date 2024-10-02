@@ -184,7 +184,7 @@ pub fn run() {
       //
 
       // restore views from config
-      view::ctrl::view_restore(&handle,&state).expect("failed to restore views");
+      view::ctrl::view_restore(handle,&state).expect("failed to restore views");
       //
       Ok(())
     })
