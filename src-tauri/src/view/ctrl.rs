@@ -147,15 +147,11 @@ extern "system" fn _ctrl_proc(
 }
 
 // TODO:configを読んでウィンドウを復元する+ラベルを再割り当てする
-pub fn view_restore(_app: &AppHandle, _state: &State<'_, AppState>) -> anyhow::Result<()> {
-  // dbg!("1");
-  // let windows = &state.config.lock().unwrap().windows;
-  // dbg!("2");
-  // for window in windows {
-  //   dbg!("3");
-  //   view_create(&app, state, WebviewUrl::External(window.url.parse()?))?;
-  // }
-  // dbg!("4");
+pub fn view_restore(app: &AppHandle, state: &State<'_, AppState>) -> anyhow::Result<()> {
+  let windows = state.config.read().unwrap().windows.clone();
+  for window in windows {
+    view_create(app, state, WebviewUrl::External(window.url.parse()?))?;
+  }
 
   Ok(())
 }
@@ -223,6 +219,7 @@ pub fn user_agent(app: &AppHandle, window: &WebviewWindow) {
         let mut pwstr = PWSTR::null();
         settings_2.UserAgent(&mut pwstr).unwrap();
         let state = app.state::<AppState>();
+        dbg!("write!");
         state.config.write().unwrap().agent_desktop = pwstr.to_string().unwrap();
       }
     })
@@ -230,6 +227,7 @@ pub fn user_agent(app: &AppHandle, window: &WebviewWindow) {
 }
 
 pub fn sync_windows(state: &State<'_, AppState>) -> anyhow::Result<()> {
+  dbg!("write!");
   state.config.write().unwrap().windows = state.get_windows();
   state.config.save()?;
 

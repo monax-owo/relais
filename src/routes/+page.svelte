@@ -5,7 +5,7 @@
 
   // let stroke: number = 2;
   let url: string;
-  let windows: SWindowData[] | undefined;
+  let windows: SWindowData[] | undefined = undefined;
   let _valid = true;
 
   $: windows = $state?.windows;
@@ -18,20 +18,20 @@
     //   valid = false;
     //   console.error(e);
     // }
-    await commands.viewCreate(url, null);
+    await commands.viewCreate(url);
   };
-  onMount(async () => {
-    ifDev(() => {
-      let un = state.subscribe((v) => {
-        if (v && v.windows.length < 1) {
-          console.log(v.windows.length);
-          url = "google.com";
-          handleOpen();
-          un();
-        }
-      });
-    });
-  });
+  // onMount(async () => {
+  //   ifDev(() => {
+  //     let un = state.subscribe((v) => {
+  //       if (v && v.windows.length < 1) {
+  //         console.log(v.windows.length);
+  //         url = "google.com";
+  //         handleOpen();
+  //         un();
+  //       }
+  //     });
+  //   });
+  // });
 </script>
 
 <Template>
