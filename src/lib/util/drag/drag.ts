@@ -33,7 +33,7 @@ const draggable: Action<HTMLElement, DraggableParam> = (node, param) => {
   let target = param.target ?? node;
   let handles = param.handles;
 
-  const GRABBINGCURSOR = param.grabbingCursor ?? "grabbing";
+  const GRABBING_CURSOR = param.grabbingCursor ?? "grabbing";
   const PADDING = param.padding ?? 0;
   const ZINDEX = String(param.zindex ?? 9999);
 
@@ -75,7 +75,7 @@ const draggable: Action<HTMLElement, DraggableParam> = (node, param) => {
       window.addEventListener("pointerup", dragUnListen.bind(undefined, fn));
       window.addEventListener("pointercancel", dragUnListen.bind(undefined, fn));
 
-      target.style.cursor = GRABBINGCURSOR;
+      target.style.cursor = GRABBING_CURSOR;
       target.style.zIndex = ZINDEX;
     };
 
