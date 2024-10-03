@@ -9,9 +9,6 @@
   </a>
 </div>
 
-> [!WARNING]
-> Unstable under development
-
 ## Feature
 
 > [!NOTE]
