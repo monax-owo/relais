@@ -83,7 +83,6 @@ impl Conf {
   }
 }
 
-// TODO:綺麗な実装にする
 impl<T> AppState<T>
 where
   T: for<'de> Deserialize<'de> + Serialize,

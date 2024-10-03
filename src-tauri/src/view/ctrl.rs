@@ -147,7 +147,6 @@ extern "system" fn _ctrl_proc(
   }
 }
 
-// TODO:configを読んでウィンドウを復元する+ラベルを再割り当てする
 pub fn view_restore(app: &AppHandle, state: &State<'_, AppState>) -> anyhow::Result<()> {
   let windows = state.config.read().unwrap().windows.clone();
   for window in windows {
