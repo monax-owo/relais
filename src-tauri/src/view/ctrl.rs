@@ -34,6 +34,7 @@ use super::util::{ctrl_pos, to_ctrl_label, window_pos, WINDOW_LABEL_PREFIX};
 pub const WINDOW_MIN_INNER_SIZE: (f64, f64) = (360.0, 200.0);
 pub const CTRL_SIZE: (u32, u32) = (40, 360);
 
+// TODO:ctrlにフォーカスがあたってる状態から他ウィンドウにフォーカスを変えても最前面に表示されたままになってしまう
 pub fn view_create(
   app: &AppHandle,
   state: &State<'_, AppState>,
@@ -51,7 +52,6 @@ pub fn view_create(
     .min_inner_size(WINDOW_MIN_INNER_SIZE.0, WINDOW_MIN_INNER_SIZE.1)
     .minimizable(true)
     .title(&title)
-    .transparent(true)
     .zoom_hotkeys_enabled(true)
     .build()?;
 
@@ -67,7 +67,6 @@ pub fn view_create(
   .resizable(false)
   .skip_taskbar(skip_taskbar)
   .title("ctrl")
-  .transparent(true)
   .build()?;
 
   let window_data = WindowData::new(title, label, url);
