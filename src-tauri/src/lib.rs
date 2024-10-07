@@ -29,7 +29,13 @@ pub fn run() {
   // custom panic hook
   let hook = panic::take_hook();
   panic::set_hook(Box::new(move |panic_hook_info| {
-    println!("hook! : {}", panic_hook_info);
+    println!(
+      r#"
+------------
+hook!
+------------
+    "#
+    );
     hook(panic_hook_info);
   }));
   //
@@ -171,7 +177,7 @@ pub fn run() {
       handle
         .plugin(
           tauri_plugin_global_shortcut::Builder::new()
-            .with_shortcuts([state.config.read().unwrap().shortcut_key.as_str()])
+            .with_shortcut(state.config.read().unwrap().shortcut_key.as_str())
             .unwrap()
             .with_handler(move |_app, shortcut, e| {
               if e.state == ShortcutState::Pressed {
