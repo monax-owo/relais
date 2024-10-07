@@ -129,6 +129,8 @@ hook!
       });
       //
 
+      // TODO:TOGGLEですべてのウィンドウをshow/hideする
+      // TODO:クリップボードのurlを開くメニューを追加
       // tray menu
       const MENU_SHOW: &str = "show";
       const MENU_TOGGLE: &str = "toggle";
