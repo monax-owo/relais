@@ -1,5 +1,6 @@
 {
   "cSpell.words": [
+    "ACTIVATEAPP",
     "clippy",
     "COLORREF",
     "configfile",
@@ -36,6 +37,7 @@
     "replacen",
     "Serde",
     "SETFOCUS",
+    "SHOWNORMAL",
     "specta",
     "superforms",
     "tabler",

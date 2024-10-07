@@ -17,11 +17,11 @@ use windows::{
   Win32::{
     Foundation::{COLORREF, HWND, LPARAM, LRESULT, WPARAM},
     UI::{
-      Shell::DefSubclassProc,
+      Shell::{DefSubclassProc, SetWindowSubclass},
       WindowsAndMessaging::{
-        GetWindowLongPtrW, SetLayeredWindowAttributes, SetWindowLongPtrW, SetWindowPos,
-        GWL_EXSTYLE, HWND_NOTOPMOST, HWND_TOPMOST, LWA_ALPHA, SWP_NOMOVE, SWP_NOSIZE, WM_SETFOCUS,
-        WS_EX_LAYERED, WS_EX_NOACTIVATE, WS_EX_TRANSPARENT,
+        GetWindowLongPtrW, SetLayeredWindowAttributes, SetWindowLongPtrW, SetWindowPos, ShowWindow,
+        GWL_EXSTYLE, HWND_NOTOPMOST, HWND_TOPMOST, LWA_ALPHA, SWP_NOMOVE, SWP_NOSIZE, SW_HIDE,
+        SW_SHOWNORMAL, WM_ACTIVATEAPP, WS_EX_LAYERED, WS_EX_TRANSPARENT,
       },
     },
   },
@@ -48,6 +48,7 @@ pub fn view_create(
 
   let window = WebviewWindowBuilder::new(&app, &label, url.clone())
     .decorations(false)
+    .focused(true)
     .maximizable(false)
     .min_inner_size(WINDOW_MIN_INNER_SIZE.0, WINDOW_MIN_INNER_SIZE.1)
     .minimizable(true)
@@ -86,14 +87,6 @@ pub fn view_create(
       let arc = Arc::clone(&arc);
       move |e| match e {
         WindowEvent::Moved(pos) => arc.1.set_position(window_pos(*pos)).unwrap(),
-        WindowEvent::Focused(state) => {
-          if *state {
-            arc.1.show().unwrap();
-            arc.0.set_focus().unwrap();
-          } else if !arc.0.is_focused().unwrap() && !arc.1.is_focused().unwrap() {
-            arc.1.hide().unwrap();
-          }
-        }
         WindowEvent::CloseRequested { .. } => {
           println!("close");
           let state = arc.2.state::<AppState>();
@@ -111,11 +104,11 @@ pub fn view_create(
 
     unsafe {
       SetWindowLongPtrW(window_hwnd, GWL_EXSTYLE, WS_EX_LAYERED.0 as isize);
-      SetWindowLongPtrW(
-        ctrl_hwnd,
-        GWL_EXSTYLE,
-        WS_EX_LAYERED.0 as isize | WS_EX_NOACTIVATE.0 as isize,
-      );
+      SetWindowLongPtrW(ctrl_hwnd, GWL_EXSTYLE, WS_EX_LAYERED.0 as isize);
+      let res = SetWindowSubclass(ctrl_hwnd, Some(ctrl_proc), 0, 0);
+      if !res.as_bool() {
+        bail!("failure SetWindowSubclass")
+      }
     }
 
     (|| -> anyhow::Result<()> {
@@ -132,7 +125,7 @@ pub fn view_create(
   Ok(())
 }
 
-extern "system" fn _ctrl_proc(
+extern "system" fn ctrl_proc(
   hwnd: HWND,
   umsg: u32,
   wparam: WPARAM,
@@ -141,7 +134,18 @@ extern "system" fn _ctrl_proc(
   _dwrefdata: usize,
 ) -> LRESULT {
   match umsg {
-    WM_SETFOCUS => LRESULT(0),
+    // フォーカスが別のウィンドウから移ったら
+    WM_ACTIVATEAPP => {
+      if wparam.0 > 0 {
+        println!("focus");
+        let res = unsafe { ShowWindow(hwnd, SW_SHOWNORMAL) };
+        LRESULT(res.0 as isize)
+      } else {
+        println!("unfocus");
+        let res = unsafe { ShowWindow(hwnd, SW_HIDE) };
+        LRESULT(res.0 as isize)
+      }
+    }
     _ => unsafe { DefSubclassProc(hwnd, umsg, wparam, lparam) },
   }
 }
