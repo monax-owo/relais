@@ -132,47 +132,48 @@ hook!
       // TODO:TOGGLEですべてのウィンドウをshow/hideする
       // TODO:クリップボードのurlを開くメニューを追加
       // tray menu
-      const MENU_SHOW: &str = "show";
-      const MENU_TOGGLE: &str = "toggle";
-      const MENU_QUIT: &str = "quit";
-
-      let tray_icon = {
-        // Image::from_path("icons/icon.png").unwrap()
-        Image::from_bytes(include_bytes!("../icons/128x128.png")).unwrap()
-      };
-      let tray_menu = MenuBuilder::new(app)
-        .items(&[
-          &MenuItem::with_id(app, MENU_SHOW, "Show", true, None::<&str>)?,
-          &MenuItem::with_id(app, MENU_TOGGLE, "Toggle Overlay", true, None::<&str>)?,
-          &MenuItem::with_id(app, MENU_QUIT, "Quit", true, None::<&str>)?,
-        ])
-        .build()?;
-      let _tray_handle = TrayIconBuilder::with_id("tray")
-        .icon(tray_icon)
-        .menu(&tray_menu)
-        .tooltip("Relais")
-        .on_tray_icon_event({
-          let main_window = Arc::clone(&main_window);
-          move |_tray, e| {
-            if let TrayIconEvent::Click {
-              button: MouseButton::Left,
-              ..
-            } = e
-            {
-              view::util::window_focus(&main_window).unwrap()
+      {
+        const SHOW: &str = "show";
+        const TOGGLE: &str = "toggle";
+        const QUIT: &str = "quit";
+        let tray_icon = {
+          // Image::from_path("icons/icon.png").unwrap()
+          Image::from_bytes(include_bytes!("../icons/128x128.png")).unwrap()
+        };
+        let tray_menu = MenuBuilder::new(app)
+          .items(&[
+            &MenuItem::with_id(app, SHOW, "Show", true, None::<&str>)?,
+            &MenuItem::with_id(app, TOGGLE, "Toggle Overlay", true, None::<&str>)?,
+            &MenuItem::with_id(app, QUIT, "Quit", true, None::<&str>)?,
+          ])
+          .build()?;
+        let _tray_handle = TrayIconBuilder::with_id("tray")
+          .icon(tray_icon)
+          .menu(&tray_menu)
+          .tooltip("Relais")
+          .on_tray_icon_event({
+            let main_window = Arc::clone(&main_window);
+            move |_tray, e| {
+              if let TrayIconEvent::Click {
+                button: MouseButton::Left,
+                ..
+              } = e
+              {
+                view::util::window_focus(&main_window).unwrap()
+              }
             }
-          }
-        })
-        .on_menu_event({
-          let main_window = Arc::clone(&main_window);
-          move |app, e| match e.id().as_ref() {
-            MENU_SHOW => window_focus(&main_window).unwrap(),
-            MENU_TOGGLE => (),
-            MENU_QUIT => exit_0(app).unwrap(),
-            _ => (),
-          }
-        })
-        .build(app)?;
+          })
+          .on_menu_event({
+            let main_window = Arc::clone(&main_window);
+            move |app, e| match e.id().as_ref() {
+              SHOW => window_focus(&main_window).unwrap(),
+              TOGGLE => (),
+              QUIT => exit_0(app).unwrap(),
+              _ => (),
+            }
+          })
+          .build(app)?;
+      }
       //
 
       // shortcut
