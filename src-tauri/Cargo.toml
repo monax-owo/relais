@@ -22,18 +22,18 @@ anyhow = { workspace = true }
 # serde_json = { workspace = true }
 serde = { workspace = true, features = ["derive"] }
 serial_test = { workspace = true }
-specta = "=2.0.0-rc.20"
+specta = "2.0.0-rc"
 specta-typescript = "^0.0.7"
-tauri = { version = "^2.0.0-rc.15", features = [
+tauri = { version = "^2.0.0", features = [
   "image-ico",
   "image-png",
   "image",
   "specta",
   "tray-icon",
 ] }
-tauri-plugin-dialog = "^2.0.0-rc.7"
-tauri-plugin-global-shortcut = "^2.0.0-rc.2"
-tauri-specta = { version = "=2.0.0-rc.20", features = ["derive", "typescript"] }
+tauri-plugin-dialog = "^2.0.0"
+tauri-plugin-global-shortcut = "^2.0.0"
+tauri-specta = { version = "^2.0.0-rc", features = ["derive", "typescript"] }
 # tokio = { workspace = true, features = ["full"] }
 toml = { workspace = true }
 url = "2.5.2"
