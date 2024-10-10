@@ -7,8 +7,7 @@ use anyhow::bail;
 use conf::Configurable;
 use std::sync::{atomic::Ordering, Arc};
 use tauri::{
-  AppHandle, Manager, PhysicalSize, State, WebviewUrl, WebviewWindow, WebviewWindowBuilder,
-  WindowEvent,
+  AppHandle, Manager, State, WebviewUrl, WebviewWindow, WebviewWindowBuilder, WindowEvent,
 };
 use uuid::Uuid;
 use webview2_com::Microsoft::Web::WebView2::Win32::ICoreWebView2Settings2;
@@ -32,7 +31,7 @@ use crate::util::{AppState, WindowData};
 use super::util::{ctrl_pos, to_ctrl_label, window_pos, WINDOW_LABEL_PREFIX};
 
 pub const WINDOW_MIN_INNER_SIZE: (f64, f64) = (360.0, 200.0);
-pub const CTRL_SIZE: (u32, u32) = (40, 360);
+pub const CTRL_SIZE: (f64, f64) = (40.0, 360.0);
 
 // TODO:ctrlにフォーカスがあたってる状態から他ウィンドウにフォーカスを変えても最前面に表示されたままになってしまう
 pub fn view_create(
@@ -62,6 +61,7 @@ pub fn view_create(
     WebviewUrl::App("/ctrl".into()),
   )
   .parent(&window)?
+  .inner_size(CTRL_SIZE.0, CTRL_SIZE.1)
   .decorations(false)
   .maximizable(false)
   .minimizable(false)
@@ -79,7 +79,7 @@ pub fn view_create(
 
   {
     let arc = Arc::new((window, ctrl_window, app));
-    let (ref window, ref ctrl_window, ref app) = *Arc::clone(&arc);
+    let (ref window, ref _ctrl_window, ref app) = *Arc::clone(&arc);
     let window_hwnd = arc.0.hwnd()?;
     let ctrl_hwnd = arc.1.hwnd()?;
 
@@ -110,16 +110,6 @@ pub fn view_create(
         bail!("failure SetWindowSubclass")
       }
     }
-
-    (|| -> anyhow::Result<()> {
-      let diff_x = ctrl_window.outer_size()?.width - ctrl_window.inner_size()?.width;
-      let diff_y = ctrl_window.outer_size()?.height - ctrl_window.inner_size()?.height;
-      ctrl_window.set_size(PhysicalSize::new(
-        diff_x + CTRL_SIZE.0,
-        diff_y + CTRL_SIZE.1,
-      ))?;
-      Ok(())
-    })()?;
   }
 
   Ok(())
