@@ -7,7 +7,8 @@ use anyhow::bail;
 use conf::Configurable;
 use std::sync::{atomic::Ordering, Arc};
 use tauri::{
-  AppHandle, Manager, State, WebviewUrl, WebviewWindow, WebviewWindowBuilder, WindowEvent,
+  AppHandle, Manager, PhysicalPosition, State, WebviewUrl, WebviewWindow, WebviewWindowBuilder,
+  WindowEvent,
 };
 use uuid::Uuid;
 use webview2_com::Microsoft::Web::WebView2::Win32::ICoreWebView2Settings2;
@@ -28,7 +29,7 @@ use windows::{
 
 use crate::util::{AppState, WindowData};
 
-use super::util::{ctrl_pos, to_ctrl_label, window_pos, WINDOW_LABEL_PREFIX};
+use super::util::{to_ctrl_label, window_pos, WINDOW_LABEL_PREFIX};
 
 pub const WINDOW_MIN_INNER_SIZE: (f64, f64) = (360.0, 200.0);
 pub const CTRL_SIZE: (f64, f64) = (40.0, 360.0);
@@ -75,7 +76,11 @@ pub fn view_create(
   state.emit_windows(&app);
   sync_windows(state)?;
 
-  window.set_position(ctrl_pos(ctrl_window.outer_position()?))?;
+  window.set_position({
+    const OFFSET: (i32, i32) = (CTRL_SIZE.0 as i32, 0);
+    let outer = ctrl_window.outer_position()?;
+    PhysicalPosition::new(outer.x + OFFSET.0, outer.y + OFFSET.1)
+  })?;
 
   {
     let arc = Arc::new((window, ctrl_window, app));
