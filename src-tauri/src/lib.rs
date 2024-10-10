@@ -195,6 +195,7 @@ hook!
       // restore views from config
       view::ctrl::view_restore(handle, &state).expect("failed to restore views");
       //
+
       Ok(())
     })
     .on_window_event(move |_window, e| match e {

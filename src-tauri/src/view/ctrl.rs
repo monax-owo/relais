@@ -172,6 +172,7 @@ pub fn set_transparent(hwnd: HWND, alpha: u8) -> anyhow::Result<()> {
   unsafe {
     SetLayeredWindowAttributes(hwnd, COLORREF(0), alpha, LWA_ALPHA)?;
   };
+
   Ok(())
 }
 

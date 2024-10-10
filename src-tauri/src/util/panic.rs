@@ -54,5 +54,6 @@ pub fn exit_0(handle: &AppHandle) -> anyhow::Result<()> {
     .context("tray is not found")?;
   handle.cleanup_before_exit();
   handle.exit(0);
+
   Ok(())
 }
