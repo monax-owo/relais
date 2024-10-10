@@ -71,8 +71,7 @@ pub fn view_create(
   .title("ctrl")
   .build()?;
 
-  let window_data = WindowData::new(title, label, url);
-  state.add_window(window_data)?;
+  state.add_window(WindowData::new(title, label, url))?;
   state.emit_windows(&app);
   sync_windows(state)?;
 
@@ -128,15 +127,14 @@ extern "system" fn ctrl_proc(
   match umsg {
     // フォーカスが別のウィンドウから移ったら
     WM_ACTIVATEAPP => {
-      if wparam.0 > 0 {
+      let res = if wparam.0 > 0 {
         println!("focus");
-        let res = unsafe { ShowWindow(hwnd, SW_SHOWNORMAL) };
-        LRESULT(res.0 as isize)
+        unsafe { ShowWindow(hwnd, SW_SHOWNORMAL) }
       } else {
         println!("unfocus");
-        let res = unsafe { ShowWindow(hwnd, SW_HIDE) };
-        LRESULT(res.0 as isize)
-      }
+        unsafe { ShowWindow(hwnd, SW_HIDE) }
+      };
+      LRESULT(res.0 as isize)
     }
     _ => unsafe { DefSubclassProc(hwnd, umsg, wparam, lparam) },
   }
