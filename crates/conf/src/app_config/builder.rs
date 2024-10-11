@@ -48,20 +48,22 @@ where
   /// # Errors
   /// This function will return an error if build failed.
   pub fn build(self) -> anyhow::Result<AppConfig<T>> {
-    let path = self.file_path;
-    let parent = path.parent().context("no parent")?;
-    if !parent.exists() {
-      create_dir_all(parent)?;
+    let file_path = self.file_path;
+    {
+      let parent = file_path.parent().context("no parent")?;
+      if !parent.exists() {
+        create_dir_all(parent)?;
+      }
     }
-    if !path.exists() {
-      File::create(&path)?;
+    if !file_path.exists() {
+      File::create(&file_path)?;
     }
-    if !path.is_file() {
+    if !file_path.is_file() {
       bail!("path is not file")
     }
 
     let mut conf = AppConfig {
-      file_path: path,
+      file_path,
       config: RwLock::new(self.data),
     };
     AppConfig::load(&mut conf)?;

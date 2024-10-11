@@ -34,7 +34,6 @@ use super::util::{to_ctrl_label, window_pos, WINDOW_LABEL_PREFIX};
 pub const WINDOW_MIN_INNER_SIZE: (f64, f64) = (360.0, 200.0);
 pub const CTRL_SIZE: (f64, f64) = (40.0, 360.0);
 
-// TODO:ctrlにフォーカスがあたってる状態から他ウィンドウにフォーカスを変えても最前面に表示されたままになってしまう
 pub fn view_create(
   app: &AppHandle,
   state: &State<'_, AppState>,
