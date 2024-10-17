@@ -73,7 +73,7 @@ name = "app"
 version = "0.1.0"
 dependencies = [
  "anyhow",
- "conf",
+ "configu",
  "serde",
  "serial_test",
  "specta",
@@ -576,8 +576,10 @@ dependencies = [
 ]
 
 [[package]]
-name = "conf"
-version = "0.1.0"
+name = "configu"
+version = "0.0.3"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "4d70dfcfa0f9fdd1f2c61573da443cfa4849b77eab634e3bc1bc4c1e65aa7ef1"
 dependencies = [
  "anyhow",
  "serde",

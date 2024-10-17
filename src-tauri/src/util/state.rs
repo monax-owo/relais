@@ -1,5 +1,5 @@
 use anyhow::Context;
-use conf::{AppConfig, AppConfigBuilder};
+use configu::{AppConfig, AppConfigBuilder};
 use serde::{Deserialize, Serialize};
 use specta::Type;
 use std::{

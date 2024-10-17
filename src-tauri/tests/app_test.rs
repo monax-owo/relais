@@ -4,7 +4,7 @@ use app_lib::{
   self,
   util::{AppState, CONFIGFILE_NAME},
 };
-use conf::Configurable;
+use configu::Configurable;
 use serde::{Deserialize, Serialize};
 
 // TODO:add tuple

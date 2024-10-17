@@ -4,7 +4,7 @@ pub mod transparent;
 pub mod user_agent;
 
 use anyhow::bail;
-use conf::Configurable;
+use configu::Configurable;
 use std::sync::{atomic::Ordering, Arc};
 use tauri::{
   AppHandle, Manager, PhysicalPosition, State, WebviewUrl, WebviewWindow, WebviewWindowBuilder,
@@ -227,7 +227,7 @@ pub(super) fn sync_windows(state: &State<'_, AppState>) -> anyhow::Result<()> {
 }
 
 pub mod command {
-  use conf::Configurable;
+  use configu::Configurable;
   use specta::specta;
   use tauri::{command, AppHandle, State, WebviewWindow};
 

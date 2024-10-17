@@ -5,7 +5,7 @@ use crate::{
   view::util::ctrl_to_window_and_data,
 };
 
-use conf::Configurable;
+use configu::Configurable;
 use specta::specta;
 use tauri::{command, State, WebviewWindow};
 use webview2_com::Microsoft::Web::WebView2::Win32::ICoreWebView2Settings2;
