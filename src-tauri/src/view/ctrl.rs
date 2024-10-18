@@ -108,7 +108,9 @@ pub fn view_create(
     unsafe {
       SetWindowLongPtrW(window_hwnd, GWL_EXSTYLE, WS_EX_LAYERED.0 as isize);
       SetWindowLongPtrW(ctrl_hwnd, GWL_EXSTYLE, WS_EX_LAYERED.0 as isize);
-      let _ = SetWindowSubclass(window_hwnd, Some(ctrl_proc), 0, 0);
+      if !SetWindowSubclass(ctrl_hwnd, Some(ctrl_proc), 0, 0).as_bool() {
+        bail!("SetWindowSubclass failed")
+      }
     }
   }
 
