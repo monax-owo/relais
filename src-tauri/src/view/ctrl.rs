@@ -124,6 +124,7 @@ extern "system" fn ctrl_proc(
   _dwrefdata: usize,
 ) -> LRESULT {
   match umsg {
+    // TODO:bug:フォーカスが離れたときの処理ができてなかった
     // フォーカスが別のウィンドウから移ったら
     WM_ACTIVATEAPP => {
       let res = if wparam.0 > 0 {
