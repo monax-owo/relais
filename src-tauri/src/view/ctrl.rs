@@ -19,9 +19,8 @@ use windows::{
     UI::{
       Shell::{DefSubclassProc, SetWindowSubclass},
       WindowsAndMessaging::{
-        GetWindowLongPtrW, SetLayeredWindowAttributes, SetWindowLongPtrW, SetWindowPos, ShowWindow,
-        GWL_EXSTYLE, HWND_NOTOPMOST, HWND_TOPMOST, LWA_ALPHA, SWP_NOMOVE, SWP_NOSIZE, SW_HIDE,
-        SW_SHOWNORMAL, WM_ACTIVATEAPP, WS_EX_LAYERED, WS_EX_TRANSPARENT,
+        GetWindowLongPtrW, SetLayeredWindowAttributes, SetWindowLongPtrW, ShowWindow, GWL_EXSTYLE,
+        LWA_ALPHA, SW_HIDE, SW_SHOWNORMAL, WM_ACTIVATEAPP, WS_EX_LAYERED, WS_EX_TRANSPARENT,
       },
     },
   },
@@ -173,13 +172,6 @@ pub fn set_transparent(hwnd: HWND, alpha: u8) -> anyhow::Result<()> {
   unsafe {
     SetLayeredWindowAttributes(hwnd, COLORREF(0), alpha, LWA_ALPHA)?;
   };
-
-  Ok(())
-}
-
-pub fn set_pin(hwnd: HWND, value: bool) -> anyhow::Result<()> {
-  let hwndinsertafter = if value { HWND_TOPMOST } else { HWND_NOTOPMOST };
-  unsafe { SetWindowPos(hwnd, hwndinsertafter, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE)? }
 
   Ok(())
 }
