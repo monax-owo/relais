@@ -125,13 +125,7 @@ where
   // TODO:lockを関数の外で取得しないといけない(寿命が足りないから)
   /// labelから合致するウィンドウを探して返す関数
   pub fn get_window_data(&self, label: &str) -> Option<WindowData> {
-    self
-      .windows
-      .lock()
-      .unwrap()
-      .iter()
-      .find(|v| v.label.as_str() == label)
-      .cloned()
+    self.windows.lock().unwrap().iter().find(|v| v.label.as_str() == label).cloned()
   }
 
   pub fn get_windows(&self) -> SerDeWindowList {

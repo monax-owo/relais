@@ -39,19 +39,14 @@ where
           webview.close().unwrap();
         }
 
-        panic!(
-          "called `Result::unwrap_with_dialog()` on an `Err` value: {:?}",
-          &e
-        );
+        panic!("called `Result::unwrap_with_dialog()` on an `Err` value: {:?}", &e);
       }
     }
   }
 }
 
 pub fn exit_0(handle: &AppHandle) -> anyhow::Result<()> {
-  handle
-    .remove_tray_by_id("tray")
-    .context("tray is not found")?;
+  handle.remove_tray_by_id("tray").context("tray is not found")?;
   handle.cleanup_before_exit();
   handle.exit(0);
 

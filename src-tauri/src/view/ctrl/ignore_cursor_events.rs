@@ -36,10 +36,7 @@ pub mod command {
 
   #[command]
   #[specta]
-  pub fn toggle_ignore_cursor_events(
-    ctrl: WebviewWindow,
-    state: State<'_, AppState>,
-  ) -> Result<bool, String> {
+  pub fn toggle_ignore_cursor_events(ctrl: WebviewWindow, state: State<'_, AppState>) -> Result<bool, String> {
     let (_, window_data) = ctrl_to_window_and_data(&ctrl, &state)?;
     let atomic = Arc::clone(&window_data.pointer_ignore);
     let condition = atomic.load(Ordering::Acquire);
@@ -51,11 +48,7 @@ pub mod command {
 
   #[command]
   #[specta]
-  pub fn set_ignore_cursor_events(
-    ctrl: WebviewWindow,
-    state: State<'_, AppState>,
-    value: bool,
-  ) -> Result<(), String> {
+  pub fn set_ignore_cursor_events(ctrl: WebviewWindow, state: State<'_, AppState>, value: bool) -> Result<(), String> {
     let (window, window_data) = ctrl_to_window_and_data(&ctrl, &state)?;
     let atomic = Arc::clone(&window_data.pointer_ignore);
 
@@ -67,10 +60,7 @@ pub mod command {
 
   #[command]
   #[specta]
-  pub fn get_ignore_cursor_events(
-    ctrl: WebviewWindow,
-    state: State<'_, AppState>,
-  ) -> Result<bool, String> {
+  pub fn get_ignore_cursor_events(ctrl: WebviewWindow, state: State<'_, AppState>) -> Result<bool, String> {
     let (_, window_data) = ctrl_to_window_and_data(&ctrl, &state)?;
     let atomic = Arc::clone(&window_data.pointer_ignore);
 

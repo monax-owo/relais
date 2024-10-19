@@ -39,10 +39,7 @@ pub fn to_window(ctrl: &WebviewWindow) -> Result<WebviewWindow, String> {
     .err_to_string()
 }
 
-pub fn ctrl_to_window_and_data(
-  ctrl: &WebviewWindow,
-  state: &State<'_, AppState>,
-) -> Result<(WebviewWindow, WindowData), String> {
+pub fn ctrl_to_window_and_data(ctrl: &WebviewWindow, state: &State<'_, AppState>) -> Result<(WebviewWindow, WindowData), String> {
   let window = to_window(ctrl)?;
   let window_data = state
     .get_window_data(window.label())

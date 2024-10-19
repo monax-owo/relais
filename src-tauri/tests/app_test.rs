@@ -93,9 +93,7 @@ static PATH: LazyLock<PathBuf> = LazyLock::new(|| {
     .join(CONFIGFILE_NAME)
 });
 
-static CONTENT: LazyLock<String> = LazyLock::new(|| {
-  toml::to_string_pretty(&TestConf::default()).expect("failed to initialize CONTENT")
-});
+static CONTENT: LazyLock<String> = LazyLock::new(|| toml::to_string_pretty(&TestConf::default()).expect("failed to initialize CONTENT"));
 
 /// # Panics
 /// Panics if failure to get/set state.
@@ -123,8 +121,6 @@ fn initialize_state() -> AppState<TestConf> {
     .truncate(true)
     .open(PATH.as_path())
     .expect("could not open configfile");
-  file
-    .write_all(CONTENT.as_bytes())
-    .expect("failed to writing to configfile");
+  file.write_all(CONTENT.as_bytes()).expect("failed to writing to configfile");
   state
 }

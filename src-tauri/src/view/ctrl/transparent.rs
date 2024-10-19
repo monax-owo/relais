@@ -24,17 +24,10 @@ pub mod command {
 
   #[command]
   #[specta]
-  pub fn toggle_transparent(
-    ctrl: WebviewWindow,
-    state: State<'_, AppState>,
-    alpha: u8,
-  ) -> Result<bool, String> {
+  pub fn toggle_transparent(ctrl: WebviewWindow, state: State<'_, AppState>, alpha: u8) -> Result<bool, String> {
     let (_, window_data) = ctrl_to_window_and_data(&ctrl, &state)?;
     let atomic = Arc::clone(&window_data.transparent);
-    let data = (
-      atomic.0.load(Ordering::Acquire),
-      atomic.1.load(Ordering::Acquire),
-    );
+    let data = (atomic.0.load(Ordering::Acquire), atomic.1.load(Ordering::Acquire));
     let condition = data.0;
 
     set_transparent(ctrl, state, if condition { 255 } else { alpha })?;
@@ -44,11 +37,7 @@ pub mod command {
 
   #[command]
   #[specta]
-  pub fn set_transparent(
-    ctrl: WebviewWindow,
-    state: State<'_, AppState>,
-    alpha: u8,
-  ) -> Result<(), String> {
+  pub fn set_transparent(ctrl: WebviewWindow, state: State<'_, AppState>, alpha: u8) -> Result<(), String> {
     let (window, window_data) = ctrl_to_window_and_data(&ctrl, &state)?;
     let atomic = Arc::clone(&window_data.transparent);
 
@@ -61,16 +50,10 @@ pub mod command {
 
   #[command]
   #[specta]
-  pub fn get_transparent(
-    ctrl: WebviewWindow,
-    state: State<'_, AppState>,
-  ) -> Result<(bool, u8), String> {
+  pub fn get_transparent(ctrl: WebviewWindow, state: State<'_, AppState>) -> Result<(bool, u8), String> {
     let (_, window_data) = ctrl_to_window_and_data(&ctrl, &state)?;
     let atomic = Arc::clone(&window_data.transparent);
-    let data = (
-      atomic.0.load(Ordering::Acquire),
-      atomic.1.load(Ordering::Acquire),
-    );
+    let data = (atomic.0.load(Ordering::Acquire), atomic.1.load(Ordering::Acquire));
 
     Ok(data)
   }

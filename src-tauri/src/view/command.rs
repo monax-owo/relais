@@ -6,11 +6,7 @@ use tauri::{command, AppHandle, State, WebviewUrl, WebviewWindow};
 
 #[command]
 #[specta]
-pub async fn view_create(
-  app: AppHandle,
-  state: State<'_, AppState>,
-  url: String,
-) -> Result<(), String> {
+pub async fn view_create(app: AppHandle, state: State<'_, AppState>, url: String) -> Result<(), String> {
   let url = if !url.starts_with("http") {
     String::from("https://") + &url
   } else {

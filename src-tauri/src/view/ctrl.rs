@@ -6,10 +6,7 @@ pub mod user_agent;
 use anyhow::{bail, Context};
 use configu::Configurable;
 use std::sync::{atomic::Ordering, Arc};
-use tauri::{
-  AppHandle, Manager, PhysicalPosition, State, WebviewUrl, WebviewWindow, WebviewWindowBuilder,
-  WindowEvent,
-};
+use tauri::{AppHandle, Manager, PhysicalPosition, State, WebviewUrl, WebviewWindow, WebviewWindowBuilder, WindowEvent};
 use uuid::Uuid;
 use webview2_com::Microsoft::Web::WebView2::Win32::ICoreWebView2Settings2;
 use windows::{
@@ -18,10 +15,7 @@ use windows::{
     Foundation::{HWND, LPARAM, LRESULT, WPARAM},
     UI::{
       Shell::{DefSubclassProc, SetWindowSubclass},
-      WindowsAndMessaging::{
-        SetWindowLongPtrW, ShowWindow, GWL_EXSTYLE, SW_HIDE, SW_SHOWNORMAL, WM_ACTIVATEAPP,
-        WS_EX_LAYERED,
-      },
+      WindowsAndMessaging::{SetWindowLongPtrW, ShowWindow, GWL_EXSTYLE, SW_HIDE, SW_SHOWNORMAL, WM_ACTIVATEAPP, WS_EX_LAYERED},
     },
   },
 };
@@ -33,11 +27,7 @@ use super::util::{to_ctrl_label, window_pos, WINDOW_LABEL_PREFIX};
 pub const WINDOW_MIN_INNER_SIZE: (f64, f64) = (360.0, 200.0);
 pub const CTRL_SIZE: (f64, f64) = (40.0, 360.0);
 
-pub fn view_create(
-  app: &AppHandle,
-  state: &State<'_, AppState>,
-  url: WebviewUrl,
-) -> anyhow::Result<()> {
+pub fn view_create(app: &AppHandle, state: &State<'_, AppState>, url: WebviewUrl) -> anyhow::Result<()> {
   let app = app.clone();
   let skip_taskbar = cfg!(not(debug_assertions));
 
@@ -54,20 +44,16 @@ pub fn view_create(
     .zoom_hotkeys_enabled(true)
     .build()?;
 
-  let ctrl_window = WebviewWindowBuilder::new(
-    &app,
-    to_ctrl_label(&*label),
-    WebviewUrl::App("/ctrl".into()),
-  )
-  .parent(&window)?
-  .inner_size(CTRL_SIZE.0, CTRL_SIZE.1)
-  .decorations(false)
-  .maximizable(false)
-  .minimizable(false)
-  .resizable(false)
-  .skip_taskbar(skip_taskbar)
-  .title("ctrl")
-  .build()?;
+  let ctrl_window = WebviewWindowBuilder::new(&app, to_ctrl_label(&*label), WebviewUrl::App("/ctrl".into()))
+    .parent(&window)?
+    .inner_size(CTRL_SIZE.0, CTRL_SIZE.1)
+    .decorations(false)
+    .maximizable(false)
+    .minimizable(false)
+    .resizable(false)
+    .skip_taskbar(skip_taskbar)
+    .title("ctrl")
+    .build()?;
 
   state.add_window(WindowData::new(title, label, url))?;
   state.emit_windows(&app);
@@ -116,14 +102,7 @@ pub fn view_create(
   Ok(())
 }
 
-extern "system" fn ctrl_proc(
-  hwnd: HWND,
-  umsg: u32,
-  wparam: WPARAM,
-  lparam: LPARAM,
-  _uidsubclass: usize,
-  _dwrefdata: usize,
-) -> LRESULT {
+extern "system" fn ctrl_proc(hwnd: HWND, umsg: u32, wparam: WPARAM, lparam: LPARAM, _uidsubclass: usize, _dwrefdata: usize) -> LRESULT {
   match umsg {
     // フォーカスが別のウィンドウから移ったら
     WM_ACTIVATEAPP => {
@@ -149,19 +128,10 @@ pub fn view_restore(app: &AppHandle, state: &State<'_, AppState>) -> anyhow::Res
   Ok(())
 }
 
-pub fn set_zoom(
-  window: &WebviewWindow,
-  state: State<'_, AppState>,
-  diff: i32,
-) -> anyhow::Result<()> {
-  let window_data = state
-    .get_window_data(window.label())
-    .context("failure to get window data")?;
+pub fn set_zoom(window: &WebviewWindow, state: State<'_, AppState>, diff: i32) -> anyhow::Result<()> {
+  let window_data = state.get_window_data(window.label()).context("failure to get window data")?;
   let zoom = Arc::clone(&window_data.zoom);
-  let val = zoom
-    .load(Ordering::Acquire)
-    .saturating_add_signed(diff)
-    .clamp(20, 500);
+  let val = zoom.load(Ordering::Acquire).saturating_add_signed(diff).clamp(20, 500);
 
   let scale = val as f64 / 100.0;
   window.set_zoom(scale)?;
@@ -217,11 +187,7 @@ pub mod command {
 
   #[command]
   #[specta]
-  pub fn view_close(
-    app: AppHandle,
-    state: State<'_, AppState>,
-    ctrl: WebviewWindow,
-  ) -> Result<(), String> {
+  pub fn view_close(app: AppHandle, state: State<'_, AppState>, ctrl: WebviewWindow) -> Result<(), String> {
     util::view_close(app, &ctrl).err_to_string()?;
     super::sync_windows(&state).err_to_string()?;
 
@@ -230,11 +196,7 @@ pub mod command {
 
   #[command]
   #[specta]
-  pub fn view_zoom(
-    ctrl: WebviewWindow,
-    state: State<'_, AppState>,
-    diff: i32,
-  ) -> Result<(), String> {
+  pub fn view_zoom(ctrl: WebviewWindow, state: State<'_, AppState>, diff: i32) -> Result<(), String> {
     set_zoom(&to_window(&ctrl)?, state, diff).err_to_string()?;
 
     Ok(())
@@ -251,30 +213,17 @@ pub mod command {
 
   #[command]
   #[specta]
-  pub fn get_status(
-    ctrl: WebviewWindow,
-    state: State<'_, AppState>,
-  ) -> Result<((bool, u8), bool, bool, bool), String> {
+  pub fn get_status(ctrl: WebviewWindow, state: State<'_, AppState>) -> Result<((bool, u8), bool, bool, bool), String> {
     let (_, window_data) = ctrl_to_window_and_data(&ctrl, &state)?;
 
     let status = (
       (
-        window_data
-          .transparent
-          .0
-          .load(std::sync::atomic::Ordering::Acquire),
-        window_data
-          .transparent
-          .1
-          .load(std::sync::atomic::Ordering::Acquire),
+        window_data.transparent.0.load(std::sync::atomic::Ordering::Acquire),
+        window_data.transparent.1.load(std::sync::atomic::Ordering::Acquire),
       ),
       window_data.pin.load(std::sync::atomic::Ordering::Acquire),
-      window_data
-        .pointer_ignore
-        .load(std::sync::atomic::Ordering::Acquire),
-      window_data
-        .mobile_mode
-        .load(std::sync::atomic::Ordering::Acquire),
+      window_data.pointer_ignore.load(std::sync::atomic::Ordering::Acquire),
+      window_data.mobile_mode.load(std::sync::atomic::Ordering::Acquire),
     );
 
     Ok(status)

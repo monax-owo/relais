@@ -14,11 +14,7 @@ pub mod command {
 
   #[command]
   #[specta]
-  pub fn test(
-    app: AppHandle,
-    ctrl: WebviewWindow,
-    _state: State<'_, AppState>,
-  ) -> Result<(), String> {
+  pub fn test(app: AppHandle, ctrl: WebviewWindow, _state: State<'_, AppState>) -> Result<(), String> {
     let window = to_window(&ctrl)?;
     window
       .with_webview(move |webview| {
@@ -27,10 +23,7 @@ pub mod command {
           unsafe {
             let controller = webview.controller();
             let webview = controller.CoreWebView2().unwrap();
-            let _webview_profile_7 = webview
-              .cast::<ICoreWebView2_13>()?
-              .Profile()?
-              .cast::<ICoreWebView2Profile7>()?;
+            let _webview_profile_7 = webview.cast::<ICoreWebView2_13>()?.Profile()?.cast::<ICoreWebView2Profile7>()?;
 
             let _path = app
               .dialog()

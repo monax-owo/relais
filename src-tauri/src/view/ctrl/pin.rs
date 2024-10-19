@@ -35,11 +35,7 @@ pub mod command {
 
   #[command]
   #[specta]
-  pub fn set_pin(
-    ctrl: WebviewWindow,
-    state: State<'_, AppState>,
-    value: bool,
-  ) -> Result<(), String> {
+  pub fn set_pin(ctrl: WebviewWindow, state: State<'_, AppState>, value: bool) -> Result<(), String> {
     let (window, window_data) = ctrl_to_window_and_data(&ctrl, &state)?;
     let atomic = Arc::clone(&window_data.pin);
 
