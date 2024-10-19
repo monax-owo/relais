@@ -27,7 +27,7 @@ where
 #[derive(Debug, Clone, Deserialize, Serialize, Type)]
 pub struct SerDeAppState {
   pub config: String,
-  pub windows: SWindowList,
+  pub windows: SerDeWindowList,
 }
 
 #[derive(Debug, Clone)]
@@ -55,14 +55,14 @@ pub struct SerDeWindowData {
 }
 
 pub type WindowDataList = Vec<WindowData>;
-pub type SWindowList = Vec<SerDeWindowData>;
+pub type SerDeWindowList = Vec<SerDeWindowData>;
 
 #[derive(Debug, Clone, Deserialize, Serialize, Type)]
 pub struct Conf {
   pub agent_desktop: String,
   pub agent_mobile: String,
   pub shortcut_key: String,
-  pub windows: SWindowList,
+  pub windows: SerDeWindowList,
 }
 
 impl Default for Conf {
@@ -134,7 +134,7 @@ where
       .cloned()
   }
 
-  pub fn get_windows(&self) -> SWindowList {
+  pub fn get_windows(&self) -> SerDeWindowList {
     let lock = self.windows.lock().unwrap();
     lock.iter().map(|v| v.into()).collect()
   }

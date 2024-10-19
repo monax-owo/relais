@@ -1,5 +1,5 @@
 use super::util;
-use crate::util::{AppState, Conf, ErrToString, SerDeAppState, SWindowList};
+use crate::util::{AppState, Conf, ErrToString, SerDeAppState, SerDeWindowList};
 
 use specta::specta;
 use tauri::{command, AppHandle, State};
@@ -12,7 +12,7 @@ pub fn exit(app: AppHandle) -> Result<(), String> {
 
 #[command]
 #[specta]
-pub fn get_windows(state: State<'_, AppState>) -> SWindowList {
+pub fn get_windows(state: State<'_, AppState>) -> SerDeWindowList {
   state.get_windows()
 }
 
