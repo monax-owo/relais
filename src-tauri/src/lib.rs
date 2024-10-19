@@ -1,6 +1,7 @@
 // Prevents additional console window on Windows in release, DO NOT REMOVE!!
 #![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
 
+use configu::Configurable;
 use specta_typescript::Typescript;
 use std::{env, panic, sync::Arc};
 use tauri::{
@@ -65,9 +66,9 @@ hook!
       view::ctrl::transparent::command::get_transparent,
       view::ctrl::transparent::command::set_transparent,
       view::ctrl::transparent::command::toggle_transparent,
-      view::ctrl::user_agent::get_user_agent,
-      view::ctrl::user_agent::set_user_agent,
-      view::ctrl::user_agent::toggle_user_agent,
+      view::ctrl::user_agent::command::get_user_agent,
+      view::ctrl::user_agent::command::set_user_agent,
+      view::ctrl::user_agent::command::toggle_user_agent,
       view::extension::command::test,
     ])
     .constant("CTRL_LABEL_PREFIX", view::util::CTRL_LABEL_PREFIX)
@@ -77,10 +78,7 @@ hook!
     .typ::<SerDeWindowData>();
   #[cfg(debug_assertions)]
   specta
-    .export(
-      Typescript::default(),
-      "../src/lib/generated/specta/bindings.ts",
-    )
+    .export(Typescript::default(), "../src/lib/generated/specta/bindings.ts")
     .expect("failed to generate types");
   //
 
@@ -155,8 +153,7 @@ hook!
             let main_window = Arc::clone(&main_window);
             move |_tray, e| {
               if let TrayIconEvent::Click {
-                button: MouseButton::Left,
-                ..
+                button: MouseButton::Left, ..
               } = e
               {
                 view::util::window_focus(&main_window).unwrap()
@@ -190,6 +187,29 @@ hook!
             .build(),
         )
         .expect("failed to set global shortcut");
+      //
+
+      // check user agent
+      {
+        const AGENT_DESKTOP: &str =
+          "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36 Edg/128.0.0.0";
+        const AGENT_MOBILE: &str =
+          "Mozilla/5.0 (Linux; Android 13; Pixel 7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/116.0.0.0 Mobile Safari/537.36";
+
+        let (desktop, mobile) = {
+          let config = state.config.read().unwrap();
+          (config.agent_desktop.clone(), config.agent_mobile.clone())
+        };
+        if desktop.trim().is_empty() {
+          state.config.write().unwrap().agent_desktop = AGENT_DESKTOP.into();
+          state.config.save().unwrap();
+        }
+
+        if mobile.trim().is_empty() {
+          state.config.write().unwrap().agent_mobile = AGENT_MOBILE.into();
+          state.config.save().unwrap();
+        }
+      }
       //
 
       // restore views from config
