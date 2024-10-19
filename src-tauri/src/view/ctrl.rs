@@ -15,12 +15,12 @@ use webview2_com::Microsoft::Web::WebView2::Win32::ICoreWebView2Settings2;
 use windows::{
   core::{Interface, PWSTR},
   Win32::{
-    Foundation::{COLORREF, HWND, LPARAM, LRESULT, WPARAM},
+    Foundation::{HWND, LPARAM, LRESULT, WPARAM},
     UI::{
       Shell::{DefSubclassProc, SetWindowSubclass},
       WindowsAndMessaging::{
-        SetLayeredWindowAttributes, SetWindowLongPtrW, ShowWindow, GWL_EXSTYLE, LWA_ALPHA, SW_HIDE,
-        SW_SHOWNORMAL, WM_ACTIVATEAPP, WS_EX_LAYERED,
+        SetWindowLongPtrW, ShowWindow, GWL_EXSTYLE, SW_HIDE, SW_SHOWNORMAL, WM_ACTIVATEAPP,
+        WS_EX_LAYERED,
       },
     },
   },
@@ -145,14 +145,6 @@ pub fn view_restore(app: &AppHandle, state: &State<'_, AppState>) -> anyhow::Res
   for window in windows {
     view_create(app, state, WebviewUrl::External(window.url.parse()?))?;
   }
-
-  Ok(())
-}
-
-pub fn set_transparent(hwnd: HWND, alpha: u8) -> anyhow::Result<()> {
-  unsafe {
-    SetLayeredWindowAttributes(hwnd, COLORREF(0), alpha, LWA_ALPHA)?;
-  };
 
   Ok(())
 }
