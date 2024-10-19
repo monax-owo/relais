@@ -19,8 +19,8 @@ use windows::{
     UI::{
       Shell::{DefSubclassProc, SetWindowSubclass},
       WindowsAndMessaging::{
-        GetWindowLongPtrW, SetLayeredWindowAttributes, SetWindowLongPtrW, ShowWindow, GWL_EXSTYLE,
-        LWA_ALPHA, SW_HIDE, SW_SHOWNORMAL, WM_ACTIVATEAPP, WS_EX_LAYERED, WS_EX_TRANSPARENT,
+        SetLayeredWindowAttributes, SetWindowLongPtrW, ShowWindow, GWL_EXSTYLE, LWA_ALPHA, SW_HIDE,
+        SW_SHOWNORMAL, WM_ACTIVATEAPP, WS_EX_LAYERED,
       },
     },
   },
@@ -144,25 +144,6 @@ pub fn view_restore(app: &AppHandle, state: &State<'_, AppState>) -> anyhow::Res
   let windows = state.config.read().unwrap().windows.clone();
   for window in windows {
     view_create(app, state, WebviewUrl::External(window.url.parse()?))?;
-  }
-
-  Ok(())
-}
-
-pub fn set_ignore_cursor_events(hwnd: HWND, value: bool) -> anyhow::Result<()> {
-  unsafe {
-    let prev = GetWindowLongPtrW(hwnd, GWL_EXSTYLE);
-
-    let style = if value {
-      prev | WS_EX_TRANSPARENT.0 as isize
-    } else {
-      prev & !(WS_EX_TRANSPARENT.0 as isize)
-    };
-
-    let res = SetWindowLongPtrW(hwnd, GWL_EXSTYLE, style);
-    if res == 0 {
-      bail!("")
-    }
   }
 
   Ok(())
