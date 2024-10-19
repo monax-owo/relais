@@ -16,7 +16,7 @@ async exit() : Promise<Result<null, string>> {
 async getConfig() : Promise<Conf> {
     return await TAURI_INVOKE("get_config");
 },
-async getState() : Promise<Result<SAppState, string>> {
+async getState() : Promise<Result<SerDeAppState, string>> {
     try {
     return { status: "ok", data: await TAURI_INVOKE("get_state") };
 } catch (e) {
@@ -24,7 +24,7 @@ async getState() : Promise<Result<SAppState, string>> {
     else return { status: "error", error: e  as any };
 }
 },
-async getWindows() : Promise<SWindowData[]> {
+async getWindows() : Promise<SerDeWindowData[]> {
     return await TAURI_INVOKE("get_windows");
 },
 async viewCreate(url: string) : Promise<Result<null, string>> {
@@ -218,15 +218,15 @@ updateWindows: "update-windows"
 
 /** user-defined constants **/
 
-export const WINDOW_LABEL_PREFIX = "window_" as const;
 export const CTRL_LABEL_PREFIX = "ctrl_" as const;
+export const WINDOW_LABEL_PREFIX = "window_" as const;
 
 /** user-defined types **/
 
-export type Conf = { agent_desktop: string; agent_mobile: string; shortcut_key: string; windows: SWindowData[] }
-export type SAppState = { config: string; windows: SWindowData[] }
-export type SWindowData = { title: string; label: string; url: string; pointer_ignore: boolean; mobile_mode: boolean; transparent: [boolean, number]; pin: boolean; zoom: number }
-export type UpdateState = SWindowData[]
+export type Conf = { agent_desktop: string; agent_mobile: string; shortcut_key: string; windows: SerDeWindowData[] }
+export type SerDeAppState = { config: string; windows: SerDeWindowData[] }
+export type SerDeWindowData = { title: string; label: string; url: string; pointer_ignore: boolean; mobile_mode: boolean; transparent: [boolean, number]; pin: boolean; zoom: number }
+export type UpdateState = SerDeWindowData[]
 export type UpdateWindows = null
 
 /** tauri-specta globals **/
