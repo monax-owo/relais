@@ -3,7 +3,7 @@ pub mod pin;
 pub mod transparent;
 pub mod user_agent;
 
-use anyhow::bail;
+use anyhow::{bail, Context};
 use configu::Configurable;
 use std::sync::{atomic::Ordering, Arc};
 use tauri::{
@@ -126,7 +126,6 @@ extern "system" fn ctrl_proc(
   _dwrefdata: usize,
 ) -> LRESULT {
   match umsg {
-    // TODO:bug:フォーカスが離れたときの処理ができてなかった
     // フォーカスが別のウィンドウから移ったら
     WM_ACTIVATEAPP => {
       let res = if wparam.0 > 0 {
@@ -190,7 +189,9 @@ pub fn set_zoom(
   state: State<'_, AppState>,
   diff: i32,
 ) -> anyhow::Result<()> {
-  let window_data = state.get_window_data(window.label())?;
+  let window_data = state
+    .get_window_data(window.label())
+    .context("failure to get window data")?;
   let zoom = Arc::clone(&window_data.zoom);
   let val = zoom
     .load(Ordering::Acquire)

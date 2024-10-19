@@ -1,4 +1,3 @@
-use anyhow::Context;
 use configu::{AppConfig, AppConfigBuilder};
 use serde::{Deserialize, Serialize};
 use specta::Type;
@@ -122,20 +121,24 @@ where
     UpdateState(vec).emit(handle).unwrap();
   }
 
-  pub fn get_window_data(&self, label: &str) -> anyhow::Result<WindowData> {
-    let lock = self.windows.lock().unwrap();
-    lock
+  // TODO:ResultではなくOptionの方がいい
+  // TODO:lockを関数の外で取得しないといけない(寿命が足りないから)
+  /// labelから合致するウィンドウを探して返す関数
+  pub fn get_window_data(&self, label: &str) -> Option<WindowData> {
+    self
+      .windows
+      .lock()
+      .unwrap()
       .iter()
       .find(|v| v.label.as_str() == label)
       .cloned()
-      .context("failed to get window data")
   }
 
   pub fn get_windows(&self) -> SWindowList {
     let lock = self.windows.lock().unwrap();
     lock.iter().map(|v| v.into()).collect()
   }
-  // window
+  //
 }
 
 impl TryFrom<&AppState> for SAppState {

@@ -44,7 +44,10 @@ pub fn ctrl_to_window_and_data(
   state: &State<'_, AppState>,
 ) -> Result<(WebviewWindow, WindowData), String> {
   let window = to_window(ctrl)?;
-  let window_data = state.get_window_data(window.label()).err_to_string()?;
+  let window_data = state
+    .get_window_data(window.label())
+    .context("failure to get window data")
+    .err_to_string()?;
   Ok((window, window_data))
 }
 
