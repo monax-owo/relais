@@ -25,7 +25,7 @@ where
 }
 
 #[derive(Debug, Clone, Deserialize, Serialize, Type)]
-pub struct SAppState {
+pub struct SerDeAppState {
   pub config: String,
   pub windows: SWindowList,
 }
@@ -43,7 +43,7 @@ pub struct WindowData {
 }
 
 #[derive(Debug, Clone, Deserialize, Serialize, Type)]
-pub struct SWindowData {
+pub struct SerDeWindowData {
   pub title: Box<str>,
   pub label: Box<str>,
   pub url: Box<str>,
@@ -55,7 +55,7 @@ pub struct SWindowData {
 }
 
 pub type WindowDataList = Vec<WindowData>;
-pub type SWindowList = Vec<SWindowData>;
+pub type SWindowList = Vec<SerDeWindowData>;
 
 #[derive(Debug, Clone, Deserialize, Serialize, Type)]
 pub struct Conf {
@@ -141,7 +141,7 @@ where
   //
 }
 
-impl TryFrom<&AppState> for SAppState {
+impl TryFrom<&AppState> for SerDeAppState {
   type Error = anyhow::Error;
 
   fn try_from(v: &AppState) -> Result<Self, Self::Error> {
@@ -167,7 +167,7 @@ impl WindowData {
   }
 }
 
-impl From<&WindowData> for SWindowData {
+impl From<&WindowData> for SerDeWindowData {
   fn from(v: &WindowData) -> Self {
     Self {
       title: v.title.as_str().into(),

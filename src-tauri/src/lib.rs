@@ -12,7 +12,7 @@ use tauri::{
 };
 use tauri_plugin_global_shortcut::ShortcutState;
 use tauri_specta::{collect_commands, collect_events};
-use util::{exit_0, AppState, Conf, SAppState, SWindowData};
+use util::{exit_0, AppState, Conf, SerDeAppState, SerDeWindowData};
 use view::{
   event::{UpdateState, UpdateWindows},
   util::window_focus,
@@ -73,8 +73,8 @@ hook!
     .constant("CTRL_LABEL_PREFIX", view::util::CTRL_LABEL_PREFIX)
     .constant("WINDOW_LABEL_PREFIX", view::util::WINDOW_LABEL_PREFIX)
     .events(collect_events![UpdateState, UpdateWindows])
-    .typ::<SAppState>()
-    .typ::<SWindowData>();
+    .typ::<SerDeAppState>()
+    .typ::<SerDeWindowData>();
   #[cfg(debug_assertions)]
   specta
     .export(

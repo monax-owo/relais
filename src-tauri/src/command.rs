@@ -1,5 +1,5 @@
 use super::util;
-use crate::util::{AppState, Conf, ErrToString, SAppState, SWindowList};
+use crate::util::{AppState, Conf, ErrToString, SerDeAppState, SWindowList};
 
 use specta::specta;
 use tauri::{command, AppHandle, State};
@@ -24,6 +24,6 @@ pub fn get_config(state: State<'_, AppState>) -> Conf {
 
 #[command]
 #[specta]
-pub fn get_state(state: State<'_, AppState>) -> Result<SAppState, String> {
-  SAppState::try_from(state.inner()).err_to_string()
+pub fn get_state(state: State<'_, AppState>) -> Result<SerDeAppState, String> {
+  SerDeAppState::try_from(state.inner()).err_to_string()
 }
