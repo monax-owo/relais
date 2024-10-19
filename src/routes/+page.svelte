@@ -1,11 +1,11 @@
 <script lang="ts">
-  import { commands, type SWindowData } from "$lib/generated/specta/bindings";
+  import { commands, type SerDeWindowData } from "$lib/generated/specta/bindings";
   import { Template } from "$lib/imports";
   import { state } from "$lib/stores/state";
 
   // let stroke: number = 2;
   let url: string;
-  let windows: SWindowData[] | undefined = undefined;
+  let windows: SerDeWindowData[] | undefined = undefined;
   let _valid = true;
 
   $: windows = $state?.windows;

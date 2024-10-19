@@ -1,10 +1,10 @@
 <script lang="ts">
   import { page } from "$app/stores";
-  import type { SWindowData } from "$lib/generated/specta/bindings";
+  import type { SerDeWindowData } from "$lib/generated/specta/bindings";
   import { Template } from "$lib/imports";
   import { state } from "$lib/stores/state";
   let label = $page.url.searchParams.get("label") ?? "null";
-  let window: SWindowData | undefined;
+  let window: SerDeWindowData | undefined;
   let datalist: Map<string, unknown>;
   onMount(() => {
     console.log(window);
