@@ -3,6 +3,10 @@
   import { Template } from "$lib/imports";
   import { state } from "$lib/stores/state";
 
+  import { superForm } from "sveltekit-superforms";
+  export let data;
+  const { form } = superForm(data.form);
+
   // let stroke: number = 2;
   let url: string;
   let windows: SerDeWindowData[] | undefined = undefined;
@@ -20,18 +24,6 @@
     // }
     await commands.viewCreate(url);
   };
-  // onMount(async () => {
-  //   ifDev(() => {
-  //     let un = state.subscribe((v) => {
-  //       if (v && v.windows.length < 1) {
-  //         console.log(v.windows.length);
-  //         url = "google.com";
-  //         handleOpen();
-  //         un();
-  //       }
-  //     });
-  //   });
-  // });
 </script>
 
 <Template>
@@ -59,7 +51,7 @@
 </Template>
 
 <style lang="scss">
-  @import "@monax-owo/style/global";
+  @use "@monax-owo/style/global";
   .root {
     display: flex;
     flex-flow: column nowrap;
