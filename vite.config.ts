@@ -34,9 +34,6 @@ export default defineConfig({
       plugins: [autoprefixer()],
     },
     preprocessorOptions: {
-      sass: {
-        api: "modern-compiler",
-      },
       scss: {
         api: "modern-compiler",
       },
