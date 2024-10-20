@@ -22,7 +22,7 @@
   },
   "global_scss": {
     "prefix": "!util",
-    "body": ["@use \"@monax-owo/style/global\";"],
+    "body": ["@use \"@monax-owo/style/global\" as *;"],
   },
   "util": {
     "prefix": "!mixin",
@@ -30,6 +30,6 @@
   },
   "util_scss": {
     "prefix": "!util",
-    "body": ["@use \"@monax-owo/style/util\";"],
+    "body": ["@use \"@monax-owo/style/util\" as *;"],
   },
 }

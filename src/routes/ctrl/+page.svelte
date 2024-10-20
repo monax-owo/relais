@@ -105,7 +105,7 @@
 </div>
 
 <style lang="scss">
-  @use "@monax-owo/style/global";
+  @use "@monax-owo/style/global" as *;
 
   .header {
     display: flex;

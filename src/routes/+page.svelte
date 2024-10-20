@@ -51,7 +51,7 @@
 </Template>
 
 <style lang="scss">
-  @use "@monax-owo/style/global";
+  @use "@monax-owo/style/global" as *;
   .root {
     display: flex;
     flex-flow: column nowrap;
