@@ -6,6 +6,12 @@ use tauri::{command, AppHandle, State};
 
 #[command]
 #[specta]
+pub fn log(value: Vec<&str>) {
+  dbg!(value);
+}
+
+#[command]
+#[specta]
 pub fn exit(app: AppHandle) -> Result<(), String> {
   util::exit_0(&app).err_to_string()
 }

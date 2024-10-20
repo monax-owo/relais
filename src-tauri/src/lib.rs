@@ -48,6 +48,7 @@ hook!
       command::get_config,
       command::get_state,
       command::get_windows,
+      command::log,
       view::command::view_create,
       view::command::window_focus,
       view::command::window_hide,

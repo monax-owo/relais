@@ -27,6 +27,9 @@ async getState() : Promise<Result<SerDeAppState, string>> {
 async getWindows() : Promise<SerDeWindowData[]> {
     return await TAURI_INVOKE("get_windows");
 },
+async log(value: string[]) : Promise<void> {
+    await TAURI_INVOKE("log", { value });
+},
 async viewCreate(url: string) : Promise<Result<null, string>> {
     try {
     return { status: "ok", data: await TAURI_INVOKE("view_create", { url }) };
