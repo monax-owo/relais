@@ -1,10 +1,14 @@
 // TauriのAPI(Rust/TS)のラッパー関数をまとめるファイル
 import { open as openWithTauri } from "@tauri-apps/plugin-shell";
-import type { Result } from "$lib/generated/specta/bindings";
+import { commands, type Result } from "$lib/generated/specta/bindings";
 
 const open = async (path: string): Promise<void> => {
   // config ファイルから設定を読む or ユーザーが指定したサービスを使う
   await openWithTauri(path);
+};
+
+const log = (...val: unknown[]) => {
+  commands.log(val as string[]);
 };
 
 const err = (err: string) => {
@@ -20,4 +24,4 @@ const unwrap = <T>(v: Result<T, string>): T => {
   }
 };
 
-export { unwrap, open, err };
+export { open, log, err, unwrap };
