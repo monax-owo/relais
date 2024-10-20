@@ -35,7 +35,7 @@ importers:
         version: 9.13.0
       '@monax-owo/style':
         specifier: github:monax-owo/style#release
-        version: https://codeload.github.com/monax-owo/style/tar.gz/70304031c6e1eb3c657cac934adecb6e7ded3682
+        version: https://codeload.github.com/monax-owo/style/tar.gz/dc53e920cfe0c103ea8c4f53a10691d3fec9da81
       '@sveltejs/adapter-static':
         specifier: ^3.0.5
         version: 3.0.5(@sveltejs/kit@2.7.2(@sveltejs/vite-plugin-svelte@3.1.2(svelte@4.2.19)(vite@5.4.9(@types/node@20.14.10)(sass-embedded@1.80.3)(sass@1.79.3)))(svelte@4.2.19)(vite@5.4.9(@types/node@20.14.10)(sass-embedded@1.80.3)(sass@1.79.3)))
@@ -594,9 +594,9 @@ packages:
   '@jridgewell/trace-mapping@0.3.25':
     resolution: {integrity: sha512-vNk6aEwybGtawWmy/PzwnGDOjCkLWSD2wqvjGGAgOAwCGWySYXfYoxt00IJkTF+8Lb57DwOb3Aa0o9CApepiYQ==}
 
-  '@monax-owo/style@https://codeload.github.com/monax-owo/style/tar.gz/70304031c6e1eb3c657cac934adecb6e7ded3682':
-    resolution: {tarball: https://codeload.github.com/monax-owo/style/tar.gz/70304031c6e1eb3c657cac934adecb6e7ded3682}
-    version: 0.1.4
+  '@monax-owo/style@https://codeload.github.com/monax-owo/style/tar.gz/dc53e920cfe0c103ea8c4f53a10691d3fec9da81':
+    resolution: {tarball: https://codeload.github.com/monax-owo/style/tar.gz/dc53e920cfe0c103ea8c4f53a10691d3fec9da81}
+    version: 0.1.6
 
   '@nodelib/fs.scandir@2.1.5':
     resolution: {integrity: sha512-vq24Bq3ym5HEQm2NKCr3yXDwjc7vTsEThRDnkp2DK9p1uqLR+DHurm/NOTo0KG7HYHU7eppKZj3MyqYuMBf62g==}
@@ -2740,7 +2740,7 @@ snapshots:
       '@jridgewell/resolve-uri': 3.1.2
       '@jridgewell/sourcemap-codec': 1.5.0
 
-  '@monax-owo/style@https://codeload.github.com/monax-owo/style/tar.gz/70304031c6e1eb3c657cac934adecb6e7ded3682': {}
+  '@monax-owo/style@https://codeload.github.com/monax-owo/style/tar.gz/dc53e920cfe0c103ea8c4f53a10691d3fec9da81': {}
 
   '@nodelib/fs.scandir@2.1.5':
     dependencies:
