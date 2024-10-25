@@ -21,11 +21,8 @@
   import { commands, events } from "$lib/generated/specta/bindings";
   import { unwrap } from "$lib/util/wrap";
   import { getCurrentWebviewWindow } from "@tauri-apps/api/webviewWindow";
-  interface Props {
-    children?: import("svelte").Snippet;
-  }
 
-  let { children }: Props = $props();
+  let { children } = $props();
   //
   onMount(async () => {
     const f = async () => {
