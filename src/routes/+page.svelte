@@ -5,13 +5,11 @@
 
   import { superForm } from "sveltekit-superforms";
   export let data;
-  const { form } = superForm(data.form);
+  const { form, errors } = superForm(data.form);
 
   // let stroke: number = 2;
-  let url: string;
-  let windows: SerDeWindowData[] | undefined = undefined;
-  let _valid = true;
 
+  let windows: SerDeWindowData[] | undefined = undefined;
   $: windows = $state?.windows;
 
   const handleOpen = async () => {
@@ -22,30 +20,31 @@
     //   valid = false;
     //   console.error(e);
     // }
-    await commands.viewCreate(url);
+
+    if (!$errors.url) {
+      await commands.viewCreate($form.url);
+    }
   };
 </script>
 
 <Template>
   <div class="root">
     <form class="form" on:submit={handleOpen}>
-      <!-- TODO:superformsでvalidationする -->
-      <!-- <span>{valid}</span> -->
-      <input type="text" bind:value={url} />
+      <input
+        type="url"
+        aria-invalid={!!$errors.url}
+        bind:value={$form.url}
+        placeholder="https://" />
       <button type="submit">OPEN</button>
     </form>
     <ul class="windows">
-      {#if windows}
-        {#each windows as window}
-          <li class="hover-11">
-            <div>{window.title}</div>
-            <div>{window.url}</div>
-            <a href="/config?label={window.label}" class="btn">config</a>
-          </li>
-        {/each}
-      {:else}
-        <li>window not found...</li>
-      {/if}
+      {#each windows ?? [] as window}
+        <li class="hover-11">
+          <div>{window.title}</div>
+          <div>{window.url}</div>
+          <a href="/config?label={window.label}" class="btn">config</a>
+        </li>
+      {/each}
     </ul>
   </div>
 </Template>

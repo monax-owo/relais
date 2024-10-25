@@ -101,7 +101,7 @@ where
   pub fn add_window(&self, window: WindowData) -> anyhow::Result<()> {
     let mut lock = self.windows.lock().unwrap();
     lock.push(window);
-    dbg!(&lock);
+    // dbg!(&lock);
 
     Ok(())
   }
@@ -110,7 +110,7 @@ where
   pub fn remove_window(&self, label: &str) -> anyhow::Result<()> {
     let mut lock = self.windows.lock().unwrap();
     lock.retain(|v| v.label.as_str() != label);
-    dbg!(&lock);
+    // dbg!(&lock);
 
     Ok(())
   }

@@ -3,7 +3,7 @@ pub mod pin;
 pub mod transparent;
 pub mod user_agent;
 
-use anyhow::{bail, Context};
+use anyhow::Context;
 use configu::Configurable;
 use std::sync::{atomic::Ordering, Arc};
 use tauri::{AppHandle, Manager, PhysicalPosition, State, WebviewUrl, WebviewWindow, WebviewWindowBuilder, WindowEvent};
@@ -28,6 +28,7 @@ pub const WINDOW_MIN_INNER_SIZE: (f64, f64) = (360.0, 200.0);
 pub const CTRL_SIZE: (f64, f64) = (40.0, 360.0);
 
 pub fn view_create(app: &AppHandle, state: &State<'_, AppState>, url: WebviewUrl) -> anyhow::Result<()> {
+  dbg!("create");
   let app = app.clone();
   let skip_taskbar = cfg!(not(debug_assertions));
 
@@ -94,7 +95,7 @@ pub fn view_create(app: &AppHandle, state: &State<'_, AppState>, url: WebviewUrl
       SetWindowLongPtrW(window_hwnd, GWL_EXSTYLE, WS_EX_LAYERED.0 as isize);
       SetWindowLongPtrW(ctrl_hwnd, GWL_EXSTYLE, WS_EX_LAYERED.0 as isize);
       if !SetWindowSubclass(ctrl_hwnd, Some(ctrl_proc), 0, 0).as_bool() {
-        bail!("SetWindowSubclass failed")
+        println!("SetWindowSubclass failed");
       }
     }
   }
