@@ -24,10 +24,10 @@
 
   const stroke = 2;
 
-  let pin = false;
-  let transparent: [boolean, number] = [false, 255];
-  let pointerIgnore = false;
-  let mobileMode = false;
+  let pin = $state(false);
+  let transparent: [boolean, number] = $state([false, 255]);
+  let pointerIgnore = $state(false);
+  let mobileMode = $state(false);
 
   onMount(async () => {
     [transparent, pin, pointerIgnore, mobileMode] = unwrap(await commands.getStatus());
@@ -66,40 +66,40 @@
 <!-- TODO: opacity level slider -->
 <!-- <button type="button" on:click={}></button> -->
 <div class="header">
-  <button type="button" on:click={handleClose}><IconX {stroke}></IconX></button>
-  <button type="button" on:click={handleMinimize}><IconMinus {stroke}></IconMinus></button>
-  <button type="button" on:click={handlePin}>
+  <button type="button" onclick={handleClose}><IconX {stroke}></IconX></button>
+  <button type="button" onclick={handleMinimize}><IconMinus {stroke}></IconMinus></button>
+  <button type="button" onclick={handlePin}>
     {#if pin}
       <IconPinnedOff {stroke} />
     {:else}
       <IconPin {stroke} />
     {/if}
   </button>
-  <button type="button" on:click={handleTransparent}>
+  <button type="button" onclick={handleTransparent}>
     {#if transparent[0]}
       <IconGhostOff {stroke} />
     {:else}
       <IconGhost {stroke} />
     {/if}
   </button>
-  <button type="button" on:click={handlePointerIgnore}>
+  <button type="button" onclick={handlePointerIgnore}>
     {#if pointerIgnore}
       <IconPointerOff {stroke} />
     {:else}
       <IconPointer {stroke} />
     {/if}
   </button>
-  <button type="button" on:click={handleMobileMode}>
+  <button type="button" onclick={handleMobileMode}>
     {#if mobileMode}
       <IconDeviceDesktop {stroke} />
     {:else}
       <IconDeviceMobile {stroke} />
     {/if}
   </button>
-  <button type="button" on:click={handleZoomIn}><IconZoomIn {stroke} /></button>
-  <button type="button" on:click={handleZoomOut}><IconZoomOut {stroke} /></button>
+  <button type="button" onclick={handleZoomIn}><IconZoomIn {stroke} /></button>
+  <button type="button" onclick={handleZoomOut}><IconZoomOut {stroke} /></button>
 
-  <button type="button" class="drag" on:pointerdown={handleDrag}>
+  <button type="button" class="drag" onpointerdown={handleDrag}>
     <IconArrowsMove {stroke} />
   </button>
 </div>

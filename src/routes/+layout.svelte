@@ -17,15 +17,20 @@
   // Fira Code
   // Supports weights 300-700
   import "@fontsource-variable/fira-code";
-  import { state } from "$lib/stores/state";
+  import { appState } from "$lib/stores/state";
   import { commands, events } from "$lib/generated/specta/bindings";
   import { unwrap } from "$lib/util/wrap";
   import { getCurrentWebviewWindow } from "@tauri-apps/api/webviewWindow";
+  interface Props {
+    children?: import("svelte").Snippet;
+  }
+
+  let { children }: Props = $props();
   //
   onMount(async () => {
     const f = async () => {
-      state.set(unwrap(await commands.getState()));
-      console.log(JSON.stringify($state, null, 2));
+      appState.set(unwrap(await commands.getState()));
+      console.log(JSON.stringify($appState, null, 2));
     };
     f();
     await events.updateState(getCurrentWebviewWindow()).listen(() => f());
@@ -36,7 +41,7 @@
 
 <!-- TODO:ctrlとその他のlayoutを分ける -->
 <div id="app">
-  <slot></slot>
+  {@render children?.()}
 </div>
 
 <style lang="scss">

@@ -2,14 +2,14 @@
   import { page } from "$app/stores";
   import type { SerDeWindowData } from "$lib/generated/specta/bindings";
   import { Template } from "$lib/imports";
-  import { state } from "$lib/stores/state";
+  import { appState } from "$lib/stores/state";
   let label = $page.url.searchParams.get("label") ?? "null";
-  let window: SerDeWindowData | undefined;
-  let datalist: Map<string, unknown>;
+  let window: SerDeWindowData | undefined = $state();
+  let datalist: Map<string, unknown> | undefined = $state();
   onMount(() => {
     console.log(window);
 
-    let un = state.subscribe((v) => {
+    let un = appState.subscribe((v) => {
       if (v) {
         window = v.windows.find((v) => v.label == label);
         if (window) {
@@ -34,7 +34,7 @@
   <nav><a href="/" class="btn">{"←"}</a></nav>
   {#if window}
     <div class="list">
-      {#each datalist as data}
+      {#each datalist ?? [] as data}
         <div><span class="key">{data[0]}: </span><span class="value">{data[1]}</span></div>
       {/each}
     </div>

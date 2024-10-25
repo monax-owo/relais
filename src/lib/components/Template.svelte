@@ -1,10 +1,23 @@
 <script lang="ts">
-  export let test = "1536px";
+  import { createBubbler, stopPropagation } from "svelte/legacy";
+
+  const bubble = createBubbler();
+  interface Props {
+    test?: string;
+    children?: import("svelte").Snippet;
+  }
+
+  let { test = "1536px", children }: Props = $props();
 </script>
 
-<!-- svelte-ignore a11y-click-events-have-key-events -->
-<div class="template" role="button" tabindex="0" style:--test={test} on:click|stopPropagation>
-  <slot><div>no content</div></slot>
+<!-- svelte-ignore a11y_click_events_have_key_events -->
+<div
+  class="template"
+  role="button"
+  tabindex="0"
+  style:--test={test}
+  onclick={stopPropagation(bubble("click"))}>
+  {#if children}{@render children()}{:else}<div>no content</div>{/if}
 </div>
 
 <style lang="scss">

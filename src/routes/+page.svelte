@@ -1,16 +1,19 @@
 <script lang="ts">
   import { commands, type SerDeWindowData } from "$lib/generated/specta/bindings";
   import { Template } from "$lib/imports";
-  import { state } from "$lib/stores/state";
+  import { appState } from "$lib/stores/state";
 
   import { superForm } from "sveltekit-superforms";
-  export let data;
+
+  let { data } = $props();
   const { form, errors } = superForm(data.form);
 
   // let stroke: number = 2;
 
-  let windows: SerDeWindowData[] | undefined = undefined;
-  $: windows = $state?.windows;
+  let windows: SerDeWindowData[] | undefined = $state(undefined);
+  $effect(() => {
+    windows = $appState?.windows;
+  });
 
   const handleOpen = async () => {
     // try {
@@ -29,7 +32,7 @@
 
 <Template>
   <div class="root">
-    <form class="form" on:submit={handleOpen}>
+    <form class="form" onsubmit={handleOpen}>
       <input
         type="url"
         aria-invalid={!!$errors.url}
