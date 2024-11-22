@@ -2,7 +2,6 @@
 #![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
 
 use configu::Configurable;
-use specta_typescript::Typescript;
 use std::{env, panic, sync::Arc};
 use tauri::{
   generate_context,
@@ -77,10 +76,15 @@ hook!
     .events(collect_events![UpdateState, UpdateWindows])
     .typ::<SerDeAppState>()
     .typ::<SerDeWindowData>();
+
   #[cfg(debug_assertions)]
-  specta
-    .export(Typescript::default(), "../src/lib/generated/specta/bindings.ts")
-    .expect("failed to generate types");
+  {
+    use specta_typescript::Typescript;
+
+    specta
+      .export(Typescript::default(), "../src/lib/generated/specta/bindings.ts")
+      .expect("failed to generate types");
+  }
   //
 
   // state
